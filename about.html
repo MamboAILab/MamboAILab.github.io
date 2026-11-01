@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>About · MamboLab</title>
-<meta name="description" content="关于 MamboLab 人工智能研究组：研究方向、团队与合作">
+<meta name="description" content="关于 MamboLab 人工智能研究组：演化优化、自动机器学习、大模型驱动的算法发现与智慧教育">
 <link rel="stylesheet" href="assets/style.css">
 <script>try{var t=localStorage.getItem('ml-theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
 </head>
@@ -15,8 +15,8 @@
     <a class="brand" href="index.html"><span class="brand-mark">M</span><span class="brand-text">MamboLab</span></a>
     <nav class="nav-links">
       <a href="about.html">About</a>
-      <a href="publications.html">Publications</a>
       <a href="members.html">Members</a>
+      <a href="publications.html">Publications</a>
       <a href="special-days.html">Special Days</a>
       <a class="admin-link" href="admin.html">管理</a>
             <button class="icon-btn" id="theme-toggle" aria-label="切换深浅色"></button>
@@ -32,15 +32,20 @@
 
   <div class="prose">
     <p data-site="description"></p>
+  </div>
+</main>
 
-    <h2>研究方向</h2>
-    <ul>
-      <li><strong>神经进化与神经架构搜索</strong> —— 用进化算法搜索网络结构与训练配置，关注多目标、鲁棒性与可迁移性。</li>
-      <li><strong>演化优化与自动算法配置</strong> —— 让算法自己学会如何被调参，把强化学习引入进化算法的超参数决策。</li>
-      <li><strong>联邦学习与隐私保护</strong> —— 数据不出域的协同训练，应对异构数据与通信约束。</li>
-      <li><strong>认知诊断与教育智能</strong> —— 把智能方法落到学生能力建模、习题推荐与知识追踪。</li>
-    </ul>
+<section class="section section-flush">
+  <div class="wrap">
+    <div class="section-head"><h2>研究方向</h2></div>
+    <p class="research-lead" id="research-lead"></p>
+    <div class="research-grid" id="research-about"></div>
+    <p class="research-note" id="research-note" hidden></p>
+  </div>
+</section>
 
+<main class="wrap wrap-narrow">
+  <div class="prose">
     <h2>我们怎么做事</h2>
     <p>
       课题组规模不大，强调每个人的研究品味和动手能力。我们更在意一个想法是否被真正做透，

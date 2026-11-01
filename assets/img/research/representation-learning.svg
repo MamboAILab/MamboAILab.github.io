@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 300" width="480" height="300" role="img" aria-label="Representation learning">
+<defs>
+<marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#8b96a8"/></marker>
+<marker id="arA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#4f74f0"/></marker>
+</defs>
+<ellipse cx="102" cy="112" rx="46" ry="36" fill="#4f74f0" fill-opacity=".07" stroke="#4f74f0" stroke-width="1.1" stroke-dasharray="4 4"/>
+<ellipse cx="156" cy="200" rx="44" ry="32" fill="#8b96a8" fill-opacity=".05" stroke="#8b96a8" stroke-width="1.1" stroke-dasharray="4 4"/>
+<circle cx="128.0" cy="112.0" r="4.5" fill="#4f74f0" fill-opacity=".9"/>
+<circle cx="118.2" cy="127.7" r="4.5" fill="#4f74f0" fill-opacity=".9"/>
+<circle cx="96.1" cy="131.5" r="4.5" fill="#4f74f0" fill-opacity=".9"/>
+<circle cx="78.5" cy="120.5" r="4.5" fill="#4f74f0" fill-opacity=".9"/>
+<circle cx="78.7" cy="103.1" r="4.5" fill="#4f74f0" fill-opacity=".9"/>
+<circle cx="96.5" cy="92.4" r="4.5" fill="#4f74f0" fill-opacity=".9"/>
+<circle cx="118.5" cy="96.5" r="4.5" fill="#4f74f0" fill-opacity=".9"/>
+<circle cx="178.1" cy="206.6" r="4.5" fill="#8b96a8" fill-opacity=".55"/>
+<circle cx="162.4" cy="216.4" r="4.5" fill="#8b96a8" fill-opacity=".55"/>
+<circle cx="141.9" cy="213.7" r="4.5" fill="#8b96a8" fill-opacity=".55"/>
+<circle cx="132.0" cy="200.7" r="4.5" fill="#8b96a8" fill-opacity=".55"/>
+<circle cx="140.3" cy="187.1" r="4.5" fill="#8b96a8" fill-opacity=".55"/>
+<circle cx="160.5" cy="183.3" r="4.5" fill="#8b96a8" fill-opacity=".55"/>
+<circle cx="177.3" cy="192.1" r="4.5" fill="#8b96a8" fill-opacity=".55"/>
+<path d="M118 132 L142 180" stroke="#7d8798" stroke-width="1.1" stroke-dasharray="3 4"/>
+<path d="M130 148 L144 162 M144 148 L130 162" stroke="#7d8798" stroke-width="1.5" stroke-linecap="round"/>
+<text x="128" y="256" fill="#7d8798" font-size="10.5" text-anchor="middle" letter-spacing=".06em" font-family="ui-sans-serif,-apple-system,'Segoe UI',PingFang SC,sans-serif">contrastive</text>
+<rect x="296" y="84" width="112" height="64" rx="13" fill="#4f74f0" fill-opacity=".13" stroke="#4f74f0" stroke-width="1.4"/>
+<text x="352" y="122" font-size="15" font-weight="600" fill="#4f74f0" text-anchor="middle" font-family="ui-sans-serif,-apple-system,'Segoe UI',PingFang SC,sans-serif">teacher</text>
+<rect x="322" y="196" width="60" height="48" rx="11" fill="#8b96a8" fill-opacity=".08" stroke="#8b96a8" stroke-width="1.3"/>
+<text x="352" y="225" font-size="13" fill="#7d8798" text-anchor="middle" font-family="ui-sans-serif,-apple-system,'Segoe UI',PingFang SC,sans-serif">student</text>
+<path d="M352 150 V190" stroke="#4f74f0" stroke-width="1.3" marker-end="url(#arA)"/>
+<text x="404" y="178" fill="#7d8798" font-size="10.5" text-anchor="start" letter-spacing=".06em" font-family="ui-sans-serif,-apple-system,'Segoe UI',PingFang SC,sans-serif">distill</text>
+<text x="352" y="262" fill="#7d8798" font-size="10.5" text-anchor="middle" letter-spacing=".06em" font-family="ui-sans-serif,-apple-system,'Segoe UI',PingFang SC,sans-serif">feature transfer</text>
+</svg>

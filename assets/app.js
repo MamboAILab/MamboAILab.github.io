@@ -121,6 +121,33 @@
       pubLinks(p) + '</div></div>';
   }
 
+  /* ---------- 研究方向 ---------- */
+  function renderResearch(host, compact) {
+    var cfg = D.site && D.site.research;
+    if (!host || !cfg || !cfg.items) return;
+    var lead = q('#research-lead'), note = q('#research-note');
+    if (lead) lead.textContent = cfg.lead || '';
+    if (note) {
+      note.textContent = cfg.note || '';
+      note.hidden = !cfg.note;
+    }
+    host.className = 'research-grid' + (compact ? ' compact' : '');
+    host.innerHTML = cfg.items.map(function (it, i) {
+      return '<article class="rc">' +
+        '<div class="rc-fig"><span class="rc-num">' + ('0' + (i + 1)).slice(-2) + '</span>' +
+          (it.figure ? '<img src="' + esc(it.figure) + '" alt="" loading="lazy">' : '') +
+        '</div>' +
+        '<div class="rc-body">' +
+          '<h3>' + esc(it.name) + '</h3>' +
+          '<p class="rc-en">' + esc(it.en || '') + '</p>' +
+          '<p class="rc-desc">' + esc(it.desc || '') + '</p>' +
+          (compact || !it.tags ? '' : '<ul class="rc-tags">' + it.tags.map(function (t) {
+            return '<li>' + esc(t) + '</li>';
+          }).join('') + '</ul>') +
+        '</div></article>';
+    }).join('');
+  }
+
   function renderSelected(el, limit) {
     if (!el || !D.publications) return;
     var all = D.publications.items || [];
@@ -526,6 +553,8 @@
 
   function renderAll() {
     renderNews(q('#news-list'), 6);
+    renderResearch(q('#research-home'), true);
+    renderResearch(q('#research-about'), false);
     renderSelected(q('#selected-pubs'), 4);
     renderMembers(q('#members-root'));
     renderPubs(q('#pubs-root'), q('#pub-filters'));
