@@ -24,6 +24,44 @@
   }
   .av-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
   @media (max-width: 720px) { .av-cell { grid-column: span 2; } }
+
+  /* Special Day 编辑行 */
+  #spd-year, #spd-term {
+    padding:7px 10px; border-radius:8px; border:1px solid var(--border);
+    background:var(--bg); color:var(--fg); font-family:inherit; font-size:13px;
+  }
+  .spd-row {
+    border:1px solid var(--line); border-radius:12px; padding:14px 16px 15px;
+    margin: 12px 0; background: var(--bg); box-shadow: var(--shadow);
+  }
+  .spd-row-head { display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:10px; }
+  .spd-row-head select {
+    flex:0 0 148px; padding:7px 10px; border-radius:8px; border:1px solid var(--line);
+    background:var(--bg); color:var(--fg); font-family:inherit; font-size:13px; font-weight:600;
+  }
+  .spd-row-head .idx { font-size:11.5px; color:var(--faint); font-variant-numeric:tabular-nums; }
+  .spd-row-head .spacer { flex:1; }
+  .spd-fields { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+  .spd-fields label { display:block; font-size:11.5px; color:var(--faint); }
+  .spd-fields input {
+    width:100%; margin-top:4px; padding:7px 10px; border-radius:8px; border:1px solid var(--line);
+    background:var(--bg); color:var(--fg); font-family:inherit; font-size:13px;
+  }
+  .spd-fields input:focus {
+    outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft);
+  }
+  .spd-photos { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-top:12px; }
+  .ph-item { position:relative; width:62px; height:62px; border-radius:8px; overflow:hidden; border:1px solid var(--line); }
+  .ph-item img { width:100%; height:100%; object-fit:cover; display:block; }
+  .ph-item button {
+    position:absolute; top:2px; right:2px; width:18px; height:18px; padding:0; border:0;
+    border-radius:50%; background:rgba(10,16,32,.68); color:#fff; font-size:11px;
+    line-height:18px; text-align:center; cursor:pointer;
+  }
+  .spd-state { margin:10px 0 0; font-size:11.8px; color:var(--faint); }
+  .spd-state.done { color:#1a7f37; }
+  .spd-state.soon { color:var(--accent); }
+  @media (max-width: 720px) { .spd-fields { grid-template-columns:1fr 1fr; } }
 </style>
 </head>
 <body>
@@ -67,16 +105,17 @@
   </section>
 
   <section class="panel" id="panel-spd">
-    <p class="hint">先选年份和学期，再维护该学期的 Special Day。日期格式 2026-03-14，留空则显示"日期待定"；填了未来日期会自动倒计时。</p>
+    <p class="hint">先选学年和学期，再维护该学期的 Special Day。填了日期才会显示在官网上：过去的时间进「已举办」，未来的进「接下来」并自动倒计时；没填日期的先在后台留着，前台不展示。每次活动都能单独上传现场照片。</p>
     <div class="admin-bar">
-      <select id="spd-year" style="padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--fg)"></select>
-      <select id="spd-term" style="padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--fg)"></select>
+      <select id="spd-year"></select>
+      <select id="spd-term"></select>
       <button class="btn-sm" id="add-spd">+ 添加一次</button>
+      <button class="btn-sm" id="add-term">+ 新学期</button>
+      <button class="btn-sm" id="add-year">+ 新学年</button>
     </div>
     <div id="spd-rows"></div>
     <div class="editor-actions">
       <button class="btn-sm" id="save-spd" style="background:var(--fg);color:var(--bg);border-color:var(--fg)">保存 Special Day</button>
-      <label class="btn-sm" style="cursor:pointer">上传照片<input type="file" id="spd-photo" accept="image/*" multiple style="display:none"></label>
     </div>
     <p class="admin-note" id="upload-state"></p>
   </section>
@@ -297,116 +336,243 @@
   });
 
   /* ---- Special Day ---- */
+  var sdTypes = (D.special_days && D.special_days.types) || [];
   var sy = $('spd-year'), st = $('spd-term');
+  var upState = $('upload-state');
+
   function fillSpdSelectors() {
-    sy.innerHTML = D.special_days.years.map(function (y) { return '<option value="' + y.year + '">' + y.year + ' 年</option>'; }).join('');
+    var years = (D.special_days && D.special_days.years) || [];
+    sy.innerHTML = years.map(function (y) {
+      return '<option value="' + y.year + '">' + y.year + ' 年</option>';
+    }).join('');
+    var last = years[years.length - 1];
+    if (last) sy.value = String(last.year);
     fillTerms();
   }
-  function curYear() { return D.special_days.years.filter(function (y) { return String(y.year) === sy.value; })[0]; }
+  function curYear() {
+    var years = (D.special_days && D.special_days.years) || [];
+    return years.filter(function (y) { return String(y.year) === sy.value; })[0] || years[years.length - 1];
+  }
   function fillTerms() {
     var y = curYear(); if (!y) return;
-    st.innerHTML = y.terms.map(function (t) { return '<option value="' + t.id + '">' + t.name + '</option>'; }).join('');
+    st.innerHTML = (y.terms || []).map(function (t) {
+      return '<option value="' + t.id + '">' + t.name + '</option>';
+    }).join('');
     drawSpd();
   }
   function curTerm() {
     var y = curYear(); if (!y) return null;
-    return y.terms.filter(function (t) { return t.id === st.value; })[0];
+    var t = (y.terms || []).filter(function (x) { return x.id === st.value; })[0];
+    return t || (y.terms || [])[0] || null;
   }
+
+  function typeName(it) {
+    var t = sdTypes.filter(function (x) { return x.id === it.type; })[0];
+    return t ? t.name : (it.name || '');
+  }
+  function parseWhen(it) {
+    if (!it || !it.date) return null;
+    var m = String(it.date).replace(/[\/.]/g, '-').match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+    if (!m) return null;
+    var hm = '00:00';
+    if (it.time) {
+      var t = String(it.time).match(/(\d{1,2})\s*[:：]\s*(\d{2})/);
+      if (t) hm = ('0' + t[1]).slice(-2) + ':' + t[2];
+    }
+    var d = new Date(m[1] + '-' + ('0' + m[2]).slice(-2) + '-' + ('0' + m[3]).slice(-2) + 'T' + hm + ':00+08:00');
+    return isNaN(d.getTime()) ? null : d;
+  }
+  function stateOf(it) {
+    var d = parseWhen(it);
+    if (!d) return { cls: 'off', text: '日期未定 —— 官网暂不展示' };
+    var left = d.getTime() - Date.now();
+    if (left <= 0) return { cls: 'done', text: '已举办 —— 官网显示在「已举办」' };
+    return { cls: 'soon', text: '即将举办 —— 官网显示倒计时（约 ' + Math.floor(left / 86400000) + ' 天）' };
+  }
+
   function spdRow(it, i) {
-    return '<div class="editor-row" data-i="' + i + '" style="grid-template-columns:repeat(3,1fr);border-bottom:1px solid var(--border);padding-bottom:14px">' +
-      '<div><label>名称</label><input data-f="name" value="' + (it.name || '') + '"></div>' +
-      '<div><label>主题（品牌/店铺）</label><input data-f="theme" value="' + (it.theme || '') + '"></div>' +
-      '<div><label>小食搭配</label><input data-f="note" value="' + (it.note || '').replace(/"/g, '&quot;') + '"></div>' +
-      '<div><label>日期</label><input data-f="date" type="date" value="' + (it.date || '') + '"></div>' +
-      '<div><label>时间（如 10:00–12:00）</label><input data-f="time" value="' + (it.time || '') + '"></div>' +
-      '<div><label>地点</label><input data-f="place" value="' + (it.place || '') + '"></div>' +
-      '<div style="grid-column:1/3"><label>照片链接（逗号分隔）</label><input data-f="photos" value="' + ((it.photos || []).join(',')) + '"></div>' +
-      '<div style="display:flex;align-items:end"><button class="btn-sm btn-danger" data-del="' + i + '">删除这一次</button></div>' +
+    var opts = sdTypes.map(function (t) {
+      return '<option value="' + t.id + '"' + (it.type === t.id ? ' selected' : '') + '>' + t.name + '</option>';
+    }).join('');
+    var photos = (it.photos || []).filter(Boolean);
+    var thumbs = photos.length ? photos.map(function (p, k) {
+      return '<span class="ph-item"><img src="' + p + '" alt=""><button type="button" data-rmphoto="' + k + '" data-i="' + i + '" title="移除这张">×</button></span>';
+    }).join('') : '<span class="admin-note">还没有照片</span>';
+    var stt = stateOf(it);
+    return '<div class="spd-row" data-i="' + i + '">' +
+      '<div class="spd-row-head">' +
+        '<span class="idx">#' + (i + 1) + '</span>' +
+        '<select data-f="type">' + opts + '</select>' +
+        '<input data-f="theme" value="' + (it.theme || '').replace(/"/g, '&quot;') + '" placeholder="主题（品牌 / 菜单）" style="flex:1;min-width:150px;padding:7px 10px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--fg);font-family:inherit;font-size:13px">' +
+        '<span class="spacer"></span>' +
+        '<button class="btn-sm btn-danger" type="button" data-del="' + i + '">删除</button>' +
+      '</div>' +
+      '<div class="spd-fields">' +
+        '<label>日期<input data-f="date" type="date" value="' + (it.date || '') + '"></label>' +
+        '<label>时间<input data-f="time" value="' + (it.time || '') + '" placeholder="10:00–12:00"></label>' +
+        '<label>地点<input data-f="place" value="' + (it.place || '').replace(/"/g, '&quot;') + '"></label>' +
+        '<label>小食搭配<input data-f="note" value="' + (it.note || '').replace(/"/g, '&quot;') + '"></label>' +
+      '</div>' +
+      '<div class="spd-photos">' + thumbs +
+        '<label class="btn-sm" style="cursor:pointer">加照片<input type="file" accept="image/*" multiple data-photo="' + i + '" style="display:none"></label>' +
+      '</div>' +
+      '<p class="spd-state ' + stt.cls + '">' + stt.text + '</p>' +
       '</div>';
   }
+
   function drawSpd() {
     var t = curTerm();
-    $('spd-rows').innerHTML = t && t.items.length ? t.items.map(spdRow).join('') : '<p class="empty">这一学期还没有记录</p>';
+    $('spd-rows').innerHTML = t && t.items.length
+      ? t.items.map(spdRow).join('')
+      : '<p class="empty">这一学期还没有记录，点「+ 添加一次」开始。</p>';
   }
+
+  function collectSpd() {
+    var t = curTerm(); if (!t) return;
+    var rows = document.querySelectorAll('#spd-rows .spd-row');
+    var out = [];
+    Array.prototype.forEach.call(rows, function (r, i) {
+      var old = t.items[i] || {};
+      var o = {
+        id: old.id || ('s' + Date.now().toString(36) + i),
+        type: old.type || '',
+        name: '',
+        theme: '', date: '', time: '', place: '', note: '',
+        photos: old.photos || []
+      };
+      Array.prototype.forEach.call(r.querySelectorAll('[data-f]'), function (inp) { o[inp.dataset.f] = inp.value.trim(); });
+      o.name = typeName(o);
+      out.push(o);
+    });
+    t.items = out;
+  }
+
   sy.onchange = fillTerms;
   st.onchange = drawSpd;
   fillSpdSelectors();
-  $('spd-rows').onclick = function (e) {
-    var b = e.target.closest('[data-del]'); if (!b) return;
-    var t = curTerm(); t.items.splice(+b.dataset.del, 1); drawSpd();
-  };
+
   $('add-spd').onclick = function () {
     var t = curTerm(); if (!t) return;
-    t.items.push({ id: 's' + Date.now(), name: '待定', theme: '', date: '', time: '', place: '', note: '', photos: [] });
+    collectSpd();
+    t.items.push({
+      id: 's' + Date.now().toString(36), type: 'milktea', name: '奶茶日',
+      theme: '', date: '', time: '', place: '', note: '', photos: []
+    });
     drawSpd();
   };
-  function collectSpd() {
-    var t = curTerm(); if (!t) return;
-    var rows = document.querySelectorAll('#spd-rows .editor-row');
-    var out = [];
-    Array.prototype.forEach.call(rows, function (r) {
-      var o = { id: 's' + Math.random().toString(36).slice(2, 9), name: '', theme: '', date: '', time: '', place: '', note: '', photos: [] };
-      Array.prototype.forEach.call(r.querySelectorAll('[data-f]'), function (inp) {
-        if (inp.dataset.f === 'photos') o.photos = inp.value.split(',').map(function (s) { return s.trim(); }).filter(Boolean);
-        else o[inp.dataset.f] = inp.value.trim();
-      });
-      out.push(o);
+
+  $('add-term').onclick = function () {
+    var y = curYear(); if (!y) return;
+    var name = prompt('新学期名称（例如：上学期 / 下学期 / 暑期）', '上学期');
+    if (!name) return;
+    collectSpd();
+    var id = 't' + Date.now().toString(36);
+    y.terms.unshift({ id: id, name: name.trim(), items: [] });
+    fillTerms();
+    st.value = id;
+    drawSpd();
+    say('已添加「' + name.trim() + '」，记得保存', true);
+  };
+
+  $('add-year').onclick = function () {
+    var years = D.special_days.years || [];
+    var max = years.reduce(function (a, y) { return Math.max(a, y.year || 0); }, 0);
+    var next = max + 1;
+    years.push({
+      year: next,
+      terms: [{ id: 'fall', name: '下学期', items: [] }, { id: 'spring', name: '上学期', items: [] }]
     });
-    out.forEach(function (o, i) { if (t.items[i]) o.id = t.items[i].id || o.id; });
-    t.items = out;
-  }
+    collectSpd();
+    fillSpdSelectors();
+    sy.value = String(next);
+    fillTerms();
+    say('已添加 ' + next + ' 学年，记得保存', true);
+  };
+
+  $('spd-rows').onclick = function (e) {
+    var del = e.target.closest('[data-del]');
+    if (del) {
+      collectSpd();
+      var t = curTerm();
+      if (t) t.items.splice(+del.dataset.del, 1);
+      drawSpd();
+      return;
+    }
+    var rm = e.target.closest('[data-rmphoto]');
+    if (rm) {
+      if (!token) { say('请先填写 token 并验证', false); return; }
+      collectSpd();
+      var tt = curTerm();
+      var it = tt && tt.items[+rm.dataset.i];
+      if (!it) return;
+      it.photos.splice(+rm.dataset.rmphoto, 1);
+      drawSpd();
+      say('提交中…');
+      commit([{ path: 'data/special-days.js', content: wrap('special_days', D.special_days) }], 'content: 移除 Special Day 照片')
+        .then(function () { say('已移除，约 1 分钟后生效', true); })
+        .catch(function (err) { say('保存失败：' + err.message, false); });
+    }
+  };
+
   $('save-spd').onclick = function () {
     collectSpd();
     say('提交中…');
     commit([{ path: 'data/special-days.js', content: wrap('special_days', D.special_days) }], 'content: 更新 Special Day')
-      .then(function () { say('已保存，约 1 分钟后生效', true); })
-      .catch(function (e) { say('保存失败：' + e.message, false); });
+      .then(function () { drawSpd(); say('已保存，约 1 分钟后生效', true); })
+      .catch(function (e2) { say('保存失败：' + e2.message, false); });
   };
 
-  /* ---- 照片上传 ---- */
-  $('spd-photo').onchange = function (e) {
-    var files = Array.prototype.slice.call(e.target.files || []);
+  /* 照片：等比缩到最长边 1600 → JPEG → 与数据同一次提交 */
+  function photoJpeg(file, max, quality) {
+    return new Promise(function (resolve, reject) {
+      var url = URL.createObjectURL(file);
+      var img = new Image();
+      img.onload = function () {
+        var scale = Math.min(1, max / Math.max(img.width, img.height));
+        var w = Math.round(img.width * scale), h = Math.round(img.height * scale);
+        var c = document.createElement('canvas');
+        c.width = w; c.height = h;
+        var ctx = c.getContext('2d');
+        ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, w, h);
+        ctx.drawImage(img, 0, 0, w, h);
+        URL.revokeObjectURL(url);
+        resolve(c.toDataURL('image/jpeg', quality || 0.82).split(',')[1]);
+      };
+      img.onerror = function () { URL.revokeObjectURL(url); reject(new Error('图片读取失败')); };
+      img.src = url;
+    });
+  }
+
+  $('spd-rows').addEventListener('change', function (e) {
+    var inp = e.target.closest('input[data-photo]');
+    if (!inp) return;
+    var i = +inp.dataset.photo;
+    var files = Array.prototype.slice.call(inp.files || []);
     if (!files.length) return;
-    if (!token) { $('upload-state').textContent = '请先填写 token 并验证'; return; }
-    var t = curTerm(), y = sy.value;
-    var dir = 'assets/img/special-days/' + y + '-' + (t ? t.id : 'x') + '/';
-    $('upload-state').textContent = '上传 ' + files.length + ' 张照片…';
-    var chain = Promise.resolve();
-    var urls = [];
-    files.forEach(function (f) {
-      chain = chain.then(function () {
-        return new Promise(function (res, rej) {
-          var fr = new FileReader();
-          fr.onload = function () {
-            var b = fr.result.split(',')[1];
-            var name = Date.now() + '-' + f.name.replace(/[^\w.\-]/g, '_');
-            api('POST', '/repos/' + REPO + '/git/blobs', { content: b, encoding: 'base64' })
-              .then(function (blob) {
-                return api('GET', '/repos/' + REPO + '/git/ref/heads/' + BRANCH).then(function (r) {
-                  return api('GET', '/repos/' + REPO + '/git/commits/' + r.object.sha).then(function (c) {
-                    return api('POST', '/repos/' + REPO + '/git/trees', {
-                      base_tree: c.tree.sha,
-                      tree: [{ path: dir + name, mode: '100644', type: 'blob', sha: blob.sha }]
-                    }).then(function (tr) {
-                      return api('POST', '/repos/' + REPO + '/git/commits', { message: 'content: 上传 Special Day 照片', tree: tr.sha, parents: [r.object.sha] })
-                        .then(function (nc) { return api('PATCH', '/repos/' + REPO + '/git/refs/heads/' + BRANCH, { sha: nc.sha }); })
-                        .then(function () { urls.push(dir + name); res(); });
-                    });
-                  });
-                });
-              }).catch(rej);
-          };
-          fr.readAsDataURL(f);
-        });
-      });
-    });
-    chain.then(function () {
-      $('upload-state').textContent = '已上传 ' + urls.length + ' 张，链接已复制到剪贴板：' + urls.join(', ');
-      try { navigator.clipboard.writeText(urls.join(',')); } catch (err) {}
+    if (!token) { upState.textContent = '请先填写 token 并验证'; return; }
+    collectSpd();
+    var t = curTerm();
+    var it = t && t.items[i];
+    if (!it) return;
+    var dir = 'assets/img/special-days/' + (curYear() ? curYear().year : 'x') + '-' + t.id + '/';
+    upState.textContent = '正在处理 ' + files.length + ' 张照片…';
+    Promise.all(files.map(function (f) { return photoJpeg(f, 1600, 0.82); })).then(function (list) {
+      var stamp = Date.now();
+      var paths = list.map(function (_, k) { return dir + it.id + '-' + (stamp + k) + '.jpg'; });
+      it.photos = (it.photos || []).concat(paths);
+      var payload = list.map(function (b64, k) { return { path: paths[k], b64: b64 }; });
+      payload.push({ path: 'data/special-days.js', content: wrap('special_days', D.special_days) });
+      upState.textContent = '上传中…';
+      return putFiles(payload, 'content: 上传 Special Day 照片');
+    }).then(function () {
+      drawSpd();
+      upState.textContent = '照片已上传，约 1 分钟后生效';
+      say('照片已上传', true);
     }).catch(function (err) {
-      $('upload-state').textContent = '上传失败：' + err.message;
+      upState.textContent = '上传失败：' + err.message;
+      say('上传失败：' + err.message, false);
     });
-  };
+  });
 
   /* ---- 动态 ---- */
   function newsRow(n, i) {

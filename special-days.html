@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Special Days · MamboLab</title>
-<meta name="description" content="MamboLab 每学期的 Special Day 记录">
+<meta name="description" content="MamboLab 每学期六次 Special Day：奶茶日、甜品日、咖啡日、肉食日、坚果日、零食日">
 <link rel="stylesheet" href="assets/style.css">
 <script>try{var t=localStorage.getItem('ml-theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
 </head>
@@ -30,13 +30,39 @@
 <main class="wrap" id="spd-root">
   <div class="page-head">
     <h1>Special Days</h1>
-    <p id="spd-intro">每个学期我们会有 5–6 个 Special Day，请全组喝奶茶、吃小吃、分享甜品。</p>
+    <p id="spd-intro">Special Day 是组里固定的六次「一起吃点什么」。不排议程、不讲论文，就是坐在一起喝杯东西、聊点别的。</p>
   </div>
 
-  <div class="tabs" id="spd-years"></div>
-  <div class="tabs" id="spd-terms"></div>
+  <section class="spd-sec">
+    <div class="section-head">
+      <h2><span class="num">01</span>六种 Special Day</h2>
+    </div>
+    <p class="spd-lead" id="spd-about"></p>
+    <div class="type-grid" id="spd-types"></div>
+  </section>
 
-  <div class="spd-grid" id="spd-grid"></div>
+  <section class="spd-sec">
+    <div class="section-head">
+      <h2><span class="num">02</span>组织形式</h2>
+    </div>
+    <p class="spd-lead" id="spd-org-lead"></p>
+    <dl class="org-list" id="spd-org"></dl>
+  </section>
+
+  <section class="spd-sec">
+    <div class="section-head">
+      <h2><span class="num">03</span>接下来</h2>
+    </div>
+    <div id="spd-next"></div>
+    <p class="spd-note" id="spd-announce"></p>
+  </section>
+
+  <section class="spd-sec">
+    <div class="section-head">
+      <h2><span class="num">04</span>已举办</h2>
+    </div>
+    <div id="spd-past"></div>
+  </section>
 </main>
 
 <footer class="footer">
@@ -62,12 +88,5 @@
 <script src="data/site.js"></script>
 <script src="data/special-days.js"></script>
 <script src="assets/app.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-  if (window.ML_DATA && window.ML_DATA.special_days && window.ML_DATA.special_days.intro) {
-    document.getElementById('spd-intro').textContent = window.ML_DATA.special_days.intro;
-  }
-});
-</script>
 </body>
 </html>

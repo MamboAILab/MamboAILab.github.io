@@ -39,13 +39,17 @@
   function initNav() {
     var menu = q('#dd-special-menu');
     if (menu && D.special_days && D.special_days.years) {
-      var html = '<div class="dd-label">按学期浏览</div>';
-      D.special_days.years.forEach(function (y) {
+      var sd = D.special_days;
+      var html = '';
+      sd.years.forEach(function (y) {
         (y.terms || []).forEach(function (t) {
-          html += '<a class="dd-sub" href="special-days.html?y=' + y.year + '&t=' + t.id + '">' +
+          var dated = (t.items || []).filter(function (it) { return it.date; }).length;
+          if (!dated) return;
+          html += '<a class="dd-sub" href="special-days.html#term-' + y.year + '-' + t.id + '">' +
             y.year + ' · ' + esc(t.name) + '</a>';
         });
       });
+      if (!html) html = '<a class="dd-sub" href="special-days.html">查看全部</a>';
       menu.innerHTML = html;
     }
     var path = location.pathname.split('/').pop() || 'index.html';
@@ -188,80 +192,220 @@
   }
 
   /* ---------- Special Day ---------- */
-  function dayStatus(item) {
-    if (!item.date) return { kind: 'tbd', label: '日期待定' };
-    var d = new Date(item.date + 'T00:00:00+08:00');
-    var today = new Date(); today.setHours(0, 0, 0, 0);
-    var diff = Math.round((d - today) / 86400000);
-    if (isNaN(diff)) return { kind: 'tbd', label: '日期待定' };
-    if (diff > 1) return { kind: 'soon', label: '还有 ' + diff + ' 天' };
-    if (diff === 1) return { kind: 'soon', label: '明天' };
-    if (diff === 0) return { kind: 'soon', label: '就是今天' };
-    return { kind: 'done', label: '已举办' };
+  var SD = D.special_days || {};
+  var TYPE_MAP = {};
+  (SD.types || []).forEach(function (t) { TYPE_MAP[t.id] = t; });
+
+  function pad2(n) { return n < 10 ? '0' + n : String(n); }
+
+  /* "2026-10-31" + "10:00–12:00" → Date（取开始时间，按北京时间） */
+  function toDate(it) {
+    if (!it || !it.date) return null;
+    var ds = String(it.date).trim().replace(/[\/.]/g, '-');
+    var m = ds.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+    if (!m) return null;
+    var hm = '00:00';
+    if (it.time) {
+      var t = String(it.time).match(/(\d{1,2})\s*[:：]\s*(\d{2})/);
+      if (t) hm = pad2(+t[1]) + ':' + t[2];
+    }
+    var d = new Date(m[1] + '-' + pad2(+m[2]) + '-' + pad2(+m[3]) + 'T' + hm + ':00+08:00');
+    return isNaN(d.getTime()) ? null : d;
+  }
+
+  function cdParts(ms) {
+    var s = Math.max(0, Math.floor(ms / 1000));
+    return { d: Math.floor(s / 86400), h: Math.floor(s % 86400 / 3600), m: Math.floor(s % 3600 / 60), s: s % 60 };
+  }
+  function fmtCd(ms) {
+    var p = cdParts(ms);
+    return (p.d > 0 ? p.d + ' 天 ' : '') + pad2(p.h) + ':' + pad2(p.m) + ':' + pad2(p.s);
+  }
+
+  /* 每秒刷新所有倒计时 */
+  function tickCountdowns() {
+    var now = Date.now();
+    Array.prototype.forEach.call(document.querySelectorAll('[data-cd]'), function (el) {
+      var target = Number(el.getAttribute('data-cd'));
+      if (!target) return;
+      var p = cdParts(target - now);
+      var u = el.querySelectorAll('b');
+      if (u.length === 4) {
+        u[0].textContent = p.d;
+        u[1].textContent = pad2(p.h);
+        u[2].textContent = pad2(p.m);
+        u[3].textContent = pad2(p.s);
+      }
+      el.classList.toggle('is-over', target - now <= 0);
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-cd-text]'), function (el) {
+      var target = Number(el.getAttribute('data-cd-text'));
+      if (!target) return;
+      var left = target - now;
+      el.textContent = left > 0 ? '还有 ' + fmtCd(left) : '正在进行';
+    });
+  }
+
+  function spdName(it) {
+    var tp = TYPE_MAP[it.type];
+    return (tp && tp.name) || it.name || '';
+  }
+  function spdEn(it) {
+    var tp = TYPE_MAP[it.type];
+    return (tp && tp.en) || '';
+  }
+  function spdMeta(it) {
+    var parts = [];
+    if (it.date) parts.push(String(it.date).replace(/-/g, '.'));
+    if (it.time) parts.push(it.time);
+    if (it.place) parts.push(it.place);
+    return parts.join(' · ');
+  }
+
+  function upCard(e) {
+    var it = e.it;
+    var tp = TYPE_MAP[it.type] || {};
+    return '<article class="next-card">' +
+      (tp.image ? '<div class="next-media" aria-hidden="true"><img src="' + esc(tp.image) + '" alt="" loading="lazy"></div>' : '') +
+      '<div class="next-main">' +
+        '<p class="next-kicker">下一次 · ' + esc(e.year + ' ' + e.termName) + '</p>' +
+        '<div class="next-title"><h3>' + esc(spdName(it)) + '</h3>' +
+          (it.theme ? '<span class="next-theme">主题 · ' + esc(it.theme) + '</span>' : '') + '</div>' +
+        '<div class="cd" data-cd="' + e.d.getTime() + '">' +
+          '<div class="cd-u"><b>0</b><span>天</span></div>' +
+          '<div class="cd-u"><b>00</b><span>时</span></div>' +
+          '<div class="cd-u"><b>00</b><span>分</span></div>' +
+          '<div class="cd-u"><b>00</b><span>秒</span></div>' +
+        '</div>' +
+        '<p class="next-meta">' + esc(spdMeta(it)) + '</p>' +
+        (it.note ? '<p class="next-note">' + esc(it.note) + '</p>' : '') +
+      '</div></article>';
+  }
+
+  function nextRow(e) {
+    var it = e.it;
+    return '<div class="next-row">' +
+      '<span class="nm">' + esc(spdName(it)) + (it.theme ? ' · ' + esc(it.theme) : '') + '</span>' +
+      '<span class="tm" data-cd-text="' + e.d.getTime() + '">' + esc(String(it.date).replace(/-/g, '.')) + '</span>' +
+      '</div>';
+  }
+
+  function pastCard(e) {
+    var it = e.it;
+    var photos = (it.photos || []).filter(Boolean);
+    var cover = photos.length
+      ? '<div class="spd-cover"><img src="' + esc(photos[0]) + '" alt="' + esc(spdName(it)) + '" loading="lazy"></div>'
+      : '<div class="spd-cover is-empty"><span>现场照片待补充</span></div>';
+    var thumbs = photos.length > 1
+      ? '<div class="spd-photos">' + photos.slice(1, 7).map(function (p) {
+          return '<a href="' + esc(p) + '" target="_blank" rel="noopener"><img src="' + esc(p) + '" alt="" loading="lazy"></a>';
+        }).join('') + '</div>'
+      : '';
+    return '<article class="spd">' + cover + '<div class="spd-body">' +
+      '<div class="spd-top"><h3>' + esc(spdName(it)) + '</h3><span class="badge badge-done">已举办</span></div>' +
+      (spdEn(it) ? '<p class="spd-en">' + esc(spdEn(it)) + '</p>' : '') +
+      (it.theme ? '<p class="spd-theme">主题 · ' + esc(it.theme) + '</p>' : '') +
+      '<p class="when">' + esc(String(it.date).replace(/-/g, '.') + (it.time ? '　' + it.time : '')) + '</p>' +
+      (it.place ? '<p class="spd-place">' + esc(it.place) + '</p>' : '') +
+      (it.note ? '<p class="note">' + esc(it.note) + '</p>' : '') +
+      thumbs + '</div></article>';
   }
 
   function renderSpecialDays(root) {
     if (!root || !D.special_days) return;
     var data = D.special_days;
-    var params = new URLSearchParams(location.search);
-    var years = data.years || [];
-    if (!years.length) { root.innerHTML = '<p class="empty">暂无记录。</p>'; return; }
 
-    var curYear = params.get('y') || String(years[years.length - 1].year);
-    var yObj = years.filter(function (y) { return String(y.year) === curYear; })[0] || years[years.length - 1];
-    var curTerm = params.get('t') || (yObj.terms[0] && yObj.terms[0].id);
-    var tObj = (yObj.terms || []).filter(function (t) { return t.id === curTerm; })[0] || yObj.terms[0];
+    var introEl = q('#spd-intro');
+    if (introEl && data.intro) introEl.textContent = data.intro;
 
-    var tabs = q('#spd-years');
-    if (tabs) {
-      tabs.innerHTML = years.map(function (y) {
-        return '<button class="tab' + (String(y.year) === curYear ? ' on' : '') + '" data-y="' + y.year + '">' + y.year + '</button>';
+    /* 01 六种类型 */
+    var grid = q('#spd-types');
+    if (grid) {
+      grid.innerHTML = (data.types || []).map(function (t) {
+        return '<article class="type-card">' +
+          (t.image ? '<div class="type-media"><img src="' + esc(t.image) + '" alt="' + esc(t.name) + '" loading="lazy"></div>' : '') +
+          '<div class="type-body">' +
+            '<div class="type-head"><h3>' + esc(t.name) + '</h3><span class="type-en">' + esc(t.en || '') + '</span></div>' +
+            '<p class="type-desc">' + esc(t.desc || '') + '</p>' +
+            (t.note ? '<p class="type-note">' + esc(t.note) + '</p>' : '') +
+          '</div></article>';
       }).join('');
-      tabs.addEventListener('click', function (e) {
-        var b = e.target.closest('.tab'); if (!b) return;
-        location.search = '?y=' + b.getAttribute('data-y') + '&t=' + curTerm;
-      });
     }
-    var ttabs = q('#spd-terms');
-    if (ttabs) {
-      ttabs.innerHTML = (yObj.terms || []).map(function (t) {
-        return '<button class="tab' + (t.id === curTerm ? ' on' : '') + '" data-t="' + t.id + '">' + esc(t.name) + '</button>';
-      }).join('');
-      ttabs.addEventListener('click', function (e) {
-        var b = e.target.closest('.tab'); if (!b) return;
-        location.search = '?y=' + curYear + '&t=' + b.getAttribute('data-t');
-      });
+    var aboutEl = q('#spd-about');
+    if (aboutEl && data.about) aboutEl.textContent = data.about;
+
+    /* 02 组织形式 */
+    if (data.org) {
+      var lead = q('#spd-org-lead');
+      if (lead) lead.textContent = data.org.lead || '';
+      var list = q('#spd-org');
+      if (list) {
+        list.innerHTML = (data.org.steps || []).map(function (s) {
+          return '<div><dt>' + esc(s.k) + '</dt><dd>' + esc(s.v) + '</dd></div>';
+        }).join('');
+      }
     }
 
-    var items = (tObj && tObj.items) || [];
-    var grid = q('#spd-grid');
-    if (!grid) return;
-    if (!items.length) { grid.innerHTML = '<p class="empty">这一学期还没有记录。</p>'; return; }
-    grid.innerHTML = items.map(function (it) {
-      var st = dayStatus(it);
-      var badge = '<span class="badge badge-' + st.kind + '">' + st.label + '</span>';
-      var when = it.date
-        ? it.date.replace(/-/g, '.') + (it.time ? '　' + esc(it.time) : '')
-        : (it.time ? esc(it.time) : '时间待定');
-      var theme = it.theme ? '<p class="spd-theme">' + esc(it.theme) + '</p>' : '';
-      var place = it.place ? '<p class="spd-place">' + esc(it.place) + '</p>' : '';
-      var photos = (it.photos || []).filter(Boolean);
-      var cover = photos.length
-        ? '<div class="spd-cover"><img src="' + esc(photos[0]) + '" alt="' + esc(it.name) + '"></div>'
-        : '<div class="spd-cover">' + (st.kind === 'done' ? '照片待补充' : '敬请期待') + '</div>';
-      var thumbs = photos.length > 1
-        ? '<div class="spd-photos">' + photos.slice(1, 7).map(function (p) {
-            return '<a href="' + esc(p) + '" target="_blank" rel="noopener"><img src="' + esc(p) + '" alt=""></a>';
-          }).join('') + '</div>'
-        : '';
-      return '<article class="spd">' + cover + '<div class="spd-body">' +
-        '<div class="spd-top"><h3>' + esc(it.name) + '</h3>' + badge + '</div>' +
-        theme +
-        '<p class="when">' + when + '</p>' +
-        place +
-        (it.note ? '<p class="note">' + esc(it.note) + '</p>' : '') +
-        thumbs + '</div></article>';
-    }).join('');
+    /* 只保留「有日期」的：已举办 + 即将举办，未定的不展示 */
+    var evts = [];
+    (data.years || []).forEach(function (y) {
+      (y.terms || []).forEach(function (t) {
+        (t.items || []).forEach(function (it) {
+          var d = toDate(it);
+          if (!d) return;
+          evts.push({
+            it: it, d: d, year: y.year, termName: t.name,
+            key: y.year + '-' + t.id, total: (t.items || []).length
+          });
+        });
+      });
+    });
+    var now = Date.now();
+    var up = evts.filter(function (e) { return e.d.getTime() >= now; })
+                 .sort(function (a, b) { return a.d - b.d; });
+    var past = evts.filter(function (e) { return e.d.getTime() < now; })
+                   .sort(function (a, b) { return b.d - a.d; });
+
+    /* 03 接下来 */
+    var nextEl = q('#spd-next');
+    if (nextEl) {
+      if (!up.length) {
+        nextEl.innerHTML = '<div class="next-empty"><h3>下一次的日期还在商量</h3>' +
+          '<p>日期确定后，这里会出现按秒走的倒计时。</p></div>';
+      } else {
+        nextEl.innerHTML = upCard(up[0]) +
+          (up.length > 1 ? '<div class="next-list">' + up.slice(1).map(nextRow).join('') + '</div>' : '');
+      }
+    }
+    var anc = q('#spd-announce');
+    if (anc && data.announcement) anc.textContent = data.announcement.text || '';
+
+    /* 04 已举办 */
+    var pastEl = q('#spd-past');
+    if (pastEl) {
+      if (!past.length) {
+        pastEl.innerHTML = '<p class="empty">还没有举办记录。</p>';
+      } else {
+        var groups = [], seen = {};
+        past.forEach(function (e) {
+          if (!seen[e.key]) {
+            seen[e.key] = { key: e.key, name: e.year + ' · ' + e.termName, items: [], total: e.total };
+            groups.push(seen[e.key]);
+          }
+          seen[e.key].items.push(e);
+        });
+        pastEl.innerHTML = groups.map(function (g) {
+          return '<div class="term-block" id="term-' + esc(g.key) + '">' +
+            '<div class="term-head"><h3>' + esc(g.name) + '</h3>' +
+            '<span>已举办 ' + g.items.length + ' / ' + g.total + ' 次</span></div>' +
+            '<div class="spd-grid">' + g.items.map(pastCard).join('') + '</div></div>';
+        }).join('');
+      }
+    }
+
+    tickCountdowns();
+    if (window.__spdTimer) clearInterval(window.__spdTimer);
+    window.__spdTimer = setInterval(tickCountdowns, 1000);
   }
 
   /* ---------- 首屏导航（深色大图时透明融入） ---------- */
