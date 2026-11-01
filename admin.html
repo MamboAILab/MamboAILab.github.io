@@ -228,7 +228,7 @@
         if (live) {
           say('✅ 已生效 —— 刷新页面（⌘/Ctrl + Shift + R 强制刷新）就能看到' + (okText ? '「' + okText + '」' : '') + '了', true);
         } else {
-          say('已经提交，但线上 3 分钟内没更新，可能还在排队构建。稍后再刷新一次；一直不变请到仓库 Actions / Pages 看构建状态', false);
+          say('已经提交，但线上 3 分钟还没更新。多半是 GitHub Pages 那次构建失败了 —— 到仓库 Settings → Pages 看最近的构建记录，再点一次保存即可重试', false);
         }
       });
     }).catch(function (e) { say('保存失败：' + e.message, false); });
