@@ -387,14 +387,42 @@ html[data-theme="dark"] .dd-menu { box-shadow: 0 4px 8px rgba(0, 0, 0, .4), 0 20
 .contact-box p { margin: 0 0 10px; font-size: 14.5px; color: var(--fg-soft); }
 .contact-box p:last-child { margin-bottom: 0; }
 .contact-box .k { color: var(--faint); font-size: 12.5px; display: inline-block; width: 76px; }
+.contact-box a.with-ico { color: var(--accent); }
 
-.footer { border-top: 1px solid var(--line); margin-top: 72px; padding: 34px 0 40px; }
-.footer-inner {
-  display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap;
-  font-size: 13px; color: var(--faint);
+/* 行内小图标（链接） */
+.with-ico {
+  display: inline-flex; align-items: center; gap: 6px;
+  vertical-align: -2px; text-decoration: none;
 }
-.footer a { color: var(--fg-soft); }
-.footer a:hover { color: var(--accent); }
+.ico-inline { width: 14px; height: 14px; flex: none; display: block; opacity: .9; }
+.with-ico:hover { text-decoration: none; }
+.with-ico:hover > span, .with-ico:hover { opacity: .82; }
+
+/* ---------- 页脚 ---------- */
+.footer { border-top: 1px solid var(--line); margin-top: 76px; padding: 32px 0 38px; }
+.footer-inner {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  gap: 18px 24px; flex-wrap: wrap;
+}
+.foot-title {
+  display: flex; align-items: baseline; flex-wrap: wrap; gap: 7px;
+  margin: 0 0 7px; font-size: 14.5px; line-height: 1.5;
+}
+.foot-name { color: var(--fg); font-weight: 700; letter-spacing: -.01em; }
+.foot-sep { color: var(--faint); font-size: 12px; }
+.foot-sub { color: var(--faint); font-size: 13.5px; letter-spacing: .01em; }
+.foot-copy { margin: 0; font-size: 12.5px; color: var(--faint); line-height: 1.6; }
+
+.foot-links { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
+.foot-link {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-size: 13.5px; font-weight: 500; color: var(--accent);
+  transition: color .15s, opacity .15s;
+}
+.foot-link:hover { text-decoration: none; opacity: .78; }
+.foot-ico { width: 15px; height: 15px; flex: none; display: block; }
+.foot-link-quiet { color: var(--faint); font-weight: 500; }
+.foot-link-quiet:hover { color: var(--fg-soft); opacity: 1; }
 
 /* ---------- 后台管理 ---------- */
 .admin-bar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 18px; }
@@ -443,4 +471,7 @@ html[data-theme="dark"] .btn-danger { color: #ff8a7a; border-color: #5a2a25; }
 @media (max-width: 640px) {
   .wrap, .wrap-wide { padding: 0 20px; }
   .people, .spd-grid { grid-template-columns: 1fr; }
+  .footer { margin-top: 56px; padding: 26px 0 32px; }
+  .foot-links { gap: 18px; }
+  .foot-sub { font-size: 12.5px; }
 }

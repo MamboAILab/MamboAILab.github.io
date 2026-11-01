@@ -269,7 +269,16 @@
     if (!D.site) return;
     Array.prototype.forEach.call(document.querySelectorAll('[data-site]'), function (el) {
       var k = el.getAttribute('data-site');
-      if (D.site[k] != null) el.textContent = D.site[k];
+      if (D.site[k] != null) {
+        /* 保留行内图标等子元素，只替换文本节点 */
+        var tn = null;
+        for (var i = 0; i < el.childNodes.length; i++) {
+          var nd = el.childNodes[i];
+          if (nd.nodeType === 3 && nd.nodeValue.trim()) { tn = nd; break; }
+        }
+        if (tn) tn.nodeValue = D.site[k];
+        else el.textContent = D.site[k];
+      }
     });
     Array.prototype.forEach.call(document.querySelectorAll('[data-site-href]'), function (el) {
       var k = el.getAttribute('data-site-href');
