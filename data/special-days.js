@@ -108,12 +108,14 @@ window.ML_DATA.special_days = {
               "id": "2026f-2",
               "type": "dessert",
               "name": "甜品日",
-              "theme": "",
-              "date": "",
+              "theme": "詹记",
+              "date": "2026-11-21",
               "time": "",
-              "place": "",
+              "place": "材料科学大楼A",
               "note": "纸杯蛋糕 + 蛋挞 + 布丁",
-              "photos": []
+              "photos": [
+                "assets/img/special-days/2026-fall/2026f-2-1793540448675.jpg"
+              ]
             },
             {
               "id": "2026f-3",
