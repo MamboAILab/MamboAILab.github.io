@@ -174,7 +174,12 @@
     return btoa(bin);
   }
 
-  function putFiles(files, message) {
+  /* 一次提交 = 取 HEAD → 传 blob → 建 tree → 建 commit → 移动 ref。
+     如果这两秒内有别人（另一个标签页 / 我这边自动部署）也推了一次，
+     ref 已经往前走了，PATCH 会报 "Update is not a fast forward"，
+     这里重新取一次 HEAD 整体重试即可。 */
+  function putFiles(files, message, tries) {
+    tries = tries || 0;
     var base;
     return api('GET', '/repos/' + REPO + '/git/ref/heads/' + BRANCH).then(function (r) {
       base = r.object.sha;
@@ -193,6 +198,16 @@
       }).then(function (nc) {
         return api('PATCH', '/repos/' + REPO + '/git/refs/heads/' + BRANCH, { sha: nc.sha });
       });
+    }).catch(function (err) {
+      var m = String((err && err.message) || '');
+      var race = /fast forward|does not match|stale|conflict|something went wrong/i.test(m);
+      if (race && tries < 4) {
+        say('线上刚好又有新提交，正在自动重试（第 ' + (tries + 2) + ' 次）…');
+        return new Promise(function (res) { setTimeout(res, 600 * (tries + 1)); })
+          .then(function () { return putFiles(files, message, tries + 1); });
+      }
+      if (race) throw new Error('线上刚有人提交（可能是另一个标签页或自动部署），请刷新页面后再保存一次');
+      throw err;
     });
   }
 
