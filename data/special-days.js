@@ -110,7 +110,7 @@ window.ML_DATA.special_days = {
               "name": "甜品日",
               "theme": "詹记",
               "date": "2026-11-21",
-              "time": "",
+              "time": "10:00-12:00",
               "place": "材料科学大楼A",
               "note": "纸杯蛋糕 + 蛋挞 + 布丁",
               "photos": [
