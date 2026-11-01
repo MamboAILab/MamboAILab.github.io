@@ -36,37 +36,12 @@
   }
 
   /* ---------- 导航 ---------- */
+  /* 导航里的 SPECIAL DAYS 是普通链接（页面内已有学年/学期下拉），不再做二级下拉菜单 */
   function initNav() {
-    var menu = q('#dd-special-menu');
-    if (menu && D.special_days && D.special_days.years) {
-      var sd = D.special_days;
-      var html = '';
-      sd.years.forEach(function (y) {
-        (y.terms || []).forEach(function (t) {
-          var dated = (t.items || []).filter(function (it) { return it.date; }).length;
-          if (!dated) return;
-          html += '<a class="dd-sub" href="special-days.html#term-' + y.year + '-' + t.id + '">' +
-            y.year + ' · ' + esc(t.name) + '</a>';
-        });
-      });
-      if (!html) html = '<a class="dd-sub" href="special-days.html">查看全部</a>';
-      menu.innerHTML = html;
-    }
     var path = location.pathname.split('/').pop() || 'index.html';
     Array.prototype.forEach.call(document.querySelectorAll('.nav-links > a[href]'), function (a) {
-      if (a.getAttribute('href') === path) a.classList.add('active');
+      a.classList.toggle('active', a.getAttribute('href') === path);
     });
-    var dd = q('.dd');
-    if (dd) {
-      var trigger = dd.querySelector('button');
-      if (trigger) {
-        trigger.addEventListener('click', function (e) {
-          e.stopPropagation();
-          dd.classList.toggle('open');
-        });
-        document.addEventListener('click', function () { dd.classList.remove('open'); });
-      }
-    }
   }
 
   /* ---------- 新闻 ---------- */
@@ -501,18 +476,27 @@
     var host = document.querySelector('.hero');
     var cfg = D.site && D.site.hero;
     if (!host || !cfg) return;
-    if (host.querySelector('.hero-bg')) return;
-    var bg = document.createElement('div');
-    bg.className = 'hero-bg ' + (cfg.scrim || 'scrim-dark');
-    if (cfg.image) {
-      var img = document.createElement('img');
+    var cls = 'hero-bg ' + (cfg.scrim || 'scrim-dark');
+    var bg = host.querySelector('.hero-bg');
+    if (!bg) {
+      bg = document.createElement('div');
+      bg.className = cls;
+      host.insertBefore(bg, host.firstChild);
+    } else {
+      bg.className = cls;
+    }
+    var img = bg.querySelector('img');
+    if (!cfg.image) {
+      if (img) img.parentNode.removeChild(img);
+    } else if (!img || img.getAttribute('src') !== cfg.image) {
+      if (img) img.parentNode.removeChild(img);
+      img = document.createElement('img');
       img.src = cfg.image;
       img.alt = '';
       img.setAttribute('fetchpriority', 'high');
       img.setAttribute('decoding', 'async');
       bg.appendChild(img);
     }
-    host.insertBefore(bg, host.firstChild);
     host.classList.toggle('on-dark', cfg.ink === 'light');
   }
 
@@ -540,17 +524,34 @@
     if (y) y.textContent = new Date().getFullYear();
   }
 
-  document.addEventListener('DOMContentLoaded', function () {
-    bindTheme();
-    initNav();
-    applyHero();
-    initHeroNav();
-    hydrate();
+  function renderAll() {
     renderNews(q('#news-list'), 6);
     renderSelected(q('#selected-pubs'), 4);
     renderMembers(q('#members-root'));
     renderPubs(q('#pubs-root'), q('#pub-filters'));
     renderSpecialDays(q('#spd-root'));
     if (typeof window.ML_page === 'function') window.ML_page();
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    D = window.ML_DATA || {};
+    bindTheme();
+    initNav();
+    applyHero();
+    initHeroNav();
+    hydrate();
+    renderAll();
+
+    /* 数据文件再取一次最新版本（data-loader.js），拿到后重绘一次，
+       避开 GitHub Pages 的 10 分钟缓存 —— 后台改完刷新即可看到 */
+    var fresh = window.ML_REFRESH || Promise.resolve(false);
+    fresh.then(function (ok) {
+      if (!ok) return;
+      D = window.ML_DATA || D;
+      initNav();
+      applyHero();
+      hydrate();
+      renderAll();
+    });
   });
 })();

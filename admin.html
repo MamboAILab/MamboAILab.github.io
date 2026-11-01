@@ -79,7 +79,7 @@
 <main class="wrap">
   <div class="page-head">
     <h1>内容管理</h1>
-    <p>改完点保存，直接提交到 GitHub，站点一分钟后自动更新</p>
+    <p>改完点保存，直接提交到 GitHub。构建约 30–60 秒，生效后这里会提示「✅ 已生效」，再刷新网站就能看到</p>
   </div>
 
   <div class="admin-bar">
@@ -97,7 +97,7 @@
 
   <section class="panel on" id="panel-members">
     <p class="hint">每行一位成员。group 决定他出现在哪一组（pi / phd / master / intern / alumni）。点「换照片」上传头像，建议用正方形人像，会自动裁成头像大小。</p>
-    <div id="member-rows"></div>
+    <div id="member-rows"><p class="empty">载入中…</p></div>
     <div class="editor-actions">
       <button class="btn-sm" id="add-member">+ 添加成员</button>
       <button class="btn-sm" id="save-members" style="background:var(--fg);color:var(--bg);border-color:var(--fg)">保存成员</button>
@@ -113,7 +113,7 @@
       <button class="btn-sm" id="add-term">+ 新学期</button>
       <button class="btn-sm" id="add-year">+ 新学年</button>
     </div>
-    <div id="spd-rows"></div>
+    <div id="spd-rows"><p class="empty">载入中…</p></div>
     <div class="editor-actions">
       <button class="btn-sm" id="save-spd" style="background:var(--fg);color:var(--bg);border-color:var(--fg)">保存 Special Day</button>
     </div>
@@ -122,7 +122,7 @@
 
   <section class="panel" id="panel-news">
     <p class="hint">首页"最新动态"列表，按日期倒序显示。</p>
-    <div id="news-rows"></div>
+    <div id="news-rows"><p class="empty">载入中…</p></div>
     <div class="editor-actions">
       <button class="btn-sm" id="add-news">+ 添加一条</button>
       <button class="btn-sm" id="save-news" style="background:var(--fg);color:var(--bg);border-color:var(--fg)">保存动态</button>
@@ -136,9 +136,14 @@
 <script src="data/members.js"></script>
 <script src="data/news.js"></script>
 <script src="data/special-days.js"></script>
+<script src="assets/data-loader.js"></script>
 <script src="assets/app.js"></script>
 <script>
 (function () {
+  /* 等数据文件取到线上最新一份再初始化，避免拿旧数据覆盖新内容 */
+  (window.ML_REFRESH || Promise.resolve()).then(main);
+
+  function main() {
   var REPO = 'MamboAILab/MamboAILab.github.io', BRANCH = 'main';
   var key = 'ml-token';
   var token = localStorage.getItem(key) || '';
@@ -192,6 +197,42 @@
   }
 
   function commit(files, message) { return putFiles(files, message); }
+
+  /* 提交成功后盯一会儿线上文件，内容一致才算「已生效」——
+     免得用户刷到旧缓存以为没保存成功 */
+  function waitLive(path, expect, cb) {
+    var want = String(expect).replace(/\s+$/, '');
+    var deadline = Date.now() + 180000;
+    function attempt() {
+      fetch(path + '?_=' + Date.now(), { cache: 'no-store' })
+        .then(function (r) { return r.ok ? r.text() : ''; })
+        .then(function (t) {
+          if (t && t.replace(/\s+$/, '') === want) return cb(true);
+          if (Date.now() > deadline) return cb(false);
+          setTimeout(attempt, 4000);
+        })
+        .catch(function () {
+          if (Date.now() > deadline) cb(false); else setTimeout(attempt, 4000);
+        });
+    }
+    setTimeout(attempt, 3000);
+  }
+
+  /* 提交 → 等线上生效 → 给出「可以刷新了」的提示 */
+  function saveThen(path, content, okText) {
+    say('提交中…');
+    return commit([{ path: path, content: content }],
+      'content: ' + (okText || '更新内容')).then(function () {
+      say('已提交，GitHub 正在构建，等它生效…');
+      waitLive(path, content, function (live) {
+        if (live) {
+          say('✅ 已生效 —— 刷新页面（⌘/Ctrl + Shift + R 强制刷新）就能看到' + (okText ? '「' + okText + '」' : '') + '了', true);
+        } else {
+          say('已经提交，但线上 3 分钟内没更新，可能还在排队构建。稍后再刷新一次；一直不变请到仓库 Actions / Pages 看构建状态', false);
+        }
+      });
+    }).catch(function (e) { say('保存失败：' + e.message, false); });
+  }
 
   function wrap(name, obj) {
     return 'window.ML_DATA = window.ML_DATA || {};\nwindow.ML_DATA.' + name + ' = ' + JSON.stringify(obj, null, 2) + '\n';
@@ -281,10 +322,7 @@
 
   $('save-members').onclick = function () {
     collectMembers();
-    say('提交中…');
-    commit([{ path: 'data/members.js', content: wrap('members', D.members) }], 'content: 更新成员名单')
-      .then(function () { say('已保存，GitHub 正在重新构建，约 1 分钟后生效', true); })
-      .catch(function (e) { say('保存失败：' + e.message, false); });
+    saveThen('data/members.js', wrap('members', D.members), '成员名单');
   };
 
   /* 头像：居中裁成正方形 → 缩到 640 → 上传 → 同一次提交里更新 members.js */
@@ -319,17 +357,22 @@
     var m = D.members.items[i];
     if (!m) return;
     if (!m.id) m.id = 'm' + Date.now();
-    var path = 'assets/img/members/' + m.id + '.jpg';
+    var file = 'assets/img/members/' + m.id + '.jpg';
     say('正在处理头像…');
     squareJpeg(f, 640).then(function (b64) {
-      m.avatar = path;
+      /* 同一路径反复覆盖会被浏览器缓存，加 ?v= 让每次换照片都是新地址 */
+      m.avatar = file + '?v=' + Date.now();
       return putFiles([
-        { path: path, b64: b64 },
+        { path: file, b64: b64 },
         { path: 'data/members.js', content: wrap('members', D.members) }
       ], 'content: 更新成员头像');
     }).then(function () {
       drawMembers();
-      say('头像已上传，约 1 分钟后生效', true);
+      say('已提交，正在等线上生效…');
+      waitLive('data/members.js', wrap('members', D.members), function (live) {
+        if (live) say('✅ 头像已生效 —— 刷新页面（⌘/Ctrl + Shift + R）就能看到新头像', true);
+        else say('头像已经提交，但线上还没更新，可能还在构建，稍后再刷新', false);
+      });
     }).catch(function (err) {
       say('头像上传失败：' + err.message, false);
     });
@@ -507,19 +550,13 @@
       if (!it) return;
       it.photos.splice(+rm.dataset.rmphoto, 1);
       drawSpd();
-      say('提交中…');
-      commit([{ path: 'data/special-days.js', content: wrap('special_days', D.special_days) }], 'content: 移除 Special Day 照片')
-        .then(function () { say('已移除，约 1 分钟后生效', true); })
-        .catch(function (err) { say('保存失败：' + err.message, false); });
+      saveThen('data/special-days.js', wrap('special_days', D.special_days), '照片已移除');
     }
   };
 
   $('save-spd').onclick = function () {
     collectSpd();
-    say('提交中…');
-    commit([{ path: 'data/special-days.js', content: wrap('special_days', D.special_days) }], 'content: 更新 Special Day')
-      .then(function () { drawSpd(); say('已保存，约 1 分钟后生效', true); })
-      .catch(function (e2) { say('保存失败：' + e2.message, false); });
+    saveThen('data/special-days.js', wrap('special_days', D.special_days), 'Special Day').then(function () { drawSpd(); });
   };
 
   /* 照片：等比缩到最长边 1600 → JPEG → 与数据同一次提交 */
@@ -566,8 +603,12 @@
       return putFiles(payload, 'content: 上传 Special Day 照片');
     }).then(function () {
       drawSpd();
-      upState.textContent = '照片已上传，约 1 分钟后生效';
-      say('照片已上传', true);
+      upState.textContent = '照片已提交，正在等线上生效…';
+      waitLive('data/special-days.js', wrap('special_days', D.special_days), function (live) {
+        upState.textContent = live
+          ? '✅ 照片已生效 —— 刷新 Special Days 页面即可看到'
+          : '照片已提交，但线上还没更新，可能还在构建，稍后再刷新';
+      });
     }).catch(function (err) {
       upState.textContent = '上传失败：' + err.message;
       say('上传失败：' + err.message, false);
@@ -608,11 +649,10 @@
       if (o.text) out.push(o);
     });
     D.news.items = out;
-    say('提交中…');
-    commit([{ path: 'data/news.js', content: wrap('news', D.news) }], 'content: 更新动态')
-      .then(function () { say('已保存，约 1 分钟后生效', true); })
-      .catch(function (e) { say('保存失败：' + e.message, false); });
+    saveThen('data/news.js', wrap('news', D.news), '动态');
   };
+
+  }
 })();
 </script>
 </body>
