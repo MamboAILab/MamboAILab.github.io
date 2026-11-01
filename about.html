@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>About · MamboLab</title>
+<meta name="description" content="关于 MamboLab 人工智能研究组：研究方向、团队与合作">
+<link rel="stylesheet" href="assets/style.css">
+<script>try{var t=localStorage.getItem('ml-theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html"><span class="brand-mark">M</span><span class="brand-text">MamboLab</span></a>
+    <nav class="nav-links">
+      <a href="about.html">About</a>
+      <a href="publications.html">Publications</a>
+      <a href="members.html">Members</a>
+      <div class="dd">
+        <button type="button">Special Days</button>
+        <div class="dd-menu" id="dd-special-menu"><a href="special-days.html">查看全部</a></div>
+      </div>
+      <button class="icon-btn" id="theme-toggle" aria-label="切换深浅色"></button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="page-head">
+    <h1>关于我们</h1>
+    <p>About MamboLab</p>
+  </div>
+
+  <div class="prose">
+    <p data-site="description"></p>
+
+    <h2>研究方向</h2>
+    <ul>
+      <li><strong>神经进化与神经架构搜索</strong> —— 用进化算法搜索网络结构与训练配置，关注多目标、鲁棒性与可迁移性。</li>
+      <li><strong>演化优化与自动算法配置</strong> —— 让算法自己学会如何被调参，把强化学习引入进化算法的超参数决策。</li>
+      <li><strong>联邦学习与隐私保护</strong> —— 数据不出域的协同训练，应对异构数据与通信约束。</li>
+      <li><strong>认知诊断与教育智能</strong> —— 把智能方法落到学生能力建模、习题推荐与知识追踪。</li>
+    </ul>
+
+    <h2>我们怎么做事</h2>
+    <p>
+      课题组规模不大，强调每个人的研究品味和动手能力。我们更在意一个想法是否被真正做透，
+      而不是论文数量。组会以问题和进展为主，鼓励质疑，也鼓励把代码开源出去。
+    </p>
+
+    <h2>联系方式</h2>
+    <div class="contact-box">
+      <p><span class="k">邮箱</span><a href="mailto:yangshang0308@gmail.com" data-site-href="email" data-site="email">yangshang0308@gmail.com</a></p>
+      <p><span class="k">GitHub</span><a href="https://github.com/MamboAILab" target="_blank" rel="noopener">github.com/MamboAILab</a></p>
+      <p><span class="k">负责人</span><a href="https://DevilYangS.github.io" target="_blank" rel="noopener">Shangshang Yang（杨尚尚）</a></p>
+    </div>
+
+    <h2>加入我们</h2>
+    <p data-site="join_text"></p>
+    <p>来信请附简历，并说明你感兴趣的问题。我们更看重你做过什么、想过什么，而不是绩点排名。</p>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="wrap-wide footer-inner">
+    <div>© <span data-year></span> MamboLab · Artificial Intelligence Research Group</div>
+    <div>
+      <a href="https://github.com/MamboAILab" target="_blank" rel="noopener">GitHub</a> ·
+      <a href="mailto:yangshang0308@gmail.com" data-site-href="email">Email</a>
+    </div>
+  </div>
+</footer>
+
+<script src="data/site.js"></script>
+<script src="data/special-days.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

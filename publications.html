@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Publications · MamboLab</title>
+<meta name="description" content="MamboLab 发表论文列表">
+<link rel="stylesheet" href="assets/style.css">
+<script>try{var t=localStorage.getItem('ml-theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html"><span class="brand-mark">M</span><span class="brand-text">MamboLab</span></a>
+    <nav class="nav-links">
+      <a href="about.html">About</a>
+      <a href="publications.html">Publications</a>
+      <a href="members.html">Members</a>
+      <div class="dd">
+        <button type="button">Special Days</button>
+        <div class="dd-menu" id="dd-special-menu"><a href="special-days.html">查看全部</a></div>
+      </div>
+      <button class="icon-btn" id="theme-toggle" aria-label="切换深浅色"></button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="page-head">
+    <h1>Publications</h1>
+    <p>课题组代表性成果 · 标注 <strong>Shangshang Yang</strong> 为组内作者</p>
+  </div>
+
+  <div class="filters" id="pub-filters"></div>
+  <div id="pubs-root"></div>
+</main>
+
+<footer class="footer">
+  <div class="wrap-wide footer-inner">
+    <div>© <span data-year></span> MamboLab · Artificial Intelligence Research Group</div>
+    <div>
+      <a href="https://github.com/MamboAILab" target="_blank" rel="noopener">GitHub</a> ·
+      <a href="mailto:yangshang0308@gmail.com" data-site-href="email">Email</a>
+    </div>
+  </div>
+</footer>
+
+<script src="data/site.js"></script>
+<script src="data/publications.js"></script>
+<script src="data/special-days.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

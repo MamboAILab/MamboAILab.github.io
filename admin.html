@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>内容管理 · MamboLab</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="stylesheet" href="assets/style.css">
+<script>try{var t=localStorage.getItem('ml-theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<style>
+  .tabs2 { display:flex; gap:6px; margin: 20px 0 8px; border-bottom:1px solid var(--border); }
+  .tabs2 button { background:none; border:0; border-bottom:2px solid transparent; padding:8px 14px; font-size:13.5px; color:var(--muted); cursor:pointer; font-family:inherit; }
+  .tabs2 button.on { color:var(--fg); border-bottom-color:var(--fg); }
+  .panel { display:none; padding-top:16px; }
+  .panel.on { display:block; }
+  .hint { font-size:12.5px; color:var(--muted); line-height:1.7; }
+  .row-actions { display:flex; gap:6px; }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html"><span class="brand-mark">M</span><span class="brand-text">MamboLab</span></a>
+    <nav class="nav-links">
+      <a href="index.html">返回站点</a>
+      <button class="icon-btn" id="theme-toggle" aria-label="切换深浅色"></button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="page-head">
+    <h1>内容管理</h1>
+    <p>改完点保存，直接提交到 GitHub，站点一分钟后自动更新</p>
+  </div>
+
+  <div class="admin-bar">
+    <input type="password" id="token" placeholder="GitHub Token（github_pat_ 开头，只需填一次）">
+    <button class="btn-sm" id="btn-login">验证</button>
+    <button class="btn-sm" id="btn-forget">清除</button>
+  </div>
+  <p class="admin-note" id="login-state">未验证。Token 只保存在你自己的浏览器里，不会上传到任何第三方。</p>
+
+  <div class="tabs2" id="tabs">
+    <button class="on" data-p="members">成员</button>
+    <button data-p="spd">Special Day</button>
+    <button data-p="news">动态</button>
+  </div>
+
+  <section class="panel on" id="panel-members">
+    <p class="hint">每行一位成员。group 决定他出现在哪一组（pi / phd / master / intern / alumni）。</p>
+    <div id="member-rows"></div>
+    <div class="editor-actions">
+      <button class="btn-sm" id="add-member">+ 添加成员</button>
+      <button class="btn-sm" id="save-members" style="background:var(--fg);color:var(--bg);border-color:var(--fg)">保存成员</button>
+    </div>
+  </section>
+
+  <section class="panel" id="panel-spd">
+    <p class="hint">先选年份和学期，再维护该学期的 Special Day。日期格式 2026-03-14，留空则显示"日期待定"；填了未来日期会自动倒计时。</p>
+    <div class="admin-bar">
+      <select id="spd-year" style="padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--fg)"></select>
+      <select id="spd-term" style="padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--fg)"></select>
+      <button class="btn-sm" id="add-spd">+ 添加一次</button>
+    </div>
+    <div id="spd-rows"></div>
+    <div class="editor-actions">
+      <button class="btn-sm" id="save-spd" style="background:var(--fg);color:var(--bg);border-color:var(--fg)">保存 Special Day</button>
+      <label class="btn-sm" style="cursor:pointer">上传照片<input type="file" id="spd-photo" accept="image/*" multiple style="display:none"></label>
+    </div>
+    <p class="admin-note" id="upload-state"></p>
+  </section>
+
+  <section class="panel" id="panel-news">
+    <p class="hint">首页"最新动态"列表，按日期倒序显示。</p>
+    <div id="news-rows"></div>
+    <div class="editor-actions">
+      <button class="btn-sm" id="add-news">+ 添加一条</button>
+      <button class="btn-sm" id="save-news" style="background:var(--fg);color:var(--bg);border-color:var(--fg)">保存动态</button>
+    </div>
+  </section>
+
+  <p class="status" id="status"></p>
+</main>
+
+<script src="data/site.js"></script>
+<script src="data/members.js"></script>
+<script src="data/news.js"></script>
+<script src="data/special-days.js"></script>
+<script src="assets/app.js"></script>
+<script>
+(function () {
+  var REPO = 'MamboAILab/MamboAILab.github.io', BRANCH = 'main';
+  var key = 'ml-token';
+  var token = localStorage.getItem(key) || '';
+  var D = window.ML_DATA;
+  var status = document.getElementById('status');
+  var state = document.getElementById('login-state');
+
+  function $(id) { return document.getElementById(id); }
+  function say(msg, ok) { status.textContent = msg; status.className = 'status ' + (ok ? 'ok' : 'err'); }
+
+  function api(method, path, body) {
+    return fetch('https://api.github.com' + path, {
+      method: method,
+      headers: { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json' },
+      body: body ? JSON.stringify(body) : undefined
+    }).then(function (r) {
+      return r.text().then(function (t) {
+        var d = t ? JSON.parse(t) : {};
+        if (!r.ok) throw new Error(d.message || ('HTTP ' + r.status));
+        return d;
+      });
+    });
+  }
+
+  function b64(str) {
+    var bytes = new TextEncoder().encode(str), bin = '';
+    for (var i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+    return btoa(bin);
+  }
+
+  function commit(files, message) {
+    var base;
+    return api('GET', '/repos/' + REPO + '/git/ref/heads/' + BRANCH).then(function (r) {
+      base = r.object.sha;
+      return api('GET', '/repos/' + REPO + '/git/commits/' + base);
+    }).then(function (c) {
+      return Promise.all(files.map(function (f) {
+        return api('POST', '/repos/' + REPO + '/git/blobs', { content: b64(f.content), encoding: 'base64' })
+          .then(function (b) { return { path: f.path, mode: '100644', type: 'blob', sha: b.sha }; });
+      })).then(function (tree) {
+        return api('POST', '/repos/' + REPO + '/git/trees', { base_tree: c.tree.sha, tree: tree });
+      }).then(function (t) {
+        return api('POST', '/repos/' + REPO + '/git/commits', { message: message, tree: t.sha, parents: [base] });
+      }).then(function (nc) {
+        return api('PATCH', '/repos/' + REPO + '/git/refs/heads/' + BRANCH, { sha: nc.sha });
+      });
+    });
+  }
+
+  function wrap(name, obj) {
+    return 'window.ML_DATA = window.ML_DATA || {};\nwindow.ML_DATA.' + name + ' = ' + JSON.stringify(obj, null, 2) + '\n';
+  }
+
+  /* ---- 登录 ---- */
+  function checkLogin() {
+    if (!token) { state.textContent = '未验证。Token 只保存在你自己的浏览器里，不会上传到任何第三方。'; return Promise.resolve(false); }
+    return api('GET', '/user').then(function (u) {
+      state.textContent = '已登录：' + u.login + '（token 存在本机浏览器）';
+      return true;
+    }).catch(function () { state.textContent = 'Token 无效或已过期'; return false; });
+  }
+  $('btn-login').onclick = function () {
+    token = $('token').value.trim();
+    localStorage.setItem(key, token);
+    checkLogin();
+  };
+  $('btn-forget').onclick = function () {
+    localStorage.removeItem(key); token = ''; $('token').value = '';
+    state.textContent = '已清除本机保存的 token';
+  };
+  $('token').value = token;
+  checkLogin();
+
+  /* ---- Tab ---- */
+  $('tabs').onclick = function (e) {
+    var b = e.target.closest('button'); if (!b) return;
+    Array.prototype.forEach.call($('tabs').children, function (x) { x.classList.toggle('on', x === b); });
+    ['members', 'spd', 'news'].forEach(function (p) {
+      $('panel-' + p).classList.toggle('on', p === b.dataset.p);
+    });
+  };
+
+  /* ---- 成员 ---- */
+  var groups = (D.site && D.site.member_groups) || [];
+  function memberRow(m, i) {
+    var opts = groups.map(function (g) {
+      return '<option value="' + g.id + '"' + (m.group === g.id ? ' selected' : '') + '>' + g.name + '</option>';
+    }).join('');
+    return '<div class="editor-row" data-i="' + i + '">' +
+      '<div><label>中文名</label><input data-f="name_zh" value="' + (m.name_zh || '') + '"></div>' +
+      '<div><label>英文名</label><input data-f="name" value="' + (m.name || '') + '"></div>' +
+      '<div><label>分组</label><select data-f="group">' + opts + '</select></div>' +
+      '<div><label>年级</label><input data-f="year" value="' + (m.year || '') + '"></div>' +
+      '<div><label>身份</label><input data-f="role" value="' + (m.role || '') + '"></div>' +
+      '<div><label>研究方向</label><input data-f="research" value="' + (m.research || '') + '"></div>' +
+      '<div><label>邮箱</label><input data-f="email" value="' + (m.email || '') + '"></div>' +
+      '<div style="display:flex;gap:6px;align-items:end"><div style="flex:1"><label>主页</label><input data-f="homepage" value="' + (m.homepage || '') + '"></div>' +
+      '<button class="btn-sm btn-danger" data-del="' + i + '">删</button></div>' +
+      '</div>';
+  }
+  function drawMembers() {
+    $('member-rows').innerHTML = D.members.items.map(memberRow).join('') || '<p class="empty">还没有成员</p>';
+  }
+  drawMembers();
+  $('member-rows').onclick = function (e) {
+    var b = e.target.closest('[data-del]'); if (!b) return;
+    D.members.items.splice(+b.dataset.del, 1); drawMembers();
+  };
+  $('add-member').onclick = function () {
+    D.members.items.push({ id: 'm' + Date.now(), name_zh: '', name: '', role: '硕士研究生', group: 'master', year: '', research: '', email: '', homepage: '', avatar: '' });
+    drawMembers();
+  };
+  $('save-members').onclick = function () {
+    var rows = document.querySelectorAll('#member-rows .editor-row');
+    var out = [];
+    Array.prototype.forEach.call(rows, function (r) {
+      var o = { id: 'm' + Math.random().toString(36).slice(2, 9), name_zh: '', name: '', role: '', group: 'master', year: '', research: '', email: '', homepage: '', avatar: '' };
+      Array.prototype.forEach.call(r.querySelectorAll('[data-f]'), function (inp) { o[inp.dataset.f] = inp.value.trim(); });
+      out.push(o);
+    });
+    // 保留原有 id 与 avatar
+    out.forEach(function (o, i) { if (D.members.items[i]) { o.id = D.members.items[i].id || o.id; o.avatar = D.members.items[i].avatar || ''; } });
+    D.members.items = out;
+    say('提交中…');
+    commit([{ path: 'data/members.js', content: wrap('members', D.members) }], 'content: 更新成员名单')
+      .then(function () { say('已保存，GitHub 正在重新构建，约 1 分钟后生效', true); })
+      .catch(function (e) { say('保存失败：' + e.message, false); });
+  };
+
+  /* ---- Special Day ---- */
+  var sy = $('spd-year'), st = $('spd-term');
+  function fillSpdSelectors() {
+    sy.innerHTML = D.special_days.years.map(function (y) { return '<option value="' + y.year + '">' + y.year + ' 年</option>'; }).join('');
+    fillTerms();
+  }
+  function curYear() { return D.special_days.years.filter(function (y) { return String(y.year) === sy.value; })[0]; }
+  function fillTerms() {
+    var y = curYear(); if (!y) return;
+    st.innerHTML = y.terms.map(function (t) { return '<option value="' + t.id + '">' + t.name + '</option>'; }).join('');
+    drawSpd();
+  }
+  function curTerm() {
+    var y = curYear(); if (!y) return null;
+    return y.terms.filter(function (t) { return t.id === st.value; })[0];
+  }
+  function spdRow(it, i) {
+    return '<div class="editor-row" data-i="' + i + '" style="grid-template-columns:1.2fr .8fr 2fr 1.6fr">' +
+      '<div><label>名称</label><input data-f="name" value="' + (it.name || '') + '"></div>' +
+      '<div><label>日期</label><input data-f="date" type="date" value="' + (it.date || '') + '"></div>' +
+      '<div><label>说明</label><input data-f="note" value="' + (it.note || '') + '"></div>' +
+      '<div style="display:flex;gap:6px;align-items:end"><div style="flex:1"><label>照片链接（逗号分隔）</label><input data-f="photos" value="' + ((it.photos || []).join(',')) + '"></div>' +
+      '<button class="btn-sm btn-danger" data-del="' + i + '">删</button></div></div>';
+  }
+  function drawSpd() {
+    var t = curTerm();
+    $('spd-rows').innerHTML = t && t.items.length ? t.items.map(spdRow).join('') : '<p class="empty">这一学期还没有记录</p>';
+  }
+  sy.onchange = fillTerms;
+  st.onchange = drawSpd;
+  fillSpdSelectors();
+  $('spd-rows').onclick = function (e) {
+    var b = e.target.closest('[data-del]'); if (!b) return;
+    var t = curTerm(); t.items.splice(+b.dataset.del, 1); drawSpd();
+  };
+  $('add-spd').onclick = function () {
+    var t = curTerm(); if (!t) return;
+    t.items.push({ id: 's' + Date.now(), name: '待定', date: '', note: '', photos: [] });
+    drawSpd();
+  };
+  function collectSpd() {
+    var t = curTerm(); if (!t) return;
+    var rows = document.querySelectorAll('#spd-rows .editor-row');
+    var out = [];
+    Array.prototype.forEach.call(rows, function (r) {
+      var o = { id: 's' + Math.random().toString(36).slice(2, 9), name: '', date: '', note: '', photos: [] };
+      Array.prototype.forEach.call(r.querySelectorAll('[data-f]'), function (inp) {
+        if (inp.dataset.f === 'photos') o.photos = inp.value.split(',').map(function (s) { return s.trim(); }).filter(Boolean);
+        else o[inp.dataset.f] = inp.value.trim();
+      });
+      out.push(o);
+    });
+    out.forEach(function (o, i) { if (t.items[i]) o.id = t.items[i].id || o.id; });
+    t.items = out;
+  }
+  $('save-spd').onclick = function () {
+    collectSpd();
+    say('提交中…');
+    commit([{ path: 'data/special-days.js', content: wrap('special_days', D.special_days) }], 'content: 更新 Special Day')
+      .then(function () { say('已保存，约 1 分钟后生效', true); })
+      .catch(function (e) { say('保存失败：' + e.message, false); });
+  };
+
+  /* ---- 照片上传 ---- */
+  $('spd-photo').onchange = function (e) {
+    var files = Array.prototype.slice.call(e.target.files || []);
+    if (!files.length) return;
+    if (!token) { $('upload-state').textContent = '请先填写 token 并验证'; return; }
+    var t = curTerm(), y = sy.value;
+    var dir = 'assets/img/special-days/' + y + '-' + (t ? t.id : 'x') + '/';
+    $('upload-state').textContent = '上传 ' + files.length + ' 张照片…';
+    var chain = Promise.resolve();
+    var urls = [];
+    files.forEach(function (f) {
+      chain = chain.then(function () {
+        return new Promise(function (res, rej) {
+          var fr = new FileReader();
+          fr.onload = function () {
+            var b = fr.result.split(',')[1];
+            var name = Date.now() + '-' + f.name.replace(/[^\w.\-]/g, '_');
+            api('POST', '/repos/' + REPO + '/git/blobs', { content: b, encoding: 'base64' })
+              .then(function (blob) {
+                return api('GET', '/repos/' + REPO + '/git/ref/heads/' + BRANCH).then(function (r) {
+                  return api('GET', '/repos/' + REPO + '/git/commits/' + r.object.sha).then(function (c) {
+                    return api('POST', '/repos/' + REPO + '/git/trees', {
+                      base_tree: c.tree.sha,
+                      tree: [{ path: dir + name, mode: '100644', type: 'blob', sha: blob.sha }]
+                    }).then(function (tr) {
+                      return api('POST', '/repos/' + REPO + '/git/commits', { message: 'content: 上传 Special Day 照片', tree: tr.sha, parents: [r.object.sha] })
+                        .then(function (nc) { return api('PATCH', '/repos/' + REPO + '/git/refs/heads/' + BRANCH, { sha: nc.sha }); })
+                        .then(function () { urls.push(dir + name); res(); });
+                    });
+                  });
+                });
+              }).catch(rej);
+          };
+          fr.readAsDataURL(f);
+        });
+      });
+    });
+    chain.then(function () {
+      $('upload-state').textContent = '已上传 ' + urls.length + ' 张，链接已复制到剪贴板：' + urls.join(', ');
+      try { navigator.clipboard.writeText(urls.join(',')); } catch (err) {}
+    }).catch(function (err) {
+      $('upload-state').textContent = '上传失败：' + err.message;
+    });
+  };
+
+  /* ---- 动态 ---- */
+  function newsRow(n, i) {
+    return '<div class="editor-row" data-i="' + i + '" style="grid-template-columns:.6fr 3fr 1fr">' +
+      '<div><label>日期</label><input data-f="date" type="date" value="' + (n.date || '') + '"></div>' +
+      '<div><label>内容</label><input data-f="text" value="' + (n.text || '').replace(/"/g, '&quot;') + '"></div>' +
+      '<div style="display:flex;gap:6px;align-items:end"><div style="flex:1"><label>链接（可选）</label><input data-f="link" value="' + (n.link || '') + '"></div>' +
+      '<button class="btn-sm btn-danger" data-del="' + i + '">删</button></div></div>';
+  }
+  function drawNews() {
+    var items = D.news.items.slice().sort(function (a, b) { return (b.date || '').localeCompare(a.date || ''); });
+    $('news-rows').innerHTML = items.map(newsRow).join('') || '<p class="empty">还没有动态</p>';
+  }
+  drawNews();
+  $('news-rows').onclick = function (e) {
+    var b = e.target.closest('[data-del]'); if (!b) return;
+    var idx = +b.dataset.del;
+    var items = D.news.items.slice().sort(function (a, b2) { return (b2.date || '').localeCompare(a.date || ''); });
+    var target = items[idx];
+    D.news.items = D.news.items.filter(function (x) { return x !== target; });
+    drawNews();
+  };
+  $('add-news').onclick = function () {
+    D.news.items.push({ date: new Date().toISOString().slice(0, 10), text: '', link: '' });
+    drawNews();
+  };
+  $('save-news').onclick = function () {
+    var rows = document.querySelectorAll('#news-rows .editor-row');
+    var out = [];
+    Array.prototype.forEach.call(rows, function (r) {
+      var o = { date: '', text: '', link: '' };
+      Array.prototype.forEach.call(r.querySelectorAll('[data-f]'), function (inp) { o[inp.dataset.f] = inp.value.trim(); });
+      if (o.text) out.push(o);
+    });
+    D.news.items = out;
+    say('提交中…');
+    commit([{ path: 'data/news.js', content: wrap('news', D.news) }], 'content: 更新动态')
+      .then(function () { say('已保存，约 1 分钟后生效', true); })
+      .catch(function (e) { say('保存失败：' + e.message, false); });
+  };
+})();
+</script>
+</body>
+</html>
