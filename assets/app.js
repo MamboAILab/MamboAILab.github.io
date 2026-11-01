@@ -264,6 +264,26 @@
     }).join('');
   }
 
+  /* ---------- 首屏背景 ---------- */
+  function applyHero() {
+    var host = document.querySelector('.hero');
+    var cfg = D.site && D.site.hero;
+    if (!host || !cfg) return;
+    if (host.querySelector('.hero-bg')) return;
+    var bg = document.createElement('div');
+    bg.className = 'hero-bg ' + (cfg.scrim || 'scrim-dark');
+    if (cfg.image) {
+      var img = document.createElement('img');
+      img.src = cfg.image;
+      img.alt = '';
+      img.setAttribute('fetchpriority', 'high');
+      img.setAttribute('decoding', 'async');
+      bg.appendChild(img);
+    }
+    host.insertBefore(bg, host.firstChild);
+    if (cfg.ink === 'light') host.classList.add('on-dark');
+  }
+
   /* ---------- 站点信息注入 ---------- */
   function hydrate() {
     if (!D.site) return;
@@ -291,6 +311,7 @@
   document.addEventListener('DOMContentLoaded', function () {
     bindTheme();
     initNav();
+    applyHero();
     hydrate();
     renderNews(q('#news-list'), 6);
     renderSelected(q('#selected-pubs'), 4);

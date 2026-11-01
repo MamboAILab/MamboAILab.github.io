@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>首页背景候选 · MamboLab</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  body { background: var(--bg-soft); }
+  .picker-head { padding: 56px 0 26px; }
+  .picker-head h1 { font-size: clamp(1.7rem, 3vw, 2.2rem); margin: 0 0 12px; letter-spacing: -.025em; }
+  .picker-head p { color: var(--fg-soft); font-size: 15px; max-width: 46em; margin: 0 0 6px; }
+  .picker-head .hint { color: var(--faint); font-size: 13.5px; }
+  .opt { margin: 0 auto 46px; max-width: 1180px; border-radius: 18px; overflow: hidden;
+         border: 1px solid var(--line); background: var(--bg); box-shadow: var(--shadow); }
+  .opt-head { display: flex; align-items: flex-start; gap: 14px; padding: 18px 24px; border-bottom: 1px solid var(--line); }
+  .opt-no {
+    flex: none; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 10px;
+    background: var(--fg); color: var(--bg); font-size: 14px; font-weight: 700; letter-spacing: -.02em;
+  }
+  .opt-head h2 { font-size: 15.5px; margin: 2px 0 3px; }
+  .opt-head p { margin: 0; font-size: 13px; color: var(--faint); }
+  .opt-head .tag {
+    margin-left: auto; flex: none; font-size: 12px; color: var(--accent);
+    background: var(--accent-soft); border-radius: 999px; padding: 4px 12px;
+  }
+  .opt .hero { padding: 64px 0 54px; }
+  .opt .hero h1 { font-size: clamp(2.1rem, 5vw, 3.1rem); }
+  .opt .hero .lede { font-size: 15.5px; max-width: 38em; }
+  .opt .hero-actions { margin-top: 26px; }
+  @media (max-width: 700px) {
+    .picker-head { padding: 36px 0 18px; }
+    .opt-head { padding: 14px 18px; }
+    .opt .hero { padding: 46px 0 40px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html"><span class="brand-mark">M</span><span class="brand-text">MamboLab</span></a>
+    <nav class="nav-links">
+      <a href="index.html">回到主页</a>
+      <a class="admin-link" href="admin.html">管理</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap picker-head">
+    <h1>首页背景候选</h1>
+    <p>下面每一块都是真实渲染的首屏效果（含三个按钮），只是背景不同。挑一个编号告诉我就行，我直接换上去。</p>
+    <p class="hint">图源 Unsplash（可免费商用）；深色图配白色文字，浅色图保留黑色文字。</p>
+  </div>
+  <div id="opts"></div>
+</main>
+
+<footer class="footer">
+  <div class="wrap-wide footer-inner">
+    <div class="foot-id">
+      <p class="foot-title"><span class="foot-name">MamboLab</span><span class="foot-sep">·</span><span class="foot-sub">Artificial Intelligence Research Group</span></p>
+      <p class="foot-copy">© <span data-year></span> MamboLab. All rights reserved.</p>
+    </div>
+    <nav class="foot-links">
+      <a class="foot-link" href="index.html">回到主页</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var OPTS = [
+    { no: '01', name: '地球夜景', desc: '深色 · 城市灯光与地球弧线，科技感最强，白字', tag: '深色',
+      img: 'assets/img/hero/01-earth.jpg', scrim: 'scrim-dark', ink: 'light' },
+    { no: '02', name: '数据中心', desc: '深色 · 机柜与线缆，工程气质，白字', tag: '深色',
+      img: 'assets/img/hero/02-datacenter.jpg', scrim: 'scrim-dark', ink: 'light' },
+    { no: '03', name: '极简走廊', desc: '浅色 · 干净的空间线条，克制高级，保留黑字', tag: '浅色',
+      img: 'assets/img/hero/03-corridor.jpg', scrim: 'scrim-light', ink: 'dark' },
+    { no: '04', name: '玻璃会议室', desc: '浅色 · 落地窗与自然光，像真实课题组的空间', tag: '浅色',
+      img: 'assets/img/hero/04-meeting.jpg', scrim: 'scrim-light', ink: 'dark' },
+    { no: '05', name: '黑板公式', desc: '深色 · 满屏公式，学术味最浓，白字', tag: '深色',
+      img: 'assets/img/hero/05-blackboard.jpg', scrim: 'scrim-dark', ink: 'light' },
+    { no: '06', name: '电路板', desc: '深色 · 芯片微距，偏硬件与计算，白字', tag: '深色',
+      img: 'assets/img/hero/06-circuit.jpg', scrim: 'scrim-dark', ink: 'light' },
+    { no: '07', name: '纯渐变（不用图片）', desc: '深蓝网格光晕，零图片加载，永远清晰', tag: '无图',
+      img: '', scrim: 'scrim-gradient', ink: 'light' },
+    { no: '08', name: '保持现在的白底', desc: '什么都不加，最干净也最保守', tag: '无图',
+      img: '', scrim: '', ink: 'dark' }
+  ];
+
+  var heroInner = '<div class="wrap">' +
+    '<p class="hero-kind">Artificial Intelligence Research Group</p>' +
+    '<h1>MamboLab</h1>' +
+    '<p class="zh">神经进化 · 强化学习 · 联邦智能</p>' +
+    '<p class="lede">MamboLab 关注智能体如何学习、进化与协同。我们从算法与理论出发，研究神经架构搜索、演化优化、认知诊断与联邦学习，并把方法推进到能够真正落地的智能系统。</p>' +
+    '<div class="hero-actions">' +
+      '<a class="btn btn-primary" href="#">查看研究成果</a>' +
+      '<a class="btn" href="#">课题组成员</a>' +
+      '<a class="btn" href="#">Special Days</a>' +
+    '</div></div>';
+
+  var html = OPTS.map(function (o) {
+    var bg = o.scrim
+      ? '<div class="hero-bg ' + o.scrim + '">' + (o.img ? '<img src="' + o.img + '" alt="">' : '') + '</div>'
+      : '';
+    return '<section class="opt">' +
+      '<div class="opt-head"><span class="opt-no">' + o.no + '</span>' +
+        '<div><h2>' + o.name + '</h2><p>' + o.desc + '</p></div>' +
+        '<span class="tag">' + o.tag + '</span></div>' +
+      '<div class="hero' + (o.ink === 'light' ? ' on-dark' : '') + '">' + bg + heroInner + '</div>' +
+      '</section>';
+  }).join('');
+
+  document.getElementById('opts').innerHTML = html;
+  var y = document.querySelector('[data-year]');
+  if (y) y.textContent = new Date().getFullYear();
+})();
+</script>
+</body>
+</html>

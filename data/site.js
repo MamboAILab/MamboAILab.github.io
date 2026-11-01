@@ -7,6 +7,11 @@ window.ML_DATA.site = {
   "affiliation": "",
   "email": "yangshang0308@gmail.com",
   "github": "https://github.com/MamboAILab",
+  "hero": {
+    "image": "",
+    "scrim": "",
+    "ink": "dark"
+  },
   "location": "",
   "join_text": "课题组常年招收硕士研究生、博士研究生与科研实习生，方向涵盖神经进化、强化学习、联邦学习与智能优化。我们更看重好奇心与动手能力，而不是已有的成果清单。",
   "member_groups": [

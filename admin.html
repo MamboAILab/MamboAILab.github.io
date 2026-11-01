@@ -15,6 +15,15 @@
   .panel.on { display:block; }
   .hint { font-size:12.5px; color:var(--muted); line-height:1.7; }
   .row-actions { display:flex; gap:6px; }
+  .av-cell { grid-column: span 2; }
+  .av-row { display:flex; align-items:center; gap:10px; }
+  .av-thumb {
+    width:42px; height:42px; border-radius:50%; overflow:hidden; flex:none; display:grid; place-items:center;
+    background:var(--accent-soft); color:var(--accent); font-size:14px; font-weight:650;
+    box-shadow: inset 0 0 0 1px var(--line);
+  }
+  .av-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+  @media (max-width: 720px) { .av-cell { grid-column: span 2; } }
 </style>
 </head>
 <body>
@@ -49,7 +58,7 @@
   </div>
 
   <section class="panel on" id="panel-members">
-    <p class="hint">每行一位成员。group 决定他出现在哪一组（pi / phd / master / intern / alumni）。</p>
+    <p class="hint">每行一位成员。group 决定他出现在哪一组（pi / phd / master / intern / alumni）。点「换照片」上传头像，建议用正方形人像，会自动裁成头像大小。</p>
     <div id="member-rows"></div>
     <div class="editor-actions">
       <button class="btn-sm" id="add-member">+ 添加成员</button>
@@ -121,14 +130,17 @@
     return btoa(bin);
   }
 
-  function commit(files, message) {
+  function putFiles(files, message) {
     var base;
     return api('GET', '/repos/' + REPO + '/git/ref/heads/' + BRANCH).then(function (r) {
       base = r.object.sha;
       return api('GET', '/repos/' + REPO + '/git/commits/' + base);
     }).then(function (c) {
       return Promise.all(files.map(function (f) {
-        return api('POST', '/repos/' + REPO + '/git/blobs', { content: b64(f.content), encoding: 'base64' })
+        var payload = f.b64
+          ? { content: f.b64, encoding: 'base64' }
+          : { content: b64(f.content), encoding: 'base64' };
+        return api('POST', '/repos/' + REPO + '/git/blobs', payload)
           .then(function (b) { return { path: f.path, mode: '100644', type: 'blob', sha: b.sha }; });
       })).then(function (tree) {
         return api('POST', '/repos/' + REPO + '/git/trees', { base_tree: c.tree.sha, tree: tree });
@@ -139,6 +151,8 @@
       });
     });
   }
+
+  function commit(files, message) { return putFiles(files, message); }
 
   function wrap(name, obj) {
     return 'window.ML_DATA = window.ML_DATA || {};\nwindow.ML_DATA.' + name + ' = ' + JSON.stringify(obj, null, 2) + '\n';
@@ -179,7 +193,14 @@
     var opts = groups.map(function (g) {
       return '<option value="' + g.id + '"' + (m.group === g.id ? ' selected' : '') + '>' + g.name + '</option>';
     }).join('');
+    var thumb = m.avatar
+      ? '<img src="' + m.avatar + '" alt="">'
+      : '<span class="av-init">' + ((m.name_zh || m.name || '?').trim().slice(0, 1) || '?') + '</span>';
     return '<div class="editor-row" data-i="' + i + '">' +
+      '<div class="av-cell"><label>头像</label><div class="av-row">' +
+        '<span class="av-thumb">' + thumb + '</span>' +
+        '<label class="btn-sm" style="cursor:pointer">换照片<input type="file" accept="image/*" data-up="' + i + '" style="display:none"></label>' +
+      '</div></div>' +
       '<div><label>中文名</label><input data-f="name_zh" value="' + (m.name_zh || '') + '"></div>' +
       '<div><label>英文名</label><input data-f="name" value="' + (m.name || '') + '"></div>' +
       '<div><label>分组</label><select data-f="group">' + opts + '</select></div>' +
@@ -203,22 +224,77 @@
     D.members.items.push({ id: 'm' + Date.now(), name_zh: '', name: '', role: '硕士研究生', group: 'master', year: '', research: '', email: '', homepage: '', avatar: '' });
     drawMembers();
   };
-  $('save-members').onclick = function () {
+
+  /* 把表单当前内容收集回 D.members.items（保留 id 与头像） */
+  function collectMembers() {
     var rows = document.querySelectorAll('#member-rows .editor-row');
     var out = [];
     Array.prototype.forEach.call(rows, function (r) {
-      var o = { id: 'm' + Math.random().toString(36).slice(2, 9), name_zh: '', name: '', role: '', group: 'master', year: '', research: '', email: '', homepage: '', avatar: '' };
+      var i = +r.dataset.i;
+      var old = D.members.items[i] || {};
+      var o = { id: old.id || ('m' + Math.random().toString(36).slice(2, 9)), name_zh: '', name: '', role: '', group: 'master', year: '', research: '', email: '', homepage: '', avatar: old.avatar || '' };
       Array.prototype.forEach.call(r.querySelectorAll('[data-f]'), function (inp) { o[inp.dataset.f] = inp.value.trim(); });
       out.push(o);
     });
-    // 保留原有 id 与 avatar
-    out.forEach(function (o, i) { if (D.members.items[i]) { o.id = D.members.items[i].id || o.id; o.avatar = D.members.items[i].avatar || ''; } });
     D.members.items = out;
+    return out;
+  }
+
+  $('save-members').onclick = function () {
+    collectMembers();
     say('提交中…');
     commit([{ path: 'data/members.js', content: wrap('members', D.members) }], 'content: 更新成员名单')
       .then(function () { say('已保存，GitHub 正在重新构建，约 1 分钟后生效', true); })
       .catch(function (e) { say('保存失败：' + e.message, false); });
   };
+
+  /* 头像：居中裁成正方形 → 缩到 640 → 上传 → 同一次提交里更新 members.js */
+  function squareJpeg(file, size) {
+    return new Promise(function (resolve, reject) {
+      var url = URL.createObjectURL(file);
+      var img = new Image();
+      img.onload = function () {
+        var side = Math.min(img.width, img.height);
+        var sx = (img.width - side) / 2, sy = (img.height - side) / 2;
+        var c = document.createElement('canvas');
+        c.width = c.height = size;
+        var ctx = c.getContext('2d');
+        ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, size, size);
+        ctx.drawImage(img, sx, sy, side, side, 0, 0, size, size);
+        URL.revokeObjectURL(url);
+        resolve(c.toDataURL('image/jpeg', 0.88).split(',')[1]);
+      };
+      img.onerror = function () { URL.revokeObjectURL(url); reject(new Error('图片读取失败')); };
+      img.src = url;
+    });
+  }
+
+  $('member-rows').addEventListener('change', function (e) {
+    var inp = e.target.closest('input[data-up]');
+    if (!inp) return;
+    var i = +inp.dataset.up;
+    var f = inp.files && inp.files[0];
+    if (!f) return;
+    if (!token) { say('请先填写 token 并验证', false); return; }
+    collectMembers();
+    var m = D.members.items[i];
+    if (!m) return;
+    if (!m.id) m.id = 'm' + Date.now();
+    var path = 'assets/img/members/' + m.id + '.jpg';
+    say('正在处理头像…');
+    squareJpeg(f, 640).then(function (b64) {
+      m.avatar = path;
+      return putFiles([
+        { path: path, b64: b64 },
+        { path: 'data/members.js', content: wrap('members', D.members) }
+      ], 'content: 更新成员头像');
+    }).then(function () {
+      drawMembers();
+      say('头像已上传，约 1 分钟后生效', true);
+    }).catch(function (err) {
+      say('头像上传失败：' + err.message, false);
+    });
+  });
 
   /* ---- Special Day ---- */
   var sy = $('spd-year'), st = $('spd-term');
