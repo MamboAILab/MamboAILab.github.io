@@ -264,6 +264,22 @@
     }).join('');
   }
 
+  /* ---------- 首屏导航（深色大图时透明融入） ---------- */
+  function initHeroNav() {
+    var nav = document.querySelector('.nav');
+    var hero = document.querySelector('.hero');
+    if (!nav || !hero) return;
+    if (!hero.classList.contains('on-dark')) return;
+    document.body.classList.add('has-hero');
+    var root = document.documentElement;
+    function measure() { root.style.setProperty('--nav-h', nav.offsetHeight + 'px'); }
+    function update() { nav.classList.toggle('is-top', window.scrollY < 8); }
+    measure(); update();
+    window.addEventListener('resize', measure);
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('hashchange', update);
+  }
+
   /* ---------- 首屏背景 ---------- */
   function applyHero() {
     var host = document.querySelector('.hero');
@@ -281,7 +297,7 @@
       bg.appendChild(img);
     }
     host.insertBefore(bg, host.firstChild);
-    if (cfg.ink === 'light') host.classList.add('on-dark');
+    host.classList.toggle('on-dark', cfg.ink === 'light');
   }
 
   /* ---------- 站点信息注入 ---------- */
@@ -312,6 +328,7 @@
     bindTheme();
     initNav();
     applyHero();
+    initHeroNav();
     hydrate();
     renderNews(q('#news-list'), 6);
     renderSelected(q('#selected-pubs'), 4);
