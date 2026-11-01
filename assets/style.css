@@ -61,7 +61,7 @@ html[data-theme="dark"] {
 
 * { box-sizing: border-box; }
 
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; overflow-x: clip; }
 
 body {
   margin: 0;
@@ -158,6 +158,18 @@ html[data-theme="dark"] .dd-menu { box-shadow: 0 4px 8px rgba(0, 0, 0, .4), 0 20
   .nav-links { gap: 14px; }
   .nav-links > a, .nav-links > .dd > button { font-size: 13px; }
   .brand-text { display: none; }
+  /* 下拉菜单在窄屏改为右对齐，否则绝对定位会撑破视口 */
+  .dd-menu { left: auto; right: -12px; transform: translateY(-4px); min-width: 200px; }
+  .dd:hover .dd-menu, .dd:focus-within .dd-menu, .dd.open .dd-menu { transform: translateY(0); }
+}
+
+/* 小屏：导航只留四个主入口，「管理」移到页脚，避免撑破视口 */
+@media (max-width: 620px) {
+  .nav-inner { padding: 10px 16px; gap: 10px; }
+  .nav-links { gap: 11px; }
+  .nav-links > a, .nav-links > .dd > button { font-size: 12.5px; }
+  .nav-links > a.admin-link { display: none; }
+  .brand-mark { width: 27px; height: 27px; font-size: 13px; border-radius: 8px; }
 }
 
 /* ---------- 首页首屏 ---------- */
@@ -313,8 +325,8 @@ html[data-theme="dark"] .dd-menu { box-shadow: 0 4px 8px rgba(0, 0, 0, .4), 0 20
   background: var(--accent-soft); color: var(--accent); margin-left: 8px; vertical-align: 1px;
 }
 @media (max-width: 620px) {
-  .pub { flex-direction: column; gap: 10px; padding: 16px 0; }
-  .pub-abbr { align-self: flex-start; }
+  .pub { flex-direction: column; gap: 8px; padding: 16px 0; }
+  .pub-abbr { align-self: flex-start; flex: 0 0 auto; }
 }
 
 /* ---------- Special Day ---------- */
