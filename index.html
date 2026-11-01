@@ -22,6 +22,7 @@
         <button type="button">Special Days</button>
         <div class="dd-menu" id="dd-special-menu"><a href="special-days.html">查看全部</a></div>
       </div>
+      <a class="icon-btn" href="admin.html" title="内容管理" aria-label="内容管理"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 013 3L7 19l-4 1 1-4z"/></svg></a>
       <button class="icon-btn" id="theme-toggle" aria-label="切换深浅色"></button>
     </nav>
   </div>
@@ -45,18 +46,28 @@
   <section class="section">
     <div class="wrap">
       <div class="section-head">
-        <h2>最新动态</h2>
-        <a class="more" href="about.html">关于课题组</a>
+        <h2><span class="num">01</span>最新动态</h2>
+        <a class="more" href="about.html">关于课题组 →</a>
       </div>
       <ul class="news" id="news-list"></ul>
     </div>
   </section>
 
-  <section class="section">
+  <section class="section section-flush">
     <div class="wrap">
       <div class="section-head">
-        <h2>研究方向</h2>
-        <a class="more" href="about.html">了解更多</a>
+        <h2><span class="num">02</span>代表性成果</h2>
+        <a class="more" href="publications.html">全部论文 →</a>
+      </div>
+      <div id="selected-pubs"></div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="wrap">
+      <div class="section-head">
+        <h2><span class="num">03</span>研究方向</h2>
+        <a class="more" href="about.html">了解更多 →</a>
       </div>
       <div class="research-grid">
         <div class="research-item">
@@ -80,9 +91,9 @@
 
   <section class="section">
     <div class="wrap">
-      <div class="section-head"><h2>加入我们</h2></div>
-      <p style="color:var(--fg-soft);font-size:14.5px" data-site="join_text"></p>
-      <p style="font-size:14.5px">有意向请把简历与研究兴趣发到
+      <div class="section-head"><h2><span class="num">04</span>加入我们</h2></div>
+      <p style="color:var(--fg-soft);font-size:15.5px;max-width:44em" data-site="join_text"></p>
+      <p style="font-size:15.5px">有意向请把简历与研究兴趣发到
         <a href="mailto:yangshang0308@gmail.com" data-site-href="email" data-site="email">yangshang0308@gmail.com</a>。
       </p>
     </div>
@@ -94,7 +105,8 @@
     <div>© <span data-year></span> MamboLab · Artificial Intelligence Research Group</div>
     <div>
       <a href="https://github.com/MamboAILab" target="_blank" rel="noopener">GitHub</a> ·
-      <a href="mailto:yangshang0308@gmail.com" data-site-href="email">Email</a>
+      <a href="mailto:yangshang0308@gmail.com" data-site-href="email">Email</a> ·
+      <a href="admin.html">管理</a>
     </div>
   </div>
 </footer>

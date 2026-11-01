@@ -121,11 +121,40 @@
   }
 
   /* ---------- 论文 ---------- */
+  var MINE = /Shangshang Yang/;
+
+  function pubLinks(p) {
+    var L = p.links || {}, out = '';
+    if (L.html) out += '<a href="' + esc(L.html) + '" target="_blank" rel="noopener">论文</a>';
+    if (L.pdf) out += '<a href="' + esc(L.pdf) + '" target="_blank" rel="noopener">PDF</a>';
+    if (L.arxiv) out += '<a href="' + esc(L.arxiv) + '" target="_blank" rel="noopener">arXiv</a>';
+    if (L.code) out += '<a href="' + esc(L.code) + '" target="_blank" rel="noopener">代码</a>';
+    return out ? '<div class="pub-links">' + out + '</div>' : '';
+  }
+
+  function pubHTML(p) {
+    var authors = esc(p.authors).replace(MINE, '<b>Shangshang Yang</b>');
+    return '<div class="pub"><div class="pub-abbr">' + esc(p.abbr || '') + '</div><div>' +
+      '<p class="pub-title">' + esc(p.title) +
+      (p.award ? '<span class="award">' + esc(p.award) + '</span>' : '') + '</p>' +
+      '<p class="pub-authors">' + authors + '</p>' +
+      '<p class="pub-venue">' + esc(p.venue || '') + '</p>' +
+      pubLinks(p) + '</div></div>';
+  }
+
+  function renderSelected(el, limit) {
+    if (!el || !D.publications) return;
+    var all = D.publications.items || [];
+    var sel = all.filter(function (p) { return p.selected; });
+    if (!sel.length) sel = all;
+    el.innerHTML = sel.slice(0, limit || 4).map(pubHTML).join('') ||
+      '<p class="empty">成果整理中。</p>';
+  }
+
   function renderPubs(el, chipsEl) {
     if (!el || !D.publications) return;
     var all = D.publications.items || [];
     var filter = 'all';
-    var mine = /Shangshang Yang/;
 
     function draw() {
       var list = all.filter(function (p) {
@@ -136,22 +165,7 @@
       var years = Object.keys(byYear).sort(function (a, b) { return b - a; });
       if (!years.length) { el.innerHTML = '<p class="empty">暂无成果记录。</p>'; return; }
       el.innerHTML = years.map(function (y) {
-        return '<div class="year-label">' + y + '</div>' + byYear[y].map(function (p) {
-          var authors = esc(p.authors).replace(mine, '<b>Shangshang Yang</b>');
-          var links = '';
-          var L = p.links || {};
-          if (L.html) links += '<a href="' + esc(L.html) + '" target="_blank" rel="noopener">论文</a>';
-          if (L.pdf) links += '<a href="' + esc(L.pdf) + '" target="_blank" rel="noopener">PDF</a>';
-          if (L.arxiv) links += '<a href="' + esc(L.arxiv) + '" target="_blank" rel="noopener">arXiv</a>';
-          if (L.code) links += '<a href="' + esc(L.code) + '" target="_blank" rel="noopener">代码</a>';
-          return '<div class="pub"><div class="pub-abbr">' + esc(p.abbr || '') + '</div><div>' +
-            '<p class="pub-title">' + esc(p.title) +
-            (p.award ? '<span class="award">' + esc(p.award) + '</span>' : '') + '</p>' +
-            '<p class="pub-authors">' + authors + '</p>' +
-            '<p class="pub-venue">' + esc(p.venue || '') + '</p>' +
-            (links ? '<div class="pub-links">' + links + '</div>' : '') +
-            '</div></div>';
-        }).join('');
+        return '<div class="year-label">' + y + '</div>' + byYear[y].map(pubHTML).join('');
       }).join('');
     }
 
@@ -270,6 +284,7 @@
     initNav();
     hydrate();
     renderNews(q('#news-list'), 6);
+    renderSelected(q('#selected-pubs'), 4);
     renderMembers(q('#members-root'));
     renderPubs(q('#pubs-root'), q('#pub-filters'));
     renderSpecialDays(q('#spd-root'));
