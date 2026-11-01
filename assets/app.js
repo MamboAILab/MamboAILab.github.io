@@ -226,7 +226,11 @@
     grid.innerHTML = items.map(function (it) {
       var st = dayStatus(it);
       var badge = '<span class="badge badge-' + st.kind + '">' + st.label + '</span>';
-      var when = it.date ? it.date.replace(/-/g, '.') : '时间待公布';
+      var when = it.date
+        ? it.date.replace(/-/g, '.') + (it.time ? '　' + esc(it.time) : '')
+        : (it.time ? esc(it.time) : '时间待定');
+      var theme = it.theme ? '<p class="spd-theme">' + esc(it.theme) + '</p>' : '';
+      var place = it.place ? '<p class="spd-place">' + esc(it.place) + '</p>' : '';
       var photos = (it.photos || []).filter(Boolean);
       var cover = photos.length
         ? '<div class="spd-cover"><img src="' + esc(photos[0]) + '" alt="' + esc(it.name) + '"></div>'
@@ -238,7 +242,9 @@
         : '';
       return '<article class="spd">' + cover + '<div class="spd-body">' +
         '<div class="spd-top"><h3>' + esc(it.name) + '</h3>' + badge + '</div>' +
+        theme +
         '<p class="when">' + when + '</p>' +
+        place +
         (it.note ? '<p class="note">' + esc(it.note) + '</p>' : '') +
         thumbs + '</div></article>';
     }).join('');
