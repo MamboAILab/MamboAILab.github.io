@@ -113,7 +113,10 @@ window.ML_DATA.special_days = {
               "time": "",
               "place": "材料科学大楼A",
               "note": "纸杯蛋糕 + 蛋挞 + 布丁",
-              "photos": []
+              "photos": [
+                "assets/img/special-days/2026-fall/2026f-2-1793540565909.jpg",
+                "assets/img/special-days/2026-fall/2026f-2-1793540603580.jpg"
+              ]
             },
             {
               "id": "2026f-3",
