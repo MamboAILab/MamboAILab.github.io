@@ -265,20 +265,43 @@
   function upCard(e) {
     var it = e.it;
     var tp = TYPE_MAP[it.type] || {};
-    return '<article class="next-card">' +
-      (tp.image ? '<div class="next-media" aria-hidden="true"><img src="' + esc(tp.image) + '" alt="" loading="lazy"></div>' : '') +
-      '<div class="next-main">' +
-        '<p class="next-kicker">下一次 · ' + esc(e.year + ' ' + e.termName) + '</p>' +
-        '<div class="next-title"><h3>' + esc(spdName(it)) + '</h3>' +
-          (it.theme ? '<span class="next-theme">主题 · ' + esc(it.theme) + '</span>' : '') + '</div>' +
-        '<div class="cd" data-cd="' + e.d.getTime() + '">' +
-          '<div class="cd-u"><b>0</b><span>天</span></div>' +
-          '<div class="cd-u"><b>00</b><span>时</span></div>' +
-          '<div class="cd-u"><b>00</b><span>分</span></div>' +
-          '<div class="cd-u"><b>00</b><span>秒</span></div>' +
+    var photos = (it.photos || []).filter(Boolean);
+    var bg = tp.image || photos[0] || '';
+    var shots = photos.length ? photos.slice(0, 3) : (tp.image ? [tp.image] : []);
+    var d = e.d;
+    var wk = '日一二三四五六'.charAt(d.getDay());
+    var ico = {
+      date: '<svg class="nh-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5.2" width="17" height="15.3" rx="2.6"/><path d="M3.5 9.6h17M8 3.2v4M16 3.2v4"/></svg>',
+      time: '<svg class="nh-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.4V12l3.2 2"/></svg>',
+      place: '<svg class="nh-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21c4.3-4.1 6.6-7.4 6.6-10.1a6.6 6.6 0 1 0-13.2 0C5.4 13.6 7.7 16.9 12 21z"/><circle cx="12" cy="10.7" r="2.4"/></svg>'
+    };
+    var meta = '<li>' + ico.date + '<span>' + esc(String(it.date).replace(/-/g, '.')) + '　周' + wk + '</span></li>' +
+      '<li>' + ico.time + '<span>' + (it.time ? esc(it.time) : '时间待定') + '</span></li>' +
+      '<li>' + ico.place + '<span>' + (it.place ? esc(it.place) : '地点待定') + '</span></li>';
+
+    return '<article class="next-hero">' +
+      (bg ? '<div class="nh-bg" aria-hidden="true"><img src="' + esc(bg) + '" alt=""></div>' : '') +
+      '<div class="nh-inner">' +
+        '<div class="nh-main">' +
+          '<p class="nh-kicker">The Next Special Day<span class="nh-dot">·</span>' + esc(e.year + ' ' + e.termName) + '</p>' +
+          '<div class="nh-title"><h3>' + esc(spdName(it)) + '</h3>' +
+            (spdEn(it) ? '<span class="nh-en">' + esc(spdEn(it)) + '</span>' : '') + '</div>' +
+          '<p class="nh-theme">主题 · ' + (it.theme ? esc(it.theme) : '待定') + '</p>' +
+          '<div class="cd" data-cd="' + d.getTime() + '">' +
+            '<div class="cd-u"><b>0</b><span>天</span></div>' +
+            '<div class="cd-u"><b>00</b><span>时</span></div>' +
+            '<div class="cd-u"><b>00</b><span>分</span></div>' +
+            '<div class="cd-u"><b>00</b><span>秒</span></div>' +
+          '</div>' +
+          '<ul class="nh-meta">' + meta + '</ul>' +
+          (it.note ? '<p class="nh-note">准备 · ' + esc(it.note) + '</p>' : '') +
         '</div>' +
-        '<p class="next-meta">' + esc(spdMeta(it)) + '</p>' +
-        (it.note ? '<p class="next-note">' + esc(it.note) + '</p>' : '') +
+        (shots.length
+          ? '<div class="nh-shots" data-c="' + shots.length + '">' + shots.map(function (p, i) {
+              return '<a class="nh-shot" href="' + esc(p) + '" target="_blank" rel="noopener" aria-label="' + esc(spdName(it)) + ' 图片 ' + (i + 1) + '">' +
+                '<img src="' + esc(p) + '" alt="' + esc(spdName(it)) + '" loading="lazy"></a>';
+            }).join('') + '</div>'
+          : '') +
       '</div></article>';
   }
 
@@ -334,18 +357,6 @@
     var aboutEl = q('#spd-about');
     if (aboutEl && data.about) aboutEl.textContent = data.about;
 
-    /* 02 组织形式 */
-    if (data.org) {
-      var lead = q('#spd-org-lead');
-      if (lead) lead.textContent = data.org.lead || '';
-      var list = q('#spd-org');
-      if (list) {
-        list.innerHTML = (data.org.steps || []).map(function (s) {
-          return '<div><dt>' + esc(s.k) + '</dt><dd>' + esc(s.v) + '</dd></div>';
-        }).join('');
-      }
-    }
-
     /* 只保留「有日期」的：已举办 + 即将举办，未定的不展示 */
     var evts = [];
     (data.years || []).forEach(function (y) {
@@ -366,37 +377,98 @@
     var past = evts.filter(function (e) { return e.d.getTime() < now; })
                    .sort(function (a, b) { return b.d - a.d; });
 
-    /* 03 接下来 */
+    /* 02 The Next Special Day */
     var nextEl = q('#spd-next');
     if (nextEl) {
       if (!up.length) {
-        nextEl.innerHTML = '<div class="next-empty"><h3>下一次的日期还在商量</h3>' +
-          '<p>日期确定后，这里会出现按秒走的倒计时。</p></div>';
+        nextEl.innerHTML = '<div class="next-empty">' +
+          '<p class="ne-tag">TBD</p>' +
+          '<h3>下一次的日期还在商量</h3>' +
+          '<p>日期定下来之后，这里会出现按秒走的倒计时、地点和准备清单。</p></div>';
       } else {
         nextEl.innerHTML = upCard(up[0]) +
           (up.length > 1 ? '<div class="next-list">' + up.slice(1).map(nextRow).join('') + '</div>' : '');
       }
     }
-    var anc = q('#spd-announce');
-    if (anc && data.announcement) anc.textContent = data.announcement.text || '';
 
-    /* 04 已举办 */
+    /* 03 已举办：按学年 / 学期下拉查看 */
     var pastEl = q('#spd-past');
-    if (pastEl) {
-      if (!past.length) {
-        pastEl.innerHTML = '<p class="empty">还没有举办记录。</p>';
+    var selYear = q('#spd-year');
+    var selTerm = q('#spd-term');
+    var picker = q('#spd-picker');
+    if (!pastEl) return;
+
+    if (!past.length) {
+      if (picker) picker.hidden = true;
+      pastEl.innerHTML = '<p class="empty">还没有举办记录。</p>';
+    } else {
+      var groups = [], seen = {};
+      past.forEach(function (e) {
+        if (!seen[e.key]) {
+          seen[e.key] = { key: e.key, year: e.year, term: e.termName, items: [], total: e.total, last: e.d };
+          groups.push(seen[e.key]);
+        }
+        seen[e.key].items.push(e);
+      });
+      groups.sort(function (a, b) { return b.last - a.last; });
+
+      /* 下拉：学年 → 学期 */
+      var years = [];
+      groups.forEach(function (g) { if (years.indexOf(g.year) < 0) years.push(g.year); });
+      years.sort(function (a, b) { return b - a; });
+
+      function termsOf(y) {
+        return groups.filter(function (g) { return String(g.year) === String(y); })
+          .map(function (g) { return { id: g.key.split('-').slice(1).join('-'), name: g.term, key: g.key }; });
+      }
+
+      function drawPast() {
+        var key = selYear.value + '-' + selTerm.value;
+        var g = groups.filter(function (x) { return x.key === key; })[0] || groups[0];
+        pastEl.innerHTML = '<div class="term-block" id="term-' + esc(g.key) + '">' +
+          '<div class="term-head"><h3>' + esc(g.year + ' · ' + g.term) + '</h3>' +
+          '<span>已举办 ' + g.items.length + ' / ' + g.total + ' 次</span></div>' +
+          '<div class="spd-grid">' + g.items.map(pastCard).join('') + '</div></div>';
+      }
+
+      function fillTerms(y, want) {
+        var list = termsOf(y);
+        selTerm.innerHTML = list.map(function (t) {
+          return '<option value="' + esc(t.id) + '">' + esc(t.name) + '</option>';
+        }).join('');
+        if (want && list.some(function (t) { return t.id === want; })) selTerm.value = want;
+      }
+
+      if (picker) picker.hidden = false;
+      if (selYear && selTerm) {
+        var hash = (location.hash || '').replace('#term-', '');
+        var hYear = hash ? hash.split('-')[0] : '';
+        var hTerm = hash ? hash.split('-').slice(1).join('-') : '';
+
+        selYear.innerHTML = years.map(function (y) {
+          return '<option value="' + y + '">' + y + ' 学年</option>';
+        }).join('');
+
+        var startYear = years.indexOf(Number(hYear)) >= 0 ? hYear : String(years[0]);
+        selYear.value = startYear;
+        fillTerms(startYear, hTerm || null);
+        if (hTerm && selTerm.value !== hTerm) {
+          /* 该学期没有已举办记录：退回最近一个有记录的学期 */
+          fillTerms(startYear, null);
+        }
+
+        selYear.addEventListener('change', function () { fillTerms(selYear.value, null); drawPast(); });
+        selTerm.addEventListener('change', drawPast);
+        drawPast();
+
+        if (hash) {
+          var sec = q('#past-sec');
+          if (sec) setTimeout(function () { sec.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 120);
+        }
       } else {
-        var groups = [], seen = {};
-        past.forEach(function (e) {
-          if (!seen[e.key]) {
-            seen[e.key] = { key: e.key, name: e.year + ' · ' + e.termName, items: [], total: e.total };
-            groups.push(seen[e.key]);
-          }
-          seen[e.key].items.push(e);
-        });
         pastEl.innerHTML = groups.map(function (g) {
-          return '<div class="term-block" id="term-' + esc(g.key) + '">' +
-            '<div class="term-head"><h3>' + esc(g.name) + '</h3>' +
+          return '<div class="term-block">' +
+            '<div class="term-head"><h3>' + esc(g.year + ' · ' + g.term) + '</h3>' +
             '<span>已举办 ' + g.items.length + ' / ' + g.total + ' 次</span></div>' +
             '<div class="spd-grid">' + g.items.map(pastCard).join('') + '</div></div>';
         }).join('');
