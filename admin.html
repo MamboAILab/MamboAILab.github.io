@@ -128,7 +128,7 @@
   </section>
 
   <section class="panel" id="panel-spd">
-    <p class="hint">先选学年和学期，下面就是这个学期的全部条目（六种类型每学期各一次，默认已经列好了）。要办哪一次，直接在那一行填 <b>日期 / 时间 / 地点 / 主题</b>，再点底部「保存 Special Day」。<br><b>它出现在官网哪里，是由日期自动决定的</b>——未来的日期 → 官网「The Next Special Day」大卡里按秒倒计时；过去的日期 → 「已举办」；没填日期 → 官网不展示。多个未来活动时，取最早的那个当大卡，其余排在它下面的小列表里。</p>
+    <p class="hint">先选学年和学期，下面就是这个学期的全部条目（六种类型每学期各一次，默认已经列好了）。要办哪一次，直接在那一行填 <b>日期 / 时间 / 地点 / 主题</b>，再点底部「保存 Special Day」。<br><b>它出现在官网哪里，是由日期自动决定的</b>——未来的日期 → 官网「The Next Special Day」大卡里按秒倒计时；过去的日期 → 「已举办」；没填日期 → 官网不展示。多个未来活动时，取最早的那个当大卡，其余排在它下面的小列表里。<br><b>时间建议写成区间</b>，例如 <b>10:00–12:00</b>：这样 12:00 一到，官网会自动把这次从「The Next」挪进「已举办」（就算访客一直开着页面也会自己变）。只写一个时间的话，按当天结束（23:59）才算办完。</p>
     <div class="admin-bar">
       <select id="spd-year"></select>
       <select id="spd-term"></select>
@@ -459,47 +459,62 @@
     var t = sdTypes.filter(function (x) { return x.id === it.type; })[0];
     return t ? t.name : (it.name || '');
   }
-  function parseWhen(it) {
+  /* 和前台同一套口径：第一个时间是开始，最后一个时间是结束；
+     只写一个时间或没写时间，按当天 23:59 结束（办完才归档） */
+  function parseSpan(it) {
     if (!it || !it.date) return null;
     var m = String(it.date).replace(/[\/.]/g, '-').match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
     if (!m) return null;
-    var hm = '00:00';
-    if (it.time) {
-      var t = String(it.time).match(/(\d{1,2})\s*[:：]\s*(\d{2})/);
-      if (t) hm = ('0' + t[1]).slice(-2) + ':' + t[2];
+    var ymd = m[1] + '-' + ('0' + m[2]).slice(-2) + '-' + ('0' + m[3]).slice(-2);
+    function at(hm) {
+      var d = new Date(ymd + 'T' + hm + ':00+08:00');
+      return isNaN(d.getTime()) ? null : d;
     }
-    var d = new Date(m[1] + '-' + ('0' + m[2]).slice(-2) + '-' + ('0' + m[3]).slice(-2) + 'T' + hm + ':00+08:00');
-    return isNaN(d.getTime()) ? null : d;
+    var hms = [], re = /(\d{1,2})\s*[:：]\s*(\d{2})/g, mm;
+    while ((mm = re.exec(String(it.time || '')))) hms.push(('0' + mm[1]).slice(-2) + ':' + mm[2]);
+    var start = at(hms[0] || '00:00');
+    if (!start) return null;
+    var end = hms.length > 1 ? at(hms[hms.length - 1]) : at('23:59');
+    if (!end) end = at('23:59');
+    while (end.getTime() <= start.getTime()) end = new Date(end.getTime() + 86400000);
+    return { start: start, end: end };
   }
+  function parseWhen(it) { var w = parseSpan(it); return w ? w.start : null; }
+
   function stateOf(it) {
-    var d = parseWhen(it);
-    if (!d) return { cls: 'off', text: '日期未定 —— 官网不展示这一条' };
-    var left = d.getTime() - Date.now();
-    if (left <= 0) return { cls: 'done', text: '已举办 —— 官网列在「已举办」里，可以传照片了' };
+    var w = parseSpan(it);
+    if (!w) return { cls: 'off', text: '日期未定 —— 官网不展示这一条' };
+    var now = Date.now();
+    if (now >= w.end.getTime()) return { cls: 'done', text: '已举办 —— 官网列在「已举办」里，可以传照片了' };
+    if (now >= w.start.getTime()) {
+      return { cls: 'soon', text: '正在进行 —— 官网正在展示「The Next」大卡，结束后自动进「已举办」' };
+    }
+    var left = w.start.getTime() - now;
     if (it.id && it.id === spdNextId) {
       return { cls: 'soon', text: '即将举办 —— 就是官网「The Next Special Day」上的那一张，已开始倒计时（还有 ' + Math.max(0, Math.ceil(left / 86400000)) + ' 天）' };
     }
     return { cls: 'soon', text: '即将举办 —— 排在 The Next 大卡下面的小列表里（还有 ' + Math.max(0, Math.ceil(left / 86400000)) + ' 天）' };
   }
 
-  /* 和官网同一套算法：所有学年学期里「有日期」的条目，未来的升序、已举办的降序 */
+  /* 和官网同一套算法：所有学年学期里「有日期」的条目，按结束时刻分区 */
   function spdEvents() {
     var all = [];
     ((D.special_days && D.special_days.years) || []).forEach(function (y) {
       (y.terms || []).forEach(function (t) {
         (t.items || []).forEach(function (it) {
-          all.push({ it: it, d: parseWhen(it), year: y.year, term: t });
+          var w = parseSpan(it);
+          all.push({ it: it, w: w, d: w ? w.start : null, end: w ? w.end : null, year: y.year, term: t });
         });
       });
     });
     var now = Date.now();
-    var dated = all.filter(function (e) { return !!e.d; });
+    var dated = all.filter(function (e) { return !!e.w; });
     return {
-      up: dated.filter(function (e) { return e.d.getTime() >= now; })
-                .sort(function (a, b) { return a.d - b.d; }),
-      past: dated.filter(function (e) { return e.d.getTime() < now; })
-                  .sort(function (a, b) { return b.d - a.d; }),
-      undated: all.filter(function (e) { return !e.d; })
+      up: dated.filter(function (e) { return e.w.end.getTime() > now; })
+                .sort(function (a, b) { return a.w.start - b.w.start; }),
+      past: dated.filter(function (e) { return e.w.end.getTime() <= now; })
+                  .sort(function (a, b) { return b.w.end - a.w.end; }),
+      undated: all.filter(function (e) { return !e.w; })
     };
   }
 
@@ -523,12 +538,15 @@
 
     var n = r.up[0], it = n.it, d = n.d;
     var when = (d.getMonth() + 1) + ' 月 ' + d.getDate() + ' 日' + (it.time ? ' ' + it.time : '');
-    var days = Math.max(0, Math.ceil((d.getTime() - Date.now()) / 86400000));
+    var nowMs = Date.now();
+    var live = nowMs >= n.w.start.getTime() && nowMs < n.w.end.getTime();
+    var days = Math.max(0, Math.ceil((d.getTime() - nowMs) / 86400000));
+    var lead = live ? '正在进行，结束后会自动掉进「已举办」' : (days === 0 ? '就在今天' : '还有 ' + days + ' 天');
     el.innerHTML = '<p class="ss-tag">官网 The Next Special Day 现在显示的是</p>' +
       '<p class="ss-main">' + esc(typeName(it)) +
         (it.theme ? ' · ' + esc(it.theme) : '') +
         ' <span class="ss-when">' + esc(when) + '</span></p>' +
-      '<p class="ss-sub">' + (days === 0 ? '就在今天' : '还有 ' + days + ' 天') +
+      '<p class="ss-sub">' + lead +
         (it.place ? ' · ' + esc(it.place) : ' · （还没填地点）') +
         ' ｜ 来自 ' + esc(n.year + ' ' + n.term.name) +
         (r.up.length > 1 ? '；另有 ' + (r.up.length - 1) + ' 次未来的活动排在它下面' : '') + '</p>' +

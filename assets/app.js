@@ -200,20 +200,33 @@
 
   function pad2(n) { return n < 10 ? '0' + n : String(n); }
 
-  /* "2026-10-31" + "10:00–12:00" → Date（取开始时间，按北京时间） */
-  function toDate(it) {
+  /* "2026-10-31" + "10:00–12:00" → { start, end }，按北京时间
+     - start：时间段里第一个时间；没写时间按当天 00:00
+     - end：时间段里最后一个时间；只写了一个时间或没写，按当天 23:59（当天结束才算办完）
+     - 结束早于开始视为跨夜（22:00–01:00 → 次日 01:00） */
+  function spdWindow(it) {
     if (!it || !it.date) return null;
     var ds = String(it.date).trim().replace(/[\/.]/g, '-');
     var m = ds.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
     if (!m) return null;
-    var hm = '00:00';
-    if (it.time) {
-      var t = String(it.time).match(/(\d{1,2})\s*[:：]\s*(\d{2})/);
-      if (t) hm = pad2(+t[1]) + ':' + t[2];
+    var ymd = m[1] + '-' + pad2(+m[2]) + '-' + pad2(+m[3]);
+    function at(hm) {
+      var d = new Date(ymd + 'T' + hm + ':00+08:00');
+      return isNaN(d.getTime()) ? null : d;
     }
-    var d = new Date(m[1] + '-' + pad2(+m[2]) + '-' + pad2(+m[3]) + 'T' + hm + ':00+08:00');
-    return isNaN(d.getTime()) ? null : d;
+    var hms = [];
+    String(it.time || '').replace(/(\d{1,2})\s*[:：]\s*(\d{2})/g, function (all, h, mi) {
+      hms.push(pad2(+h) + ':' + mi);
+      return all;
+    });
+    var start = at(hms[0] || '00:00');
+    if (!start) return null;
+    var end = hms.length > 1 ? at(hms[hms.length - 1]) : at('23:59');
+    if (!end) end = at('23:59');
+    while (end.getTime() <= start.getTime()) end = new Date(end.getTime() + 86400000);
+    return { start: start, end: end };
   }
+  function toDate(it) { var w = spdWindow(it); return w ? w.start : null; }
 
   function cdParts(ms) {
     var s = Math.max(0, Math.floor(ms / 1000));
@@ -224,12 +237,24 @@
     return (p.d > 0 ? p.d + ' 天 ' : '') + pad2(p.h) + ':' + pad2(p.m) + ':' + pad2(p.s);
   }
 
-  /* 每秒刷新所有倒计时 */
+  /* 下一次活动的结束时刻：到了就自动重排（倒计时归零不算结束，办完才算） */
+  var SPD_NEXT_END = 0;
+
+  /* 每秒刷新所有倒计时；顺便盯住「The Next」有没有办完，办完立刻归档 */
   function tickCountdowns() {
     var now = Date.now();
     Array.prototype.forEach.call(document.querySelectorAll('[data-cd]'), function (el) {
       var target = Number(el.getAttribute('data-cd'));
       if (!target) return;
+      var endAt = Number(el.getAttribute('data-cd-end')) || 0;
+      var live = !!endAt && now >= target && now < endAt;
+      var host = el.parentNode;
+      var liveEl = host && host.querySelector ? host.querySelector('.nh-live') : null;
+      if (liveEl) {
+        el.hidden = live;
+        liveEl.hidden = !live;
+      }
+      if (live) return;
       var p = cdParts(target - now);
       var u = el.querySelectorAll('b');
       if (u.length === 4) {
@@ -246,6 +271,11 @@
       var left = target - now;
       el.textContent = left > 0 ? '还有 ' + fmtCd(left) : '正在进行';
     });
+    if (SPD_NEXT_END && now >= SPD_NEXT_END) {
+      SPD_NEXT_END = 0;
+      var host0 = q('#spd-root');
+      if (host0) renderSpecialDays(host0);
+    }
   }
 
   function spdName(it) {
@@ -270,7 +300,11 @@
     var photos = (it.photos || []).filter(Boolean);
     var bg = tp.image || photos[0] || '';
     var shots = photos.length ? photos.slice(0, 3) : (tp.image ? [tp.image] : []);
-    var d = e.d;
+    var d = e.start || e.d;
+    var endD = e.end || d;
+    var live = Date.now() >= d.getTime() && Date.now() < endD.getTime();
+    var hv = String(it.time || '').match(/\d{1,2}\s*[:：]\s*\d{2}/g) || [];
+    var endLabel = hv.length > 1 ? hv[hv.length - 1].replace(/[：\s]/g, function (c) { return c === '：' ? ':' : ''; }) : '';
     var wk = '日一二三四五六'.charAt(d.getDay());
     var ico = {
       date: '<svg class="nh-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5.2" width="17" height="15.3" rx="2.6"/><path d="M3.5 9.6h17M8 3.2v4M16 3.2v4"/></svg>',
@@ -289,12 +323,14 @@
           '<div class="nh-title"><h3>' + esc(spdName(it)) + '</h3>' +
             (spdEn(it) ? '<span class="nh-en">' + esc(spdEn(it)) + '</span>' : '') + '</div>' +
           '<p class="nh-theme">主题 · ' + (it.theme ? esc(it.theme) : '待定') + '</p>' +
-          '<div class="cd" data-cd="' + d.getTime() + '">' +
+          '<div class="cd" data-cd="' + d.getTime() + '" data-cd-end="' + endD.getTime() + '"' + (live ? ' hidden' : '') + '>' +
             '<div class="cd-u"><b>0</b><span>天</span></div>' +
             '<div class="cd-u"><b>00</b><span>时</span></div>' +
             '<div class="cd-u"><b>00</b><span>分</span></div>' +
             '<div class="cd-u"><b>00</b><span>秒</span></div>' +
           '</div>' +
+          '<p class="nh-live"' + (live ? '' : ' hidden') + '><i aria-hidden="true"></i>正在进行' +
+            (endLabel ? ' · ' + esc(endLabel) + ' 结束' : '') + '</p>' +
           '<ul class="nh-meta">' + meta + '</ul>' +
           (it.note ? '<p class="nh-note">准备 · ' + esc(it.note) + '</p>' : '') +
         '</div>' +
@@ -339,6 +375,8 @@
   function renderSpecialDays(root) {
     if (!root || !D.special_days) return;
     var data = D.special_days;
+    /* 自动重排前先记住下拉的当前选择 */
+    var syPrev = q('#spd-year'), stPrev = q('#spd-term');
 
     var introEl = q('#spd-intro');
     if (introEl && data.intro) introEl.textContent = data.intro;
@@ -364,20 +402,21 @@
     (data.years || []).forEach(function (y) {
       (y.terms || []).forEach(function (t) {
         (t.items || []).forEach(function (it) {
-          var d = toDate(it);
-          if (!d) return;
+          var w = spdWindow(it);
+          if (!w) return;
           evts.push({
-            it: it, d: d, year: y.year, termName: t.name,
+            it: it, d: w.start, start: w.start, end: w.end, year: y.year, termName: t.name,
             key: y.year + '-' + t.id, total: (t.items || []).length
           });
         });
       });
     });
     var now = Date.now();
-    var up = evts.filter(function (e) { return e.d.getTime() >= now; })
-                 .sort(function (a, b) { return a.d - b.d; });
-    var past = evts.filter(function (e) { return e.d.getTime() < now; })
-                   .sort(function (a, b) { return b.d - a.d; });
+    /* 分区看「结束时刻」：正在进行中的仍算即将举办，办完才掉进已举办 */
+    var up = evts.filter(function (e) { return e.end.getTime() > now; })
+                 .sort(function (a, b) { return a.start - b.start; });
+    var past = evts.filter(function (e) { return e.end.getTime() <= now; })
+                   .sort(function (a, b) { return b.end - a.end; });
 
     /* 02 The Next Special Day */
     var nextEl = q('#spd-next');
@@ -392,6 +431,8 @@
           (up.length > 1 ? '<div class="next-list">' + up.slice(1).map(nextRow).join('') + '</div>' : '');
       }
     }
+    /* 记住下一次什么时候办完，到点自动重排（页面一直开着也会归档） */
+    SPD_NEXT_END = up.length ? up[0].end.getTime() : 0;
 
     /* 03 已举办：按学年 / 学期下拉查看 */
     var pastEl = q('#spd-past');
@@ -407,7 +448,7 @@
       var groups = [], seen = {};
       past.forEach(function (e) {
         if (!seen[e.key]) {
-          seen[e.key] = { key: e.key, year: e.year, term: e.termName, items: [], total: e.total, last: e.d };
+          seen[e.key] = { key: e.key, year: e.year, term: e.termName, items: [], total: e.total, last: e.end };
           groups.push(seen[e.key]);
         }
         seen[e.key].items.push(e);
@@ -451,10 +492,17 @@
           return '<option value="' + y + '">' + y + ' 学年</option>';
         }).join('');
 
-        var startYear = years.indexOf(Number(hYear)) >= 0 ? hYear : String(years[0]);
+        /* 要是这次是「办完自动重排」，把用户正在看的学年 / 学期留着 */
+        var keepYear = '', keepTerm = '';
+        if (syPrev && syPrev.value) { keepYear = syPrev.value; keepTerm = stPrev ? stPrev.value : ''; }
+
+        var startYear = keepYear && years.some(function (y) { return String(y) === keepYear; })
+          ? keepYear
+          : (years.indexOf(Number(hYear)) >= 0 ? hYear : String(years[0]));
+        var startTerm = keepYear ? keepTerm : (hTerm || null);
         selYear.value = startYear;
-        fillTerms(startYear, hTerm || null);
-        if (hTerm && selTerm.value !== hTerm) {
+        fillTerms(startYear, startTerm);
+        if (startTerm && selTerm.value !== startTerm) {
           /* 该学期没有已举办记录：退回最近一个有记录的学期 */
           fillTerms(startYear, null);
         }

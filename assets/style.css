@@ -522,6 +522,21 @@ body.has-hero .nav.is-top .nav-links > a.icon-btn:hover { color: #fff; backgroun
 }
 .cd-u span { margin-top: 7px; font-size: 11px; letter-spacing: .08em; color: rgba(255, 255, 255, .58); }
 .cd.is-over .cd-u b { color: rgba(255, 255, 255, .45); }
+.cd[hidden], .nh-live[hidden] { display: none; }
+.nh-live {
+  display: flex; align-items: center; gap: 10px; margin: 24px 0 0;
+  font-size: 14.2px; font-weight: 600; color: #fff; letter-spacing: .01em;
+}
+.nh-live i {
+  width: 8px; height: 8px; border-radius: 50%; background: #4ade80; flex: none;
+  animation: nhLive 1.9s ease-out infinite;
+}
+@keyframes nhLive {
+  0%   { box-shadow: 0 0 0 0 rgba(74, 222, 128, .55); }
+  70%  { box-shadow: 0 0 0 10px rgba(74, 222, 128, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
+}
+@media (prefers-reduced-motion: reduce) { .nh-live i { animation: none; } }
 .nh-meta {
   list-style: none; margin: 22px 0 0; padding: 0;
   display: flex; flex-direction: column; gap: 9px;
