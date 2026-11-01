@@ -61,6 +61,29 @@
   .spd-state { margin:10px 0 0; font-size:11.8px; color:var(--faint); }
   .spd-state.done { color:#1a7f37; }
   .spd-state.soon { color:var(--accent); }
+
+  /* 排期总览：官网现在会显示什么 */
+  .spd-summary {
+    border:1px solid var(--line); border-radius:12px; padding:14px 16px;
+    background:var(--accent-soft); margin:14px 0 4px;
+  }
+  .ss-tag { font-size:11px; letter-spacing:.04em; color:var(--accent); margin:0 0 6px; font-weight:600; }
+  .ss-main { font-size:15px; font-weight:650; margin:0; color:var(--fg); }
+  .ss-main .ss-when { font-weight:500; color:var(--faint); font-variant-numeric:tabular-nums; }
+  .ss-sub { font-size:12.3px; color:var(--muted); margin:5px 0 0; line-height:1.65; }
+  .ss-stats { display:flex; gap:14px; flex-wrap:wrap; margin-top:9px; font-size:11.8px; color:var(--faint); }
+  .ss-stats span::before { content:''; display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--faint); margin-right:5px; vertical-align:1px; }
+  .ss-stats .s-next::before { background:var(--accent); }
+  .ss-stats .s-done::before { background:#1a7f37; }
+
+  /* 行状态色条 */
+  .spd-row.is-next { border-left:3px solid var(--accent); }
+  .spd-row.is-done { border-left:3px solid #1a7f37; }
+  .spd-row.is-off  { border-left:3px solid var(--line); }
+  .row-flag { font-size:10.5px; padding:2px 7px; border-radius:999px; border:1px solid currentColor; }
+  .row-flag.next { color:var(--accent); }
+  .row-flag.done { color:#1a7f37; }
+
   @media (max-width: 720px) { .spd-fields { grid-template-columns:1fr 1fr; } }
 </style>
 </head>
@@ -105,7 +128,7 @@
   </section>
 
   <section class="panel" id="panel-spd">
-    <p class="hint">先选学年和学期，再维护该学期的 Special Day。填了日期才会显示在官网上：过去的时间进「已举办」，未来的进「接下来」并自动倒计时；没填日期的先在后台留着，前台不展示。每次活动都能单独上传现场照片。</p>
+    <p class="hint">先选学年和学期，下面就是这个学期的全部条目（六种类型每学期各一次，默认已经列好了）。要办哪一次，直接在那一行填 <b>日期 / 时间 / 地点 / 主题</b>，再点底部「保存 Special Day」。<br><b>它出现在官网哪里，是由日期自动决定的</b>——未来的日期 → 官网「The Next Special Day」大卡里按秒倒计时；过去的日期 → 「已举办」；没填日期 → 官网不展示。多个未来活动时，取最早的那个当大卡，其余排在它下面的小列表里。</p>
     <div class="admin-bar">
       <select id="spd-year"></select>
       <select id="spd-term"></select>
@@ -113,6 +136,7 @@
       <button class="btn-sm" id="add-term">+ 新学期</button>
       <button class="btn-sm" id="add-year">+ 新学年</button>
     </div>
+    <div id="spd-summary" class="spd-summary"></div>
     <div id="spd-rows"><p class="empty">载入中…</p></div>
     <div class="editor-actions">
       <button class="btn-sm" id="save-spd" style="background:var(--fg);color:var(--bg);border-color:var(--fg)">保存 Special Day</button>
@@ -397,6 +421,13 @@
   var sdTypes = (D.special_days && D.special_days.types) || [];
   var sy = $('spd-year'), st = $('spd-term');
   var upState = $('upload-state');
+  var spdNextId = '';
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+    });
+  }
 
   function fillSpdSelectors() {
     var years = (D.special_days && D.special_days.years) || [];
@@ -442,10 +473,72 @@
   }
   function stateOf(it) {
     var d = parseWhen(it);
-    if (!d) return { cls: 'off', text: '日期未定 —— 官网暂不展示' };
+    if (!d) return { cls: 'off', text: '日期未定 —— 官网不展示这一条' };
     var left = d.getTime() - Date.now();
-    if (left <= 0) return { cls: 'done', text: '已举办 —— 官网显示在「已举办」' };
-    return { cls: 'soon', text: '即将举办 —— 官网显示倒计时（约 ' + Math.floor(left / 86400000) + ' 天）' };
+    if (left <= 0) return { cls: 'done', text: '已举办 —— 官网列在「已举办」里，可以传照片了' };
+    if (it.id && it.id === spdNextId) {
+      return { cls: 'soon', text: '即将举办 —— 就是官网「The Next Special Day」上的那一张，已开始倒计时（还有 ' + Math.max(0, Math.ceil(left / 86400000)) + ' 天）' };
+    }
+    return { cls: 'soon', text: '即将举办 —— 排在 The Next 大卡下面的小列表里（还有 ' + Math.max(0, Math.ceil(left / 86400000)) + ' 天）' };
+  }
+
+  /* 和官网同一套算法：所有学年学期里「有日期」的条目，未来的升序、已举办的降序 */
+  function spdEvents() {
+    var all = [];
+    ((D.special_days && D.special_days.years) || []).forEach(function (y) {
+      (y.terms || []).forEach(function (t) {
+        (t.items || []).forEach(function (it) {
+          all.push({ it: it, d: parseWhen(it), year: y.year, term: t });
+        });
+      });
+    });
+    var now = Date.now();
+    var dated = all.filter(function (e) { return !!e.d; });
+    return {
+      up: dated.filter(function (e) { return e.d.getTime() >= now; })
+                .sort(function (a, b) { return a.d - b.d; }),
+      past: dated.filter(function (e) { return e.d.getTime() < now; })
+                  .sort(function (a, b) { return b.d - a.d; }),
+      undated: all.filter(function (e) { return !e.d; })
+    };
+  }
+
+  function drawSummary() {
+    var el = $('spd-summary');
+    if (!el) return;
+    var r = spdEvents();
+    spdNextId = r.up.length ? (r.up[0].it.id || '') : '';
+
+    var stats = '<div class="ss-stats">' +
+      '<span class="s-next">未来 ' + r.up.length + ' 次</span>' +
+      '<span class="s-done">已举办 ' + r.past.length + ' 次</span>' +
+      '<span>日期未定 ' + r.undated.length + ' 次（不展示）</span></div>';
+
+    if (!r.up.length) {
+      el.innerHTML = '<p class="ss-tag">官网 The Next Special Day</p>' +
+        '<p class="ss-main">现在是空的 —— 没有任何一条填了未来的日期</p>' +
+        '<p class="ss-sub">在下面任意一行填上未来的日期并保存，它就会自动变成官网那张大卡，并开始按秒倒计时。</p>' + stats;
+      return;
+    }
+
+    var n = r.up[0], it = n.it, d = n.d;
+    var when = (d.getMonth() + 1) + ' 月 ' + d.getDate() + ' 日' + (it.time ? ' ' + it.time : '');
+    var days = Math.max(0, Math.ceil((d.getTime() - Date.now()) / 86400000));
+    el.innerHTML = '<p class="ss-tag">官网 The Next Special Day 现在显示的是</p>' +
+      '<p class="ss-main">' + esc(typeName(it)) +
+        (it.theme ? ' · ' + esc(it.theme) : '') +
+        ' <span class="ss-when">' + esc(when) + '</span></p>' +
+      '<p class="ss-sub">' + (days === 0 ? '就在今天' : '还有 ' + days + ' 天') +
+        (it.place ? ' · ' + esc(it.place) : ' · （还没填地点）') +
+        ' ｜ 来自 ' + esc(n.year + ' ' + n.term.name) +
+        (r.up.length > 1 ? '；另有 ' + (r.up.length - 1) + ' 次未来的活动排在它下面' : '') + '</p>' +
+      stats;
+  }
+
+  function flagOf(it, stt) {
+    if (stt.cls === 'done') return '<span class="row-flag done">已举办</span>';
+    if (it.id && it.id === spdNextId) return '<span class="row-flag next">→ 官网 The Next</span>';
+    return '';
   }
 
   function spdRow(it, i) {
@@ -457,11 +550,12 @@
       return '<span class="ph-item"><img src="' + p + '" alt=""><button type="button" data-rmphoto="' + k + '" data-i="' + i + '" title="移除这张">×</button></span>';
     }).join('') : '<span class="admin-note">还没有照片</span>';
     var stt = stateOf(it);
-    return '<div class="spd-row" data-i="' + i + '">' +
+    return '<div class="spd-row is-' + stt.cls + '" data-i="' + i + '">' +
       '<div class="spd-row-head">' +
         '<span class="idx">#' + (i + 1) + '</span>' +
         '<select data-f="type">' + opts + '</select>' +
         '<input data-f="theme" value="' + (it.theme || '').replace(/"/g, '&quot;') + '" placeholder="主题（品牌 / 菜单）" style="flex:1;min-width:150px;padding:7px 10px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--fg);font-family:inherit;font-size:13px">' +
+        '<span class="flag-slot">' + flagOf(it, stt) + '</span>' +
         '<span class="spacer"></span>' +
         '<button class="btn-sm btn-danger" type="button" data-del="' + i + '">删除</button>' +
       '</div>' +
@@ -480,9 +574,27 @@
 
   function drawSpd() {
     var t = curTerm();
+    drawSummary();          /* 先算出「谁是下一个」，行标记才对得上 */
     $('spd-rows').innerHTML = t && t.items.length
       ? t.items.map(spdRow).join('')
       : '<p class="empty">这一学期还没有记录，点「+ 添加一次」开始。</p>';
+  }
+
+  /* 改了日期 / 时间就地刷新状态与总览，不重画整块（否则输入框会失焦） */
+  function refreshStates() {
+    collectSpd();
+    drawSummary();
+    var t = curTerm();
+    Array.prototype.forEach.call(document.querySelectorAll('#spd-rows .spd-row'), function (r, i) {
+      var it = t && t.items[i];
+      if (!it) return;
+      var stt = stateOf(it);
+      r.className = 'spd-row is-' + stt.cls;
+      var p = r.querySelector('.spd-state');
+      if (p) { p.className = 'spd-state ' + stt.cls; p.textContent = stt.text; }
+      var slot = r.querySelector('.flag-slot');
+      if (slot) slot.innerHTML = flagOf(it, stt);
+    });
   }
 
   function collectSpd() {
@@ -573,6 +685,16 @@
     collectSpd();
     saveThen('data/special-days.js', wrap('special_days', D.special_days), 'Special Day').then(function () { drawSpd(); });
   };
+
+  /* 日期 / 时间 / 地点 / 主题一改，立刻重算「它会去哪里」 */
+  $('spd-rows').addEventListener('change', function (e) {
+    var f = e.target.getAttribute && e.target.getAttribute('data-f');
+    if (f === 'date' || f === 'time') refreshStates();
+  });
+  $('spd-rows').addEventListener('input', function (e) {
+    var f = e.target.getAttribute && e.target.getAttribute('data-f');
+    if (f === 'place' || f === 'theme') refreshStates();
+  });
 
   /* 照片：等比缩到最长边 1600 → JPEG → 与数据同一次提交 */
   function photoJpeg(file, max, quality) {
