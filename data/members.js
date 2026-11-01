@@ -24,6 +24,30 @@ window.ML_DATA.members = {
       "email": "",
       "homepage": "",
       "avatar": ""
+    },
+    {
+      "id": "m1793535218077",
+      "name_zh": "王子文",
+      "name": "Ziwen Wang",
+      "role": "博士研究生",
+      "group": "phd",
+      "year": "2022",
+      "research": "认知教育 · 鲁邦学习 ·  自动机器学习",
+      "email": "",
+      "homepage": "",
+      "avatar": ""
+    },
+    {
+      "id": "m1793535260890",
+      "name_zh": "李静",
+      "name": "Jing Li",
+      "role": "博士研究生",
+      "group": "phd",
+      "year": "2026",
+      "research": "进化智能优化 · 智能体辅助优化 · LLM",
+      "email": "",
+      "homepage": "",
+      "avatar": ""
     }
   ]
 }
