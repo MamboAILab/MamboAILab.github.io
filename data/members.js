@@ -48,6 +48,18 @@ window.ML_DATA.members = {
       "email": "",
       "homepage": "",
       "avatar": ""
+    },
+    {
+      "id": "m1793602113784",
+      "name_zh": "白慧珍",
+      "name": "Huizhen Bai",
+      "role": "硕士研究生",
+      "group": "master",
+      "year": "2025",
+      "research": "神经结构搜索",
+      "email": "",
+      "homepage": "",
+      "avatar": ""
     }
   ]
 }
