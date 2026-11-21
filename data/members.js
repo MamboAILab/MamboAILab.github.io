@@ -84,6 +84,66 @@ window.ML_DATA.members = {
       "email": "",
       "homepage": "",
       "avatar": ""
+    },
+    {
+      "id": "m1795275723493",
+      "name_zh": "李冰冰",
+      "name": "Bingbing Li",
+      "role": "硕士研究生",
+      "group": "master",
+      "year": "2025",
+      "research": "学习路径推荐",
+      "email": "",
+      "homepage": "",
+      "avatar": ""
+    },
+    {
+      "id": "m1795275726970",
+      "name_zh": "刘泳康",
+      "name": "Yongkang Liu",
+      "role": "硕士研究生",
+      "group": "master",
+      "year": "2024",
+      "research": "问题表征学习 · 算法自动配置",
+      "email": "",
+      "homepage": "",
+      "avatar": ""
+    },
+    {
+      "id": "m1795275728492",
+      "name_zh": "袁彪",
+      "name": "Biao Yuan",
+      "role": "硕士研究生",
+      "group": "master",
+      "year": "2024",
+      "research": "神经结构搜索 · 认知诊断",
+      "email": "",
+      "homepage": "",
+      "avatar": ""
+    },
+    {
+      "id": "m1795275729721",
+      "name_zh": "李文彪",
+      "name": "Wenbiao Li",
+      "role": "硕士研究生",
+      "group": "master",
+      "year": "2024",
+      "research": "算法自动配置",
+      "email": "",
+      "homepage": "",
+      "avatar": ""
+    },
+    {
+      "id": "m1795275731010",
+      "name_zh": "杨真",
+      "name": "Zhen Yang",
+      "role": "硕士毕业生",
+      "group": "alumni",
+      "year": "2023",
+      "research": "优化算法配置",
+      "email": "",
+      "homepage": "",
+      "avatar": ""
     }
   ]
 }
