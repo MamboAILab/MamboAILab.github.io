@@ -116,8 +116,8 @@ window.ML_DATA.special_days = {
               "place": "材料科学大楼A",
               "note": "詹记：桃酥 + 蛋挞 + 麻薯 + 蛋糕",
               "photos": [
-                "assets/img/special-days/2026-fall/2026f-2-1793540603580.jpg",
-                "assets/img/special-days/2026-fall/2026f-2-1795269819299.jpg"
+                "assets/img/special-days/2026-fall/2026f-2-1795269819299.jpg",
+                "assets/img/special-days/2026-fall/2026f-2-1793540603580.jpg"
               ]
             },
             {
