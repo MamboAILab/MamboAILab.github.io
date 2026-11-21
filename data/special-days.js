@@ -100,8 +100,8 @@ window.ML_DATA.special_days = {
               "theme": "卡旺卡",
               "date": "2026-10-31",
               "time": "10:00–12:00",
-              "place": "xx 大学 xxx 科学大楼 A601",
-              "note": "奶茶 + 果茶 + 小饼干",
+              "place": "材料科学大楼A",
+              "note": "干燥，啥也没有",
               "photos": [
                 "assets/img/special-days/2026-fall/2026f-1-1795273960547.jpg"
               ]
@@ -110,11 +110,11 @@ window.ML_DATA.special_days = {
               "id": "2026f-2",
               "type": "dessert",
               "name": "甜品日",
-              "theme": "詹记",
+              "theme": "詹记+喜茶",
               "date": "2026-11-21",
               "time": "10:00-12:00",
               "place": "材料科学大楼A",
-              "note": "詹记：桃酥 + 蛋挞 + 麻薯 + 蛋糕",
+              "note": "桃酥 + 蛋糕 + 蛋黄酥",
               "photos": [
                 "assets/img/special-days/2026-fall/2026f-2-1795269819299.jpg",
                 "assets/img/special-days/2026-fall/2026f-2-1795275251698.jpg",
@@ -175,4 +175,4 @@ window.ML_DATA.special_days = {
       ]
     }
   ]
-};
+}
