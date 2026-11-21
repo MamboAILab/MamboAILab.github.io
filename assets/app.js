@@ -353,15 +353,17 @@
 
   function pastCard(e) {
     var it = e.it;
-    var photos = (it.photos || []).filter(Boolean);
-    var cover = photos.length
-      ? '<div class="spd-cover"><img src="' + esc(photos[0]) + '" alt="' + esc(spdName(it)) + '" loading="lazy"></div>'
-      : '<div class="spd-cover is-empty"><span>现场照片待补充</span></div>';
-    var thumbs = photos.length > 1
-      ? '<div class="spd-photos">' + photos.slice(1, 7).map(function (p) {
-          return '<a href="' + esc(p) + '" target="_blank" rel="noopener"><img src="' + esc(p) + '" alt="" loading="lazy"></a>';
-        }).join('') + '</div>'
-      : '';
+    /* 多张照片 => 封面区自动轮播；单张 => 静态封面。不再渲染下方缩略图 */
+    var photos = (it.photos || []).filter(Boolean).slice(0, 6);
+    var n = photos.length;
+    var cover;
+    if (!n) {
+      cover = '<div class="spd-cover is-empty"><span>现场照片待补充</span></div>';
+    } else {
+      cover = '<div class="spd-cover' + (n > 1 ? ' is-slide' : '') + '">' + photos.map(function (p) {
+        return '<img src="' + esc(p) + '" alt="' + esc(spdName(it)) + '" loading="lazy">';
+      }).join('') + '</div>';
+    }
     return '<article class="spd">' + cover + '<div class="spd-body">' +
       '<div class="spd-top"><h3>' + esc(spdName(it)) + '</h3><span class="badge badge-done">已举办</span></div>' +
       (spdEn(it) ? '<p class="spd-en">' + esc(spdEn(it)) + '</p>' : '') +
@@ -369,7 +371,25 @@
       '<p class="when">' + esc(String(it.date).replace(/-/g, '.') + (it.time ? '　' + it.time : '')) + '</p>' +
       (it.place ? '<p class="spd-place">' + esc(it.place) + '</p>' : '') +
       (it.note ? '<p class="note">' + esc(it.note) + '</p>' : '') +
-      thumbs + '</div></article>';
+      '</div></article>';
+  }
+
+  /* ---------- 已举办卡片的多图轮播 ---------- */
+  var SPD_SLIDES = [];
+  function initSlides(scope) {
+    SPD_SLIDES.forEach(clearInterval);
+    SPD_SLIDES = [];
+    Array.prototype.forEach.call((scope || document).querySelectorAll('.spd-cover.is-slide'), function (cv) {
+      var imgs = cv.querySelectorAll('img');
+      if (imgs.length < 2) return;
+      var i = 0;
+      imgs[0].classList.add('is-on');
+      SPD_SLIDES.push(setInterval(function () {
+        imgs[i].classList.remove('is-on');
+        i = (i + 1) % imgs.length;
+        imgs[i].classList.add('is-on');
+      }, 5000));
+    });
   }
 
   function renderSpecialDays(root) {
@@ -472,6 +492,7 @@
           '<div class="term-head"><h3>' + esc(g.year + ' · ' + g.term) + '</h3>' +
           '<span>已举办 ' + g.items.length + ' / ' + g.total + ' 次</span></div>' +
           '<div class="spd-grid">' + g.items.map(pastCard).join('') + '</div></div>';
+        initSlides(pastEl);
       }
 
       function fillTerms(y, want) {
@@ -522,6 +543,7 @@
             '<span>已举办 ' + g.items.length + ' / ' + g.total + ' 次</span></div>' +
             '<div class="spd-grid">' + g.items.map(pastCard).join('') + '</div></div>';
         }).join('');
+        initSlides(pastEl);
       }
     }
 

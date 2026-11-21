@@ -626,10 +626,19 @@ body.has-hero .nav.is-top .nav-links > a.icon-btn:hover { color: #fff; backgroun
 }
 .spd:hover { transform: translateY(-3px); box-shadow: var(--shadow-lift); }
 .spd-cover {
+  position: relative; overflow: hidden;
   aspect-ratio: 4 / 3; background: var(--bg-soft); display: grid; place-items: center;
   color: var(--faint); font-size: 12.5px; border-bottom: 1px solid var(--line);
 }
 .spd-cover img { width: 100%; height: 100%; object-fit: cover; object-position: center 42%; }
+/* 多张照片：纵向叠放，JS 每 5 秒切换 .is-on 交叉淡入淡出 */
+.spd-cover.is-slide img {
+  position: absolute; inset: 0; opacity: 0; transition: opacity .9s ease-in-out;
+}
+.spd-cover.is-slide img.is-on { opacity: 1; }
+@media (prefers-reduced-motion: reduce) {
+  .spd-cover.is-slide img { transition: none; }
+}
 .spd-cover.is-empty {
   background:
     repeating-linear-gradient(45deg, transparent 0 9px, rgba(16, 24, 40, .018) 9px 18px),
@@ -653,8 +662,6 @@ html[data-theme="dark"] .spd-cover.is-empty {
 }
 .badge { font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 999px; white-space: nowrap; }
 .badge-done { background: var(--pill); color: var(--muted); }
-.spd-photos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; margin-top: 12px; }
-.spd-photos img { aspect-ratio: 1; object-fit: cover; border-radius: 6px; }
 
 /* ---------- 正文 / 其他 ---------- */
 .prose h2 { font-size: 1.3rem; margin: 42px 0 12px; letter-spacing: -.015em; }
