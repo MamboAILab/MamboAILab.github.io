@@ -102,7 +102,9 @@ window.ML_DATA.special_days = {
               "time": "10:00–12:00",
               "place": "xx 大学 xxx 科学大楼 A601",
               "note": "奶茶 + 果茶 + 小饼干",
-              "photos": []
+              "photos": [
+                "assets/img/special-days/2026-fall/2026f-1-1795273960547.jpg"
+              ]
             },
             {
               "id": "2026f-2",
