@@ -112,9 +112,10 @@ window.ML_DATA.special_days = {
               "date": "2026-11-21",
               "time": "10:00-12:00",
               "place": "材料科学大楼A",
-              "note": "纸杯蛋糕 + 蛋挞 + 布丁",
+              "note": "詹记：桃酥 + 蛋挞 + 麻薯 + 蛋糕",
               "photos": [
-                "assets/img/special-days/2026-fall/2026f-2-1793540603580.jpg"
+                "assets/img/special-days/2026-fall/2026f-2-1793540603580.jpg",
+                "assets/img/special-days/2026-fall/2026f-2-1795269819299.jpg"
               ]
             },
             {
@@ -132,11 +133,11 @@ window.ML_DATA.special_days = {
               "id": "2026f-4",
               "type": "meat",
               "name": "肉食日",
-              "theme": "",
-              "date": "",
-              "time": "",
-              "place": "",
-              "note": "鸡翅 + 周黑鸭 + 鸡米花",
+              "theme": "卤味 + 炸货 + 饮料",
+              "date": "2026-12-12",
+              "time": "10:00–12:00",
+              "place": "材料科学大楼A",
+              "note": "卤味拼盘 + 炸货 + 饮料",
               "photos": []
             },
             {
@@ -171,4 +172,4 @@ window.ML_DATA.special_days = {
       ]
     }
   ]
-}
+};
