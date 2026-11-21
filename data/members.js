@@ -60,6 +60,30 @@ window.ML_DATA.members = {
       "email": "",
       "homepage": "",
       "avatar": ""
+    },
+    {
+      "id": "m1795274329034",
+      "name_zh": "杨昊锟",
+      "name": "Haokun Yang",
+      "role": "硕士研究生",
+      "group": "master",
+      "year": "2025",
+      "research": "认知驱动的学习优化",
+      "email": "",
+      "homepage": "",
+      "avatar": ""
+    },
+    {
+      "id": "m1795274373336",
+      "name_zh": "肖凯文",
+      "name": "Kaiwen Xiao",
+      "role": "硕士研究生",
+      "group": "master",
+      "year": "2025",
+      "research": "算法自动设计",
+      "email": "",
+      "homepage": "",
+      "avatar": ""
     }
   ]
 }
