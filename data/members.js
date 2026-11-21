@@ -204,6 +204,30 @@ window.ML_DATA.members = {
       "email": "",
       "homepage": "",
       "avatar": ""
+    },
+    {
+      "id": "m1795276459918",
+      "name_zh": "甄诚",
+      "name": "Cheng Zhen",
+      "role": "硕士",
+      "group": "alumni",
+      "year": "2021",
+      "research": "神经结构搜索 · 认知诊断",
+      "email": "",
+      "homepage": "",
+      "avatar": ""
+    },
+    {
+      "id": "m1795276462298",
+      "name_zh": "孙湘坤",
+      "name": "Xiangkun Sun",
+      "role": "硕士",
+      "group": "alumni",
+      "year": "2021",
+      "research": "神经结构搜索 · 鲁棒学习",
+      "email": "",
+      "homepage": "",
+      "avatar": ""
     }
   ]
 }
