@@ -371,19 +371,19 @@
 
     var n = 0;
     var html = '<p class="cf-intro">' + esc(C.intro) + '</p>' + kpiHTML(e) + overviewHTML(C, e, ++n);
-    /* 会议式阅读顺序：概览 → 场地与时间 → 议程 → 组委会 → 赞助 → 目标 → 甄选 → 历届 */
+    /* 最新阅读顺序：概览 → 本届目标 → 场地 → 议程 → 组委会 → 增选 → 赞助 → 历届 */
+    if (e.goals && e.goals.length) html += goalsHTML(e, ++n);
     if (e.photos && e.photos.length) {
       html += photosHTML(e.photos, year >= 2025 ? '场地信息' : '现场', ++n);
     }
     if (e.scene && e.scene.length) html += photosHTML(e.scene, '晚会现场', ++n);
     if (e.program && e.program.length) html += programHTML(e, ++n);
     if ((e.chair_groups && e.chair_groups.length) || (e.chairs && e.chairs.length)) html += chairsHTML(e, ++n);
+    if (e.call) html += callHTML(e, ++n);
+    if (e.applicants && e.applicants.length) html += applicantsHTML(e, ++n);
     if (e.sponsors) html += sponsorsHTML(e, ++n);
     if (e.stats && e.stats.length) html += statsHTML(e, ++n);
     if (e.menu && e.menu.length) html += menuHTML(e, ++n);
-    if (e.applicants && e.applicants.length) html += applicantsHTML(e, ++n);
-    if (e.goals && e.goals.length) html += goalsHTML(e, ++n);
-    if (e.call) html += callHTML(e, ++n);
     html += pastHTML(C.editions, year, ++n);
     body.innerHTML = '<div class="wrap">' + html + '</div>';
 
