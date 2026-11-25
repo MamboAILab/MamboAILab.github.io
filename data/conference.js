@@ -1,7 +1,7 @@
 window.ML_DATA = window.ML_DATA || {};
 window.ML_DATA.conference = {
   "name_zh": "BIMK 博士吃喝群平安夜晚会",
-  "name_en": "BIMK Doctoral Dining Group · Christmas Eve Banquet",
+  "name_en": "BIMK PhD Students’ Christmas Eve Dinner",
   "short": "博士吃喝群平安夜晚会",
   "host": "生物智能与知识发现研究所（BIMK）· 博士吃喝群组委会",
   "intro": "一场每年平安夜举办的课题组聚餐：不讲论文、不排议程，只负责把一整年没坐在一起吃过的饭补上。自 2023 年首届起，已连续举办三届，2026 年为第四届。",
@@ -33,7 +33,7 @@ window.ML_DATA.conference = {
       "chair_groups": [
         {
           "title": "荣誉主席",
-          "en": "Honorable General Chairs",
+          "en": "Honorary General Chairs",
           "members": [
             { "name": "田野", "photo": "assets/img/conference/people/tianye.jpg", "meta": ["教授、博士生导师", "国家优青（B）人才", "合肥市 C 类人才"] },
             { "name": "彭媛媛", "photo": "assets/img/conference/people/pengyuanyuan.jpg", "meta": ["著名教育家、美食家、摄影家", "旅游达人、维权达人", "合肥市重点企业法人代表"] }
@@ -65,7 +65,7 @@ window.ML_DATA.conference = {
         { "t": "组委会与增选", "d": "申请人介绍 + 现场投票" },
         { "t": "场地与菜单", "d": "本届场地介绍、食谱统计" },
         { "t": "参会统计", "d": "人数、年龄、行业分布" },
-        { "t": "颁奖仪式", "en": "Award Ceremony", "d": "本届新增环节，奖项设置待定" },
+        { "t": "颁奖仪式", "en": "Awards Ceremony", "d": "本届新增环节，奖项设置待定" },
         { "t": "下届展望", "d": "交接与下一届筹备" }
       ],
       "sponsors": {
@@ -132,7 +132,7 @@ window.ML_DATA.conference = {
       "chair_groups": [
         {
           "title": "荣誉主席",
-          "en": "Honorable General Chairs",
+          "en": "Honorary General Chairs",
           "members": [
             { "name": "田野", "photo": "assets/img/conference/people/tianye.jpg", "meta": ["教授、博士生导师", "国家优青（B）人才"] },
             { "name": "彭媛媛", "photo": "assets/img/conference/people/pengyuanyuan.jpg", "meta": ["著名教育家、美食家、摄影家"] }
@@ -140,7 +140,7 @@ window.ML_DATA.conference = {
         },
         {
           "title": "组织主席",
-          "en": "Local General Chairs",
+          "en": "Local Organizing Chairs",
           "members": [
             { "name": "杨尚尚", "photo": "assets/img/conference/people/yangshangshang.jpg", "meta": ["教授、博士生导师", "组委会常委（候）· 第三届承办"] },
             { "name": "胡梦岚", "photo": "assets/img/conference/people/humenglan.jpg", "meta": ["著名企业家、智能座舱开发者", "健身达人、哭闹达人"] }

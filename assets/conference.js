@@ -80,7 +80,7 @@
           '<div class="cf-hero-copy">' +
             '<p class="cf-eyebrow">BIMK · 博士吃喝群 · ' + esc(e.ordinal) + '</p>' +
             '<h1>' + esc(C.short) + '</h1>' +
-            '<p class="cf-en">' + esc(e.ordinal_en) + ' Edition · BIMK Doctoral Dining Group · Christmas Eve Banquet</p>' +
+            '<p class="cf-en">The ' + esc(e.ordinal_en) + ' ' + esc(C.name_en) + '</p>' +
             '<p class="cf-meta">' +
               '<span>' + esc(e.date_label) + '</span>' +
               '<span>' + esc(e.venue) + '</span>' +
@@ -175,7 +175,7 @@
 
   function kpiHTML(e) {
     return '<div class="cf-kpis">' +
-      '<div class="cf-kpi"><span class="k">届次</span><strong>' + esc(e.ordinal) + '</strong><em>' + esc(e.ordinal_en) + ' Edition</em></div>' +
+      '<div class="cf-kpi"><span class="k">届次</span><strong>' + esc(e.ordinal) + '</strong><em>The ' + esc(e.ordinal_en) + ' Dinner</em></div>' +
       '<div class="cf-kpi"><span class="k">日期</span><strong>' + esc(e.date_label.replace(/（.*?）/g, '')) + '</strong><em>平安夜</em></div>' +
       '<div class="cf-kpi"><span class="k">地点</span><strong>' + esc(e.venue) + '</strong><em>' + esc(e.venue_note || '') + '</em></div>' +
       '<div class="cf-kpi"><span class="k">参会</span><strong>' + esc(e.attendance) + '</strong><em>' + esc(e.attendance_note || '') + '</em></div>' +
@@ -217,7 +217,7 @@
 
   function committeeHTML(list) {
     if (!list || !list.length) return '';
-    return '<div class="cf-comm"><h3 class="cf-comm-t">组委会成员<span>Committee Members</span></h3>' +
+    return '<div class="cf-comm"><h3 class="cf-comm-t">组委会成员<span>Organizing Committee Members</span></h3>' +
       '<p class="cf-committee">' + list.map(function (x) { return '<em>' + esc(x) + '</em>'; }).join('') + '</p></div>';
   }
 
