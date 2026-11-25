@@ -9,7 +9,7 @@ window.ML_DATA.conference = {
     {
       "year": 2026,
       "theme": "2026",
-      "bg": "assets/img/conference/bg/2026.jpg",
+      "bg": "assets/img/conference/bg/2026.webp",
       "ordinal": "第四届",
       "ordinal_en": "4th",
       "status": "upcoming",
@@ -22,10 +22,10 @@ window.ML_DATA.conference = {
       "city": "合肥",
       "attendance": "待统计",
       "attendance_note": "目标：不低于上届 16 人",
-      "lead": "第四届平安夜晚会定于 2026 年 12 月 24 日（周四） 19:00 开席，由杨尚尚、胡梦岚组织承办，继续选址龙湖翠湖一号。这里毗邻翡翠湖，115 ㎡ 三室两厅，也是第三届的举办地。本届首次增设颁奖仪式与钻石赞助商席位，并同步进行组委会增选。",
+      "lead": "第四届平安夜晚会定于 2026 年 12 月 24 日（周四） 19:00 开席，由杨尚尚、胡梦岚、张亚杰组织承办，继续选址龙湖翠湖一号。这里毗邻翡翠湖，115 ㎡ 三室两厅，也是第三届的举办地。本届首次增设颁奖仪式与钻石赞助商席位，并同步进行组委会增选。",
       "dates": [
         { "k": "晚会场地", "v": "龙湖翠湖一号", "note": "翡翠湖畔 · 115 ㎡ 三室两厅，与第三届同一场地" },
-        { "k": "组织承办", "v": "杨尚尚、胡梦岚", "note": "第四届晚会组织与场地承办" },
+        { "k": "组织承办", "v": "杨尚尚、胡梦岚、张亚杰", "note": "第四届晚会组织与场地承办" },
         { "k": "组委会增选", "v": "晚会现场", "note": "个人申请 → 一名委员提名推荐 → 现场报名投票" },
         { "k": "签到入场", "v": "18:30–19:00", "note": "到场、就座" },
         { "k": "正式开席", "v": "2026.12.24 19:00", "note": "平安夜当晚，北京时间" }
@@ -85,28 +85,40 @@ window.ML_DATA.conference = {
               {
                 "name": "司朗春",
                 "name_en": "Langchun Si",
-                "role": "安徽大学计算机科学与技术学院 博士研究生",
+                "role": "安徽大学计算机科学与技术学院 博士后",
                 "photo": "assets/img/conference/sponsors/silangchun.jpg"
               },
               {
                 "name": "田野",
                 "name_en": "Ye Tian",
-                "role": "安徽大学计算机科学与技术学院 副教授 · IEEE Member",
+                "role": "安徽大学计算机科学与技术学院 教授 · IEEE Member",
                 "photo": "assets/img/conference/sponsors/tianye.jpg"
               },
               {
                 "name": "盛子默",
                 "name_en": "Zimo Sheng",
-                "role": "安徽大学计算机科学与技术学院 讲师 · 硕士生导师",
+                "role": "安徽大学计算机科学与技术学院 教授",
                 "photo": "assets/img/conference/sponsors/shengzimo.jpg"
               },
               {
                 "name": "江浩",
                 "name_en": "Hao Jiang",
-                "role": "安徽大学计算机科学与技术学院 副教授 · 博士生导师",
+                "role": "安徽大学计算机科学与技术学院 教授",
                 "photo": "assets/img/conference/sponsors/jianghao.jpg"
               }
             ]
+          },
+          {
+            "title": "金牌赞助商",
+            "en": "Gold Sponsors",
+            "level": "gold",
+            "slots": []
+          },
+          {
+            "title": "银牌赞助商",
+            "en": "Silver Sponsors",
+            "level": "silver",
+            "slots": []
           }
         ]
       },
@@ -119,7 +131,7 @@ window.ML_DATA.conference = {
     {
       "year": 2025,
       "theme": "2025",
-      "bg": "assets/img/conference/bg/2025.jpg",
+      "bg": "assets/img/conference/bg/2025.webp",
       "ordinal": "第三届",
       "ordinal_en": "3rd",
       "status": "past",
@@ -194,7 +206,7 @@ window.ML_DATA.conference = {
     {
       "year": 2024,
       "theme": "2024",
-      "bg": "assets/img/conference/bg/2024.jpg",
+      "bg": "assets/img/conference/bg/2024.webp",
       "ordinal": "第二届",
       "ordinal_en": "2nd",
       "status": "past",
@@ -229,7 +241,7 @@ window.ML_DATA.conference = {
     {
       "year": 2023,
       "theme": "2023",
-      "bg": "assets/img/conference/bg/2023.jpg",
+      "bg": "assets/img/conference/bg/2023.webp",
       "ordinal": "首届",
       "ordinal_en": "1st",
       "status": "past",

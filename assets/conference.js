@@ -73,7 +73,10 @@
     return '' +
       '<section class="cf-hero cf-y' + esc(theme) + '">' +
         '<div class="cf-hero-bg" aria-hidden="true">' +
-          (e.bg ? '<img src="' + esc(e.bg) + '" alt="">' : '') +
+          (e.bg ? '<img src="' + esc(e.bg) + '" alt="" fetchpriority="high" decoding="async">' : '') +
+          '<span class="cf-snow cf-snow-far"></span>' +
+          '<span class="cf-snow cf-snow-near"></span>' +
+          '<span class="cf-glow"></span>' +
           '<span class="cf-ghost">' + esc(e.year) + '</span>' +
         '</div>' +
         '<div class="wrap cf-hero-inner">' +
@@ -190,8 +193,8 @@
     }).join('');
     return sec(n, '概览',
       '<div class="cf-split">' +
-        '<div class="cf-lead"><p>' + esc(e.lead) + '</p>' +
-          '<p class="cf-hostnote">主办：' + esc(C.host) + '</p></div>' +
+        '<div class="cf-lead"><p class="cf-kicker">关于本届 <span>Overview</span></p><p>' + esc(e.lead) + '</p>' +
+          '<p class="cf-hostnote"><span>主办单位</span>' + esc(C.host) + '</p></div>' +
         '<div class="cf-dates">' + dates + '</div>' +
       '</div>');
   }
@@ -254,21 +257,30 @@
   var DIAMOND_SVG = '<svg class="cf-diamond" viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
     '<path d="M12 2.6 21 8.4 12 21.4 3 8.4Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>' +
     '<path d="M3 8.4h18M12 2.6 7.6 8.4 12 21.4 16.4 8.4 12 2.6M7.6 8.4 5.6 4.4M16.4 8.4l2-4" stroke="currentColor" stroke-width="1" stroke-linejoin="round" opacity=".65"/></svg>';
+  var MEDAL_SVG = '<svg class="cf-diamond" viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
+    '<path d="m7 3 2.6 7h4.8L17 3M9 3l2 5m4-5-2 5" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>' +
+    '<circle cx="12" cy="15" r="6" stroke="currentColor" stroke-width="1.5"/>' +
+    '<path d="m12 11.4 1.05 2.13 2.35.34-1.7 1.66.4 2.34L12 16.77l-2.1 1.1.4-2.34-1.7-1.66 2.35-.34L12 11.4Z" fill="currentColor"/></svg>';
+  function sponsorIcon(level) {
+    return level === 'gold' || level === 'silver' ? MEDAL_SVG : DIAMOND_SVG;
+  }
 
-  /* 钻石赞助商：照片、Diamond 标识、姓名与职务；不展示简介折叠和主页链接。 */
-  function sponsorCard(s) {
+  /* 赞助商仅展示等级、照片、姓名与职务；空层级显示一块轻量招募区，不虚构席位。 */
+  function sponsorCard(s, level, label) {
     if (!s || !s.name) {
       return '<div class="cf-sp is-open">' +
-        '<span class="cf-sp-badge" aria-hidden="true">' + DIAMOND_SVG + '</span>' +
-        '<p class="cf-sp-name">钻石赞助商 · 席位 ' + esc((s && s.seat) || '') + '</p>' +
-        '<p class="cf-sp-note">待定</p></div>';
+        '<span class="cf-sp-badge" aria-hidden="true">' + sponsorIcon(level) + '</span>' +
+        '<p class="cf-sp-name">虚位以待</p>' +
+        '<p class="cf-sp-note">诚邀支持 · ' + esc(label || '赞助商') + '</p></div>';
     }
     var media = s.photo
       ? '<img class="cf-sp-photo" src="' + esc(s.photo) + '" alt="' + esc(s.name) + '" loading="lazy">'
       : '<span class="cf-sp-mono" aria-hidden="true">' + esc(initial(s.name)) + '</span>';
+    var short = (level === 'gold' || level === 'silver')
+      ? (level === 'gold' ? 'Gold' : 'Silver') : 'Diamond';
     return '<article class="cf-sp filled">' +
       '<div class="cf-sp-top">' + media +
-        '<p class="cf-sp-seat">' + DIAMOND_SVG + 'Diamond</p></div>' +
+        '<p class="cf-sp-seat">' + sponsorIcon(level) + short + '</p></div>' +
       '<p class="cf-sp-name">' + esc(s.name) + (s.name_en ? '<span class="cf-sp-name-en">' + esc(s.name_en) + '</span>' : '') + '</p>' +
       (s.role ? '<p class="cf-sp-role">' + esc(s.role) + '</p>' : '') +
       (s.thanks ? '<p class="cf-sp-thanks">' + esc(s.thanks) + '</p>' : '') +
@@ -280,9 +292,12 @@
     if (!sp || !sp.tiers || !sp.tiers.length) return '';
     var tiers = sp.tiers.map(function (t) {
       var slots = t.slots || [];
-      var cards = slots.map(sponsorCard).join('');
-      return '<div class="cf-sp-tier">' +
-        '<div class="cf-sp-tier-head"><h3>' + DIAMOND_SVG + esc(t.title) + '</h3><span>' + esc(t.en || '') + '</span></div>' +
+      var level = t.level || 'diamond';
+      var cards = slots.length
+        ? slots.map(function (s) { return sponsorCard(s, level, t.title); }).join('')
+        : sponsorCard(null, level, t.title);
+      return '<div class="cf-sp-tier cf-sp-' + level + '">' +
+        '<div class="cf-sp-tier-head"><h3>' + sponsorIcon(level) + esc(t.title) + '</h3><span>' + esc(t.en || '') + '</span></div>' +
         '<div class="cf-sp-grid">' + cards + '</div></div>';
     }).join('');
     return '<section class="cf-sec" id="cf-sponsors">' +
@@ -332,7 +347,7 @@
 
   function goalsHTML(e, n) {
     if (!e.goals || !e.goals.length) return '';
-    return sec(n, '本届目标', '<ul class="cf-goals">' + e.goals.map(function (g) { return '<li>' + esc(g) + '</li>'; }).join('') + '</ul>');
+    return sec(n, '本届目标', '<ol class="cf-goals">' + e.goals.map(function (g) { return '<li>' + esc(g) + '</li>'; }).join('') + '</ol>');
   }
 
   function callHTML(e, n) {
