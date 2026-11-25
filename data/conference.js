@@ -1,7 +1,7 @@
 window.ML_DATA = window.ML_DATA || {};
 window.ML_DATA.conference = {
   "name_zh": "BIMK 博士吃喝群平安夜晚会",
-  "name_en": "BIMK PhD Student Food & Wine Group Christmas Eve Dinner (Special Activity)",
+  "name_en": "BIMK PhD Student Food & Wine Group Christmas Eve Banquet",
   "short": "博士吃喝群平安夜晚会",
   "host": "生物智能与知识发现研究所（BIMK）· 博士吃喝群组委会",
   "intro": "一场每年平安夜举办的课题组聚餐：不讲论文、不排议程，只负责把一整年没坐在一起吃过的饭补上。自 2023 年首届起，已连续举办三届，2026 年为第四届。",
@@ -185,10 +185,10 @@ window.ML_DATA.conference = {
         { "src": "assets/img/conference/venue-2.jpg", "cap": "115 ㎡ 户型图" }
       ],
       "scene": [
-        { "src": "assets/img/conference/2025-1.jpg", "cap": "第三届现场 · 一桌人的自拍" },
-        { "src": "assets/img/conference/2025-2.jpg", "cap": "第三届现场 · 举杯" },
-        { "src": "assets/img/conference/2025-3.jpg", "cap": "第三届现场 · 长桌、菜单与本届主题" },
-        { "src": "assets/img/conference/2025-4.jpg", "cap": "第三届现场 · 18:51 的监控画面" }
+        { "src": "assets/img/conference/2025-1.jpg", "cap": "大合影" },
+        { "src": "assets/img/conference/2025-2.jpg", "cap": "举杯" },
+        { "src": "assets/img/conference/2025-3.jpg", "cap": "餐前准备" },
+        { "src": "assets/img/conference/2025-4.jpg", "cap": "第三人称视角" }
       ]
     },
     {
@@ -222,8 +222,8 @@ window.ML_DATA.conference = {
         }
       ],
       "photos": [
-        { "src": "assets/img/conference/2024-1.jpg", "cap": "第二届现场 · 餐桌合影" },
-        { "src": "assets/img/conference/2024-2.jpg", "cap": "第二届现场 · 长桌与圣诞装饰" }
+        { "src": "assets/img/conference/2024-1.jpg", "cap": "憔悴的田彭氏和开心的大家" },
+        { "src": "assets/img/conference/2024-2.jpg", "cap": "正在开花的小甜心" }
       ]
     },
     {
