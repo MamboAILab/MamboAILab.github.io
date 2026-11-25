@@ -339,8 +339,8 @@
     if (!e.call) return '';
     var steps = '<ol class="cf-steps">' + e.call.items.map(function (s) { return '<li>' + esc(s) + '</li>'; }).join('') + '</ol>';
     return '<section class="cf-sec" id="cf-call">' +
-      '<div class="section-head"><h2><span class="num">' + pad(n) + '</span>组委会增选</h2></div>' +
-      '<div class="cf-call"><p class="cf-call-t">' + esc(e.call.title) + '</p>' +
+      '<div class="section-head"><h2><span class="num">' + pad(n) + '</span>组委会甄选</h2></div>' +
+      '<div class="cf-call"><p class="cf-call-t">Call for Committee Members</p>' +
       '<p>' + esc(e.call.body) + '</p>' + steps + '</div></section>';
   }
 
@@ -371,19 +371,20 @@
 
     var n = 0;
     var html = '<p class="cf-intro">' + esc(C.intro) + '</p>' + kpiHTML(e) + overviewHTML(C, e, ++n);
-    if ((e.chair_groups && e.chair_groups.length) || (e.chairs && e.chairs.length)) html += chairsHTML(e, ++n);
-    if (e.program && e.program.length) html += programHTML(e, ++n);
-    if (e.stats && e.stats.length) html += statsHTML(e, ++n);
-    if (e.menu && e.menu.length) html += menuHTML(e, ++n);
+    /* 会议式阅读顺序：概览 → 场地与时间 → 议程 → 组委会 → 赞助 → 目标 → 甄选 → 历届 */
     if (e.photos && e.photos.length) {
-      html += photosHTML(e.photos, year >= 2025 ? '本届场地' : '现场', ++n);
+      html += photosHTML(e.photos, year >= 2025 ? '场地信息' : '现场', ++n);
     }
     if (e.scene && e.scene.length) html += photosHTML(e.scene, '晚会现场', ++n);
+    if (e.program && e.program.length) html += programHTML(e, ++n);
+    if ((e.chair_groups && e.chair_groups.length) || (e.chairs && e.chairs.length)) html += chairsHTML(e, ++n);
+    if (e.sponsors) html += sponsorsHTML(e, ++n);
+    if (e.stats && e.stats.length) html += statsHTML(e, ++n);
+    if (e.menu && e.menu.length) html += menuHTML(e, ++n);
     if (e.applicants && e.applicants.length) html += applicantsHTML(e, ++n);
     if (e.goals && e.goals.length) html += goalsHTML(e, ++n);
-    /* 赞助商放在页面最下方，历届回顾之后 */
+    if (e.call) html += callHTML(e, ++n);
     html += pastHTML(C.editions, year, ++n);
-    if (e.sponsors) html += sponsorsHTML(e, ++n);
     body.innerHTML = '<div class="wrap">' + html + '</div>';
 
     bindYearPicker();
