@@ -68,16 +68,47 @@ window.ML_DATA.conference = {
         { "t": "下届展望", "d": "交接与下一届筹备" }
       ],
       "sponsors": {
-        "note": "本届首次开放赞助，钻石赞助商共 4 席，名单与介绍将陆续公布。",
+        "note": "本届首次开放赞助，钻石赞助商共 4 席。以下按席位排序，点击卡片上的「简介 / Bio」可展开完整介绍。",
         "tiers": [
           {
             "title": "钻石赞助商",
             "en": "Diamond Sponsors",
             "slots": [
-              { "seat": "01" },
-              { "seat": "02" },
-              { "seat": "03" },
-              { "seat": "04" }
+              {
+                "seat": "01",
+                "name": "司朗春",
+                "name_en": "Langchun Si",
+                "role": "安徽大学计算机科学与技术学院 博士研究生",
+                "photo": "assets/img/conference/sponsors/silangchun.jpg",
+                "bio": "2019 年于安徽大学获学士学位，目前于安徽大学计算机科学与技术学院攻读博士学位。研究方向包括进化大规模多目标优化、代理模型与放疗优化。",
+                "bio_en": "Langchun Si received the B.Sc. degree from Anhui University, Hefei, China, in 2019, where he is currently pursuing the Ph.D. degree with the School of Computer Science and Technology, Anhui University, Hefei, China. His current research interests include evolutionary large-scale multi-objective optimization, surrogate models and radiotherapy optimization."
+              },
+              {
+                "seat": "02",
+                "name": "田野",
+                "name_en": "Ye Tian",
+                "role": "安徽大学计算机科学与技术学院 副教授 · IEEE Member",
+                "photo": "assets/img/conference/sponsors/tianye.jpg",
+                "bio": "分别于 2012、2015、2018 年在安徽大学获学士、硕士、博士学位，现任安徽大学计算机科学与技术学院副教授，研究方向为计算智能及其应用。曾获 2018、2021、2024 年 IEEE TEVC 杰出论文奖、2020 年 IEEE CIM 杰出论文奖，以及 2022 年 IEEE CIS 杰出博士学位论文奖。",
+                "bio_en": "Ye Tian (Member, IEEE) received the B.Sc., M.Sc., and Ph.D. degrees from Anhui University, Hefei, China, in 2012, 2015, and 2018, respectively. He is currently an Associate Professor with the School of Computer Science and Technology, Anhui University, Hefei, China. His current research interests include computational intelligence and its applications. He is the recipient of the 2018, 2021, and 2024 IEEE TEVC Outstanding Paper Awards, the 2020 IEEE CIM Outstanding Paper Award, and the 2022 IEEE CIS Outstanding PhD Dissertation Award."
+              },
+              {
+                "seat": "03",
+                "name": "盛子默",
+                "name_en": "Zimo Sheng",
+                "role": "安徽大学计算机科学与技术学院 讲师 · 硕士生导师",
+                "url": "https://cs.ahu.edu.cn/2025/0926/c20808a374861/page.htm",
+                "bio": "安徽大学计算机科学与技术学院硕士生导师、讲师，目前主持国家自然科学基金青年项目 1 项。本、硕、博均毕业于电子科技大学计算机科学与工程学院，师从肖鸣宇教授，于 2024 年 12 月获得博士学位；2025 年 3 月通过人才引进入职安徽大学计算机学院，进入张兴义教授团队。研究方向涵盖计算理论、进化算法理论及应用，重点围绕图问题的参数算法与核心化算法开展研究。以第一作者身份在《中国科学：信息科学》、Theoretical Computer Science 等期刊，以及 IJCAI、COCOON 等会议上发表多篇论文，并担任 AAAI、IJCAI、COCOON、Theoretical Computer Science 等期刊与会议的审稿人。"
+              },
+              {
+                "seat": "04",
+                "name": "江浩",
+                "name_en": "Hao Jiang",
+                "role": "安徽大学计算机科学与技术学院 副教授 · 博士生导师",
+                "photo": "assets/img/conference/sponsors/jianghao.jpg",
+                "url": "https://cs.ahu.edu.cn/2024/0827/c20807a346163/page.htm",
+                "bio": "男，博士，安徽大学计算机科学与技术学院副教授，主要研究方向为多目标进化优化及其在智慧物流中的应用。近三年发表论文十余篇，其中以第一作者发表中科院一区论文 2 篇、二区论文 6 篇。主持国家自然科学基金青年项目 1 项，并担任 IEEE Transactions on Emerging Topics in Computational Intelligence、Swarm and Evolutionary Computation、Applied Soft Computing 等多个国际知名期刊审稿人。"
+              }
             ]
           }
         ]

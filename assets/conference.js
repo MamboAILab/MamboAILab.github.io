@@ -231,31 +231,64 @@
     return sec(n, '晚会议程', '<ol class="cf-prog">' + rows + '</ol>');
   }
 
-  /* 赞助商：钻石 4 席占位，拿到 logo 与介绍后在数据里填 name / logo / url / note 即可 */
+  /* 赞助商：钻石 4 席。数据里每个席位可填
+     name / name_en / role / photo / bio / bio_en / url / thanks（赞助内容）。
+     简介默认收起，点「简介 / Bio」展开；没有照片的用姓名字标。 */
+  function sponsorCard(s) {
+    if (!s || !s.name) {
+      return '<div class="cf-sp is-open">' +
+        '<span class="cf-sp-badge" aria-hidden="true">◇</span>' +
+        '<p class="cf-sp-name">钻石赞助商 · 席位 ' + esc((s && s.seat) || '') + '</p>' +
+        '<p class="cf-sp-note">待定</p></div>';
+    }
+    var id = 'cf-sp-bio-' + esc(s.seat || Math.random().toString(36).slice(2, 8));
+    var media = s.photo
+      ? '<img class="cf-sp-photo" src="' + esc(s.photo) + '" alt="' + esc(s.name) + '" loading="lazy">'
+      : '<span class="cf-sp-mono" aria-hidden="true">' + esc(initial(s.name)) + '</span>';
+    var links = '';
+    if (s.url) links += '<a href="' + esc(s.url) + '" target="_blank" rel="noopener">主页</a>';
+    var bio = (s.bio || s.bio_en)
+      ? '<button type="button" class="cf-sp-toggle" data-bio="' + id + '" aria-expanded="false" aria-controls="' + id + '">简介 / Bio<span class="cf-sp-caret" aria-hidden="true"></span></button>' +
+        '<div class="cf-sp-bio" id="' + id + '" hidden>' +
+          (s.bio ? '<p>' + esc(s.bio) + '</p>' : '') +
+          (s.bio_en ? '<p class="cf-sp-bio-en" lang="en">' + esc(s.bio_en) + '</p>' : '') +
+        '</div>'
+      : '';
+    return '<article class="cf-sp filled">' +
+      '<div class="cf-sp-top">' + media +
+        '<p class="cf-sp-seat">Diamond · ' + esc(s.seat || '') + '</p></div>' +
+      '<p class="cf-sp-name">' + esc(s.name) + (s.name_en ? '<span class="cf-sp-name-en">' + esc(s.name_en) + '</span>' : '') + '</p>' +
+      (s.role ? '<p class="cf-sp-role">' + esc(s.role) + '</p>' : '') +
+      (s.thanks ? '<p class="cf-sp-thanks">' + esc(s.thanks) + '</p>' : '') +
+      (links ? '<p class="cf-sp-links">' + links + '</p>' : '') +
+      bio +
+    '</article>';
+  }
+
   function sponsorsHTML(e, n) {
     var sp = e.sponsors;
     if (!sp || !sp.tiers || !sp.tiers.length) return '';
     var tiers = sp.tiers.map(function (t) {
       var slots = t.slots || [];
-      var cards = slots.map(function (s) {
-        if (s.name || s.logo) {
-          var inner = (s.logo ? '<img src="' + esc(s.logo) + '" alt="' + esc(s.name || '') + '">' : '') +
-            '<p class="cf-sp-name">' + esc(s.name || '') + '</p>' +
-            (s.note ? '<p class="cf-sp-note">' + esc(s.note) + '</p>' : '');
-          return s.url
-            ? '<a class="cf-sp filled" href="' + esc(s.url) + '" target="_blank" rel="noopener">' + inner + '</a>'
-            : '<div class="cf-sp filled">' + inner + '</div>';
-        }
-        return '<div class="cf-sp is-open">' +
-          '<span class="cf-sp-badge" aria-hidden="true">◇</span>' +
-          '<p class="cf-sp-name">钻石赞助商 · 席位 ' + esc(s.seat) + '</p>' +
-          '<p class="cf-sp-note">待定</p></div>';
-      }).join('');
+      var cards = slots.map(sponsorCard).join('');
       return '<div class="cf-sp-tier">' +
         '<div class="cf-sp-tier-head"><h3>' + esc(t.title) + '</h3><span>' + esc(t.en || '') + '</span></div>' +
-        '<div class="cf-sp-grid n' + slots.length + '">' + cards + '</div></div>';
+        '<div class="cf-sp-grid">' + cards + '</div></div>';
     }).join('');
     return sec(n, '赞助商', tiers, '<span class="cf-note">' + esc(sp.note || '') + '</span>');
+  }
+
+  function bindSponsors(scope) {
+    Array.prototype.forEach.call(scope.querySelectorAll('.cf-sp-toggle'), function (btn) {
+      btn.addEventListener('click', function () {
+        var box = document.getElementById(btn.getAttribute('data-bio'));
+        if (!box) return;
+        var open = box.hidden;
+        box.hidden = !open;
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        btn.classList.toggle('open', open);
+      });
+    });
   }
 
   function statsHTML(e, n) {
@@ -363,6 +396,7 @@
     body.innerHTML = '<div class="wrap">' + html + '</div>';
 
     bindYearPicker();
+    bindSponsors(body);
     Array.prototype.forEach.call(body.querySelectorAll('[data-year]'), function (a) {
       a.addEventListener('click', function (ev) {
         ev.preventDefault();
