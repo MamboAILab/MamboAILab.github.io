@@ -17,15 +17,15 @@ window.ML_DATA.conference = {
       "start_at": "2026-12-24T19:00:00+08:00",
       "start_label": "2026 年 12 月 24 日（周四）19:00 开席",
       "date_label": "2026.12.24（周四）19:00",
-      "venue": "待定",
-      "venue_note": "由申报人申请或组委会提名，常委会讨论确定",
+      "venue": "龙湖翠湖一号",
+      "venue_note": "翡翠湖畔 · 115 ㎡ 三室两厅 · 与第三届同一场地",
       "city": "合肥",
       "attendance": "待统计",
       "attendance_note": "目标：不低于上届 16 人",
-      "lead": "第四届平安夜晚会定于 2026 年 12 月 24 日（周四）19:00 开席。本届首次增设颁奖仪式与钻石赞助商席位；场地仍开放申报，组委会同步进行增选——这是历届晚会里第一次把「怎么办」也交给全组投票决定。",
+      "lead": "第四届平安夜晚会定于 2026 年 12 月 24 日（周四）19:00 开席，由杨尚尚、胡梦岚组织承办，继续选址龙湖翠湖一号。这里毗邻翡翠湖，115 ㎡ 三室两厅，也是第三届的举办地。本届首次增设颁奖仪式与钻石赞助商席位，并同步进行组委会增选。",
       "dates": [
-        { "k": "场地申报 / 组委会提名", "v": "进行中", "note": "申报人提交场地与方案，或由组委会委员提名" },
-        { "k": "常委会讨论确定场地", "v": "待定", "note": "综合场地条件、人数与预算后表决" },
+        { "k": "晚会场地", "v": "龙湖翠湖一号", "note": "翡翠湖畔 · 115 ㎡ 三室两厅，与第三届同一场地" },
+        { "k": "组织承办", "v": "杨尚尚、胡梦岚", "note": "第四届晚会组织与场地承办" },
         { "k": "组委会增选", "v": "晚会现场", "note": "个人申请 → 一名委员提名推荐 → 现场报名投票" },
         { "k": "签到入场", "v": "18:30–19:00", "note": "到场、就座" },
         { "k": "正式开席", "v": "2026.12.24 19:00", "note": "平安夜当晚，北京时间" }
@@ -50,6 +50,10 @@ window.ML_DATA.conference = {
         }
       ],
       "committee": ["田野", "彭媛媛", "杨尚尚", "张盼盼", "胡梦岚", "张亚杰", "李真真"],
+      "photos": [
+        { "src": "assets/img/conference/venue-1.jpg", "cap": "龙湖翠湖一号 · 园区鸟瞰（与第三届同一场地）" },
+        { "src": "assets/img/conference/venue-2.jpg", "cap": "115 ㎡ 户型图（第三届场地资料）" }
+      ],
       "goals": [
         "参会规模不低于上一届（16 人）",
         "引入新式菜肴，菜单不再重复往届",
@@ -65,47 +69,35 @@ window.ML_DATA.conference = {
         { "t": "下届展望", "d": "交接与下一届筹备" }
       ],
       "sponsors": {
-        "note": "本届首次开放赞助，钻石赞助商共 4 席。以下按席位排序，点击卡片上的「简介 / Bio」可展开完整介绍。",
+        "note": "本届首次开放赞助，感谢 4 位钻石赞助商的支持。",
         "tiers": [
           {
             "title": "钻石赞助商",
             "en": "Diamond Sponsors",
             "slots": [
               {
-                "seat": "01",
                 "name": "司朗春",
                 "name_en": "Langchun Si",
                 "role": "安徽大学计算机科学与技术学院 博士研究生",
-                "photo": "assets/img/conference/sponsors/silangchun.jpg",
-                "bio": "2019 年于安徽大学获学士学位，目前于安徽大学计算机科学与技术学院攻读博士学位。研究方向包括进化大规模多目标优化、代理模型与放疗优化。",
-                "bio_en": "Langchun Si received the B.Sc. degree from Anhui University, Hefei, China, in 2019, where he is currently pursuing the Ph.D. degree with the School of Computer Science and Technology, Anhui University, Hefei, China. His current research interests include evolutionary large-scale multi-objective optimization, surrogate models and radiotherapy optimization."
+                "photo": "assets/img/conference/sponsors/silangchun.jpg"
               },
               {
-                "seat": "02",
                 "name": "田野",
                 "name_en": "Ye Tian",
                 "role": "安徽大学计算机科学与技术学院 副教授 · IEEE Member",
-                "photo": "assets/img/conference/sponsors/tianye.jpg",
-                "bio": "分别于 2012、2015、2018 年在安徽大学获学士、硕士、博士学位，现任安徽大学计算机科学与技术学院副教授，研究方向为计算智能及其应用。曾获 2018、2021、2024 年 IEEE TEVC 杰出论文奖、2020 年 IEEE CIM 杰出论文奖，以及 2022 年 IEEE CIS 杰出博士学位论文奖。",
-                "bio_en": "Ye Tian (Member, IEEE) received the B.Sc., M.Sc., and Ph.D. degrees from Anhui University, Hefei, China, in 2012, 2015, and 2018, respectively. He is currently an Associate Professor with the School of Computer Science and Technology, Anhui University, Hefei, China. His current research interests include computational intelligence and its applications. He is the recipient of the 2018, 2021, and 2024 IEEE TEVC Outstanding Paper Awards, the 2020 IEEE CIM Outstanding Paper Award, and the 2022 IEEE CIS Outstanding PhD Dissertation Award."
+                "photo": "assets/img/conference/sponsors/tianye.jpg"
               },
               {
-                "seat": "03",
                 "name": "盛子默",
                 "name_en": "Zimo Sheng",
                 "role": "安徽大学计算机科学与技术学院 讲师 · 硕士生导师",
-                "photo": "assets/img/conference/sponsors/shengzimo.jpg",
-                "url": "https://cs.ahu.edu.cn/2025/0926/c20808a374861/page.htm",
-                "bio": "安徽大学计算机科学与技术学院硕士生导师、讲师，目前主持国家自然科学基金青年项目 1 项。本、硕、博均毕业于电子科技大学计算机科学与工程学院，师从肖鸣宇教授，于 2024 年 12 月获得博士学位；2025 年 3 月通过人才引进入职安徽大学计算机学院，进入张兴义教授团队。研究方向涵盖计算理论、进化算法理论及应用，重点围绕图问题的参数算法与核心化算法开展研究。以第一作者身份在《中国科学：信息科学》、Theoretical Computer Science 等期刊，以及 IJCAI、COCOON 等会议上发表多篇论文，并担任 AAAI、IJCAI、COCOON、Theoretical Computer Science 等期刊与会议的审稿人。"
+                "photo": "assets/img/conference/sponsors/shengzimo.jpg"
               },
               {
-                "seat": "04",
                 "name": "江浩",
                 "name_en": "Hao Jiang",
                 "role": "安徽大学计算机科学与技术学院 副教授 · 博士生导师",
-                "photo": "assets/img/conference/sponsors/jianghao.jpg",
-                "url": "https://cs.ahu.edu.cn/2024/0827/c20807a346163/page.htm",
-                "bio": "男，博士，安徽大学计算机科学与技术学院副教授，主要研究方向为多目标进化优化及其在智慧物流中的应用。近三年发表论文十余篇，其中以第一作者发表中科院一区论文 2 篇、二区论文 6 篇。主持国家自然科学基金青年项目 1 项，并担任 IEEE Transactions on Emerging Topics in Computational Intelligence、Swarm and Evolutionary Computation、Applied Soft Computing 等多个国际知名期刊审稿人。"
+                "photo": "assets/img/conference/sponsors/jianghao.jpg"
               }
             ]
           }
