@@ -77,20 +77,20 @@
           '<span class="cf-ghost">' + esc(e.year) + '</span>' +
         '</div>' +
         '<div class="wrap cf-hero-inner">' +
-          '<p class="cf-eyebrow">BIMK · 博士吃喝群 · ' + esc(e.ordinal) + '</p>' +
-          '<h1>' + esc(C.short) + '</h1>' +
-          '<p class="cf-en">' + esc(C.name_en) + ' · ' + esc(e.ordinal_en) + '</p>' +
-          '<p class="cf-meta">' +
-            '<span>' + esc(e.date_label) + '</span>' +
-            '<span>' + esc(e.venue) + '</span>' +
-            '<span>' + esc(e.city) + '</span>' +
-            '<span class="cf-state">' + (e.status === 'upcoming' ? '即将举办' : '已举办') + '</span>' +
-          '</p>' +
+          '<div class="cf-hero-copy">' +
+            '<p class="cf-eyebrow">BIMK · 博士吃喝群 · ' + esc(e.ordinal) + '</p>' +
+            '<h1>' + esc(C.short) + '</h1>' +
+            '<p class="cf-en">' + esc(e.ordinal_en) + ' Edition · BIMK Doctoral Dining Group · Christmas Eve Banquet</p>' +
+            '<p class="cf-meta">' +
+              '<span>' + esc(e.date_label) + '</span>' +
+              '<span>' + esc(e.venue) + '</span>' +
+              '<span>' + esc(e.city) + '</span>' +
+              '<span class="cf-state">' + (e.status === 'upcoming' ? '即将举办' : '已举办') + '</span>' +
+            '</p>' +
+          '</div>' +
           countdownHTML(e) +
           '<div class="cf-actions">' +
-            '<a class="btn btn-primary" href="#cf-body">查看本届</a>' +
             '<a class="btn" href="#cf-past">历届回顾</a>' +
-            (e.call ? '<a class="btn" href="#cf-call">组委会增选</a>' : '') +
           '</div>' +
         '</div>' +
       '</section>';
@@ -381,7 +381,6 @@
     if (e.scene && e.scene.length) html += photosHTML(e.scene, '晚会现场', ++n);
     if (e.applicants && e.applicants.length) html += applicantsHTML(e, ++n);
     if (e.goals && e.goals.length) html += goalsHTML(e, ++n);
-    if (e.call) html += callHTML(e, ++n);
     /* 赞助商放在页面最下方，历届回顾之后 */
     html += pastHTML(C.editions, year, ++n);
     if (e.sponsors) html += sponsorsHTML(e, ++n);
