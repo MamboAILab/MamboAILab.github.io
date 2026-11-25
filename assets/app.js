@@ -36,11 +36,42 @@
   }
 
   /* ---------- 导航 ---------- */
-  /* 导航里的 SPECIAL DAYS 是普通链接（页面内已有学年/学期下拉），不再做二级下拉菜单 */
+  /* SPECIAL DAYS 是普通链接（页面内已有学年/学期下拉）；
+     CONFERENCE 是下拉：正文链接直接进当前活动，右侧小箭头 / 悬停展开系列活动列表。
+     以后新增活动，只需在 .dd-conf 的 .dd-menu 里再加一条 .dd-item。 */
   function initNav() {
     var path = location.pathname.split('/').pop() || 'index.html';
-    Array.prototype.forEach.call(document.querySelectorAll('.nav-links > a[href]'), function (a) {
+    Array.prototype.forEach.call(document.querySelectorAll('.nav-links > a[href], .nav-links > .dd > a[href]'), function (a) {
       a.classList.toggle('active', a.getAttribute('href') === path);
+    });
+    initNavDropdowns();
+  }
+
+  function initNavDropdowns() {
+    Array.prototype.forEach.call(document.querySelectorAll('.nav .dd'), function (dd) {
+      if (dd.dataset.bound) return;
+      dd.dataset.bound = '1';
+      var btn = dd.querySelector('.dd-caret') || dd.querySelector('button');
+      if (!btn) return;
+      function setOpen(v) {
+        dd.classList.toggle('open', v);
+        btn.setAttribute('aria-expanded', v ? 'true' : 'false');
+      }
+      btn.addEventListener('click', function (ev) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        setOpen(!dd.classList.contains('open'));
+      });
+      dd.addEventListener('keydown', function (ev) {
+        if (ev.key === 'Escape') { setOpen(false); btn.focus(); }
+      });
+      dd.addEventListener('focusout', function () {
+        /* 焦点移出整个下拉才收起，避免菜单内 Tab 被关掉 */
+        setTimeout(function () { if (!dd.contains(document.activeElement)) setOpen(false); }, 0);
+      });
+      document.addEventListener('click', function (ev) {
+        if (!dd.contains(ev.target)) setOpen(false);
+      });
     });
   }
 

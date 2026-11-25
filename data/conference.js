@@ -8,42 +8,47 @@ window.ML_DATA.conference = {
   "editions": [
     {
       "year": 2026,
+      "theme": "2026",
+      "bg": "assets/img/conference/bg/2026.jpg",
       "ordinal": "第四届",
       "ordinal_en": "4th",
       "status": "upcoming",
       "date": "2026-12-24",
-      "date_label": "2026.12.24（周四）",
+      "start_at": "2026-12-24T19:00:00+08:00",
+      "start_label": "2026 年 12 月 24 日（周四）19:00 开席",
+      "date_label": "2026.12.24（周四）19:00",
       "venue": "待定",
       "venue_note": "由申报人申请或组委会提名，常委会讨论确定",
       "city": "合肥",
       "attendance": "待统计",
       "attendance_note": "目标：不低于上届 16 人",
-      "lead": "第四届平安夜晚会定于 2026 年 12 月 24 日举行。场地仍开放申报，组委会同步进行增选——这是历届晚会里第一次把「怎么办」也交给全组投票决定。",
+      "lead": "第四届平安夜晚会定于 2026 年 12 月 24 日（周四）19:00 开席。本届首次增设颁奖仪式与钻石赞助商席位；场地仍开放申报，组委会同步进行增选——这是历届晚会里第一次把「怎么办」也交给全组投票决定。",
       "dates": [
         { "k": "场地申报 / 组委会提名", "v": "进行中", "note": "申报人提交场地与方案，或由组委会委员提名" },
         { "k": "常委会讨论确定场地", "v": "待定", "note": "综合场地条件、人数与预算后表决" },
         { "k": "组委会增选", "v": "晚会现场", "note": "个人申请 → 一名委员提名推荐 → 现场报名投票" },
-        { "k": "晚会", "v": "2026.12.24", "note": "平安夜当晚" }
+        { "k": "签到入场", "v": "18:30–19:00", "note": "到场、就座" },
+        { "k": "正式开席", "v": "2026.12.24 19:00", "note": "平安夜当晚，北京时间" }
       ],
       "chairs": [
         {
           "role": "Honorable General Chairs · 组委会常委",
-          "name": "田野",
+          "name": "田野", "photo": "assets/img/conference/people/tianye.png",
           "meta": ["教授、博士生导师", "国家优青（B）人才", "合肥市 C 类人才"]
         },
         {
           "role": "Honorable General Chairs · 组委会常委",
-          "name": "彭媛媛",
+          "name": "彭媛媛", "photo": "assets/img/conference/people/pengyuanyuan.png",
           "meta": ["著名教育家、美食家、摄影家", "旅游达人、维权达人", "合肥市重点企业法人代表"]
         },
         {
           "role": "Local General Chairs · 组委会常委（候）",
-          "name": "杨尚尚",
+          "name": "杨尚尚", "photo": "assets/img/conference/people/yangshangshang.png",
           "meta": ["教授、博士生导师", "国家海外青年人才", "合肥市 D 类人才（以上都不是）"]
         },
         {
           "role": "Local General Chairs · 组委会常委（候）",
-          "name": "胡梦岚",
+          "name": "胡梦岚", "photo": "assets/img/conference/people/humenglan.png",
           "meta": ["著名企业家、智能座舱开发者", "健身达人、哭闹达人", "合肥市 E 类人才（候补）"]
         }
       ],
@@ -59,8 +64,24 @@ window.ML_DATA.conference = {
         { "t": "组委会与增选", "d": "申请人介绍 + 现场投票" },
         { "t": "场地与菜单", "d": "本届场地介绍、食谱统计" },
         { "t": "参会统计", "d": "人数、年龄、行业分布" },
+        { "t": "颁奖仪式", "en": "Award Ceremony", "d": "本届新增环节，奖项设置待定" },
         { "t": "下届展望", "d": "交接与下一届筹备" }
       ],
+      "sponsors": {
+        "note": "本届首次开放赞助，钻石赞助商共 4 席，名单与介绍将陆续公布。",
+        "tiers": [
+          {
+            "title": "钻石赞助商",
+            "en": "Diamond Sponsors",
+            "slots": [
+              { "seat": "01" },
+              { "seat": "02" },
+              { "seat": "03" },
+              { "seat": "04" }
+            ]
+          }
+        ]
+      },
       "call": {
         "title": "组委会增选 · Call for Committee Members",
         "body": "现开放组委会增选，组内成员均可报名。入选者参与下一年度晚会的场地、菜单与流程筹备，并在晚会现场走完以下流程。",
@@ -69,6 +90,8 @@ window.ML_DATA.conference = {
     },
     {
       "year": 2025,
+      "theme": "2025",
+      "bg": "assets/img/conference/bg/2025.jpg",
       "ordinal": "第三届",
       "ordinal_en": "3rd",
       "status": "past",
@@ -86,9 +109,9 @@ window.ML_DATA.conference = {
         { "k": "参会人数", "v": "16 人", "note": "历届最高" }
       ],
       "chairs": [
-        { "role": "Honorable General Chairs", "name": "田野", "meta": ["教授、博士生导师", "国家优青（B）人才"] },
-        { "role": "Honorable General Chairs", "name": "彭媛媛", "meta": ["著名教育家、美食家、摄影家"] },
-        { "role": "Local General Chair · 承办", "name": "杨尚尚", "meta": ["教授、博士生导师", "组委会常委（候）"] }
+        { "role": "Honorable General Chairs", "name": "田野", "photo": "assets/img/conference/people/tianye.png", "meta": ["教授、博士生导师", "国家优青（B）人才"] },
+        { "role": "Honorable General Chairs", "name": "彭媛媛", "photo": "assets/img/conference/people/pengyuanyuan.png", "meta": ["著名教育家、美食家、摄影家"] },
+        { "role": "Local General Chair · 承办", "name": "杨尚尚", "photo": "assets/img/conference/people/yangshangshang.png", "meta": ["教授、博士生导师", "组委会常委（候）"] }
       ],
       "committee": ["田野", "彭媛媛", "杨尚尚", "张盼盼", "胡梦岚"],
       "program": [
@@ -113,8 +136,8 @@ window.ML_DATA.conference = {
         { "k": "汽水 / 果汁", "v": "可乐、雪碧、芬达；NFC 橙汁、青柠汁" }
       ],
       "applicants": [
-        { "name": "张亚杰", "meta": ["准聘助理教授", "省部级青年人才", "准国家青年人才"] },
-        { "name": "李真真", "meta": ["知名美妆博主、资深买手", "躺平达人、摸鱼达人", "四通一达重要战略合作伙伴"] }
+        { "name": "张亚杰", "photo": "assets/img/conference/people/zhangyajie.png", "meta": ["准聘助理教授", "省部级青年人才", "准国家青年人才"] },
+        { "name": "李真真", "photo": "assets/img/conference/people/lizhenzhen.png", "meta": ["知名美妆博主、资深买手", "躺平达人、摸鱼达人", "四通一达重要战略合作伙伴"] }
       ],
       "photos": [
         { "src": "assets/img/conference/venue-1.jpg", "cap": "龙湖翠湖一号 · 园区鸟瞰" },
@@ -129,6 +152,8 @@ window.ML_DATA.conference = {
     },
     {
       "year": 2024,
+      "theme": "2024",
+      "bg": "assets/img/conference/bg/2024.jpg",
       "ordinal": "第二届",
       "ordinal_en": "2nd",
       "status": "past",
@@ -146,8 +171,8 @@ window.ML_DATA.conference = {
         { "k": "参会人数", "v": "8 人", "note": "历届最少，但没断" }
       ],
       "chairs": [
-        { "role": "General Chairs", "name": "田野", "meta": ["教授、博士生导师"] },
-        { "role": "General Chairs", "name": "彭媛媛", "meta": ["田彭氏"] }
+        { "role": "General Chairs", "name": "田野", "photo": "assets/img/conference/people/tianye.png", "meta": ["教授、博士生导师"] },
+        { "role": "General Chairs", "name": "彭媛媛", "photo": "assets/img/conference/people/pengyuanyuan.png", "meta": ["田彭氏"] }
       ],
       "photos": [
         { "src": "assets/img/conference/2024-1.jpg", "cap": "第二届现场 · 餐桌合影" },
@@ -156,6 +181,8 @@ window.ML_DATA.conference = {
     },
     {
       "year": 2023,
+      "theme": "2023",
+      "bg": "assets/img/conference/bg/2023.jpg",
       "ordinal": "首届",
       "ordinal_en": "1st",
       "status": "past",
@@ -173,8 +200,8 @@ window.ML_DATA.conference = {
         { "k": "参会人数", "v": "11 人", "note": "起点" }
       ],
       "chairs": [
-        { "role": "Founders · General Chairs", "name": "田野", "meta": ["教授、博士生导师"] },
-        { "role": "Founders · General Chairs", "name": "彭媛媛", "meta": ["田彭氏"] }
+        { "role": "Founders · General Chairs", "name": "田野", "photo": "assets/img/conference/people/tianye.png", "meta": ["教授、博士生导师"] },
+        { "role": "Founders · General Chairs", "name": "彭媛媛", "photo": "assets/img/conference/people/pengyuanyuan.png", "meta": ["田彭氏"] }
       ],
       "photos": [
         { "src": "assets/img/conference/2023-1.jpg", "cap": "首届现场 · 围桌的一顿" },

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>About · MamboLab</title>
 <meta name="description" content="关于 MamboLab 人工智能研究组：演化优化、自动机器学习、大模型驱动的算法发现与智慧教育">
-<link rel="stylesheet" href="assets/style.css?v=20261125a">
+<link rel="stylesheet" href="assets/style.css?v=20261125b">
 <script>try{var t=localStorage.getItem('ml-theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
 </head>
 <body>
@@ -17,7 +17,18 @@
       <a href="about.html">About</a>
       <a href="members.html">Members</a>
       <a href="publications.html">Publications</a>
-      <a href="conference.html">Conference</a>
+      <div class="dd dd-conf">
+        <a href="conference.html">Conference</a>
+        <button class="dd-caret" type="button" aria-label="展开 Conference 活动列表" aria-expanded="false" aria-haspopup="true"></button>
+        <div class="dd-menu" role="menu">
+          <p class="dd-label">Conference · 系列活动</p>
+          <a class="dd-item" href="conference.html" role="menuitem">
+            <span class="dd-item-t">Christmas Eve Banquet</span>
+            <span class="dd-item-d">BIMK 博士吃喝群平安夜晚会 · 2023 起每年 12.24</span>
+          </a>
+          <p class="dd-more">更多活动筹备中</p>
+        </div>
+      </div>
       <a href="special-days.html">Special Days</a>
       <a class="admin-link" href="admin.html">管理</a>
             <button class="icon-btn" id="theme-toggle" aria-label="切换深浅色"></button>
@@ -89,6 +100,6 @@
 <script src="data/site.js"></script>
 <script src="data/special-days.js"></script>
 <script src="assets/data-loader.js"></script>
-<script src="assets/app.js?v=20261125a"></script>
+<script src="assets/app.js?v=20261125b"></script>
 </body>
 </html>

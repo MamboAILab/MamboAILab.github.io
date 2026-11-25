@@ -161,21 +161,50 @@ html[data-theme="dark"] .dd-menu { box-shadow: 0 4px 8px rgba(0, 0, 0, .4), 0 20
 }
 .dd-menu .dd-sub { padding-left: 11px; }
 
+/* Conference 下拉：正文是链接，旁边一个小箭头开合系列活动列表 */
+.dd-conf { display: flex; align-items: center; gap: 4px; }
+.dd-conf > a {
+  color: var(--nav-fg); font-size: 14.5px; font-weight: 500; transition: color .15s;
+}
+.dd-conf > a:hover { color: var(--nav-fg-strong); text-decoration: none; }
+.dd-conf > a.active { color: var(--nav-active); font-weight: 600; }
+.dd-conf > .dd-caret {
+  width: 15px; height: 22px; padding: 0; border: 0; background: none; cursor: pointer;
+  color: var(--nav-fg); display: grid; place-items: center; border-radius: 5px;
+}
+.dd-conf > .dd-caret::after {
+  width: 4px; height: 4px; transition: transform .18s var(--ease);
+}
+.dd-conf > .dd-caret:hover { color: var(--nav-fg-strong); }
+.dd-conf.open > .dd-caret::after { transform: rotate(225deg) translate(-1px, -1px); }
+/* 让指针从链接移到菜单的 14px 空隙也不会断开悬停 */
+.dd-conf::before { content: ""; position: absolute; left: 0; right: 0; top: 100%; height: 16px; }
+.dd-conf .dd-menu { min-width: 286px; padding: 7px; }
+.dd-conf .dd-menu .dd-label { margin: 0; font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; }
+.dd-conf .dd-item { padding: 10px 12px; }
+.dd-conf .dd-item-t { display: block; font-size: 14px; font-weight: 600; color: var(--fg); letter-spacing: -.01em; }
+.dd-conf .dd-item-d { display: block; margin-top: 3px; font-size: 12px; line-height: 1.6; color: var(--muted); }
+.dd-conf .dd-more {
+  margin: 4px 0 0; padding: 7px 12px 5px; border-top: 1px dashed var(--line);
+  font-size: 11.5px; color: var(--faint);
+}
+
 @media (max-width: 760px) {
   .nav-inner { padding: 12px 20px; }
   .nav-links { gap: 14px; }
-  .nav-links > a, .nav-links > .dd > button { font-size: 13px; }
+  .nav-links > a, .nav-links > .dd > button, .dd-conf > a { font-size: 13px; }
   .brand-text { display: none; }
   /* 下拉菜单在窄屏改为右对齐，否则绝对定位会撑破视口 */
   .dd-menu { left: auto; right: -12px; transform: translateY(-4px); min-width: 200px; }
   .dd:hover .dd-menu, .dd:focus-within .dd-menu, .dd.open .dd-menu { transform: translateY(0); }
+  .dd-conf .dd-menu { min-width: min(300px, calc(100vw - 32px)); right: -8px; }
 }
 
 /* 小屏：导航只留四个主入口，「管理」移到页脚，避免撑破视口 */
 @media (max-width: 620px) {
   .nav-inner { padding: 10px 16px; gap: 10px; }
   .nav-links { gap: 11px; }
-  .nav-links > a, .nav-links > .dd > button { font-size: 12.5px; }
+  .nav-links > a, .nav-links > .dd > button, .dd-conf > a { font-size: 12.5px; }
   .nav-links > a.admin-link { display: none; }
   .brand-mark { width: 27px; height: 27px; font-size: 13px; border-radius: 8px; }
 }
@@ -796,6 +825,22 @@ html[data-theme="dark"] .btn-danger { color: #ff8a7a; border-color: #5a2a25; }
   padding: 74px 0 60px;
 }
 .cf-hero-bg { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+/* 各届主题背景：2026 冬夜蓝金 / 2025 翡翠湖 / 2024 酒红烛光 / 2023 森林绿 */
+.cf-hero-bg img {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; object-position: center;
+  opacity: .92;
+}
+.cf-hero-bg::after {
+  content: ""; position: absolute; inset: 0;
+  background:
+    linear-gradient(90deg, rgba(6, 9, 18, .9) 0%, rgba(6, 9, 18, .66) 42%, rgba(6, 9, 18, .3) 100%),
+    linear-gradient(180deg, rgba(6, 9, 18, .18) 0%, rgba(6, 9, 18, .55) 100%);
+}
+.cf-y2024 { background-color: #2a0f18; }
+.cf-y2025 { background-color: #07262c; }
+.cf-y2023 { background-color: #0a2620; }
+.cf-ghost { z-index: 1; }
 .cf-ghost {
   position: absolute; right: -10px; bottom: -56px;
   font-size: clamp(140px, 24vw, 260px); font-weight: 800; letter-spacing: -.06em;
@@ -826,7 +871,52 @@ html[data-theme="dark"] .btn-danger { color: #ff8a7a; border-color: #5a2a25; }
 .cf-hero .btn-primary { background: #fff; border-color: #fff; color: #0b1020; }
 .cf-hero .btn-primary:hover { background: rgba(255, 255, 255, .9); color: #0b1020; }
 
-/* 年份切换条 */
+/* 倒计时：大字天数 / 时 / 分 / 秒 */
+.cf-cd {
+  margin-top: 30px; max-width: 620px;
+  padding: 20px 24px 18px; border-radius: 16px;
+  background: rgba(255, 255, 255, .055);
+  border: 1px solid rgba(255, 255, 255, .16);
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+}
+.cf-cd-head { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.cf-cd-tag {
+  font-size: 10.5px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase;
+  padding: 3px 9px; border-radius: 999px; color: #ffe1ad;
+  background: rgba(255, 205, 130, .13); border: 1px solid rgba(255, 205, 130, .3);
+}
+.cf-cd-to { font-size: 12.5px; color: rgba(255, 255, 255, .68); }
+.cf-cd-digits { display: flex; align-items: stretch; gap: 10px; }
+.cf-cd-digits[hidden] { display: none; }
+.cf-cd-u {
+  flex: 1; min-width: 0; text-align: center; padding: 12px 6px 10px;
+  border-radius: 12px; background: rgba(9, 13, 26, .42);
+  border: 1px solid rgba(255, 255, 255, .1);
+}
+.cf-cd-u b {
+  display: block; font-weight: 700; line-height: 1; letter-spacing: -.03em;
+  font-size: clamp(36px, 6vw, 58px); color: #fff;
+  font-variant-numeric: tabular-nums; font-feature-settings: "tnum";
+}
+.cf-cd-u span {
+  display: block; margin-top: 8px; font-size: 12px; letter-spacing: .18em;
+  color: rgba(255, 255, 255, .6);
+}
+.cf-cd-sep {
+  align-self: center; padding-bottom: 18px;
+  font-size: 30px; font-weight: 600; color: rgba(255, 255, 255, .26);
+}
+.cf-cd-time { margin: 14px 0 0; font-size: 13px; color: rgba(255, 255, 255, .86); }
+.cf-cd-tz { color: rgba(255, 255, 255, .48); font-size: 12px; }
+.cf-cd-left { margin: 3px 0 0; font-size: 12.5px; color: rgba(255, 224, 176, .9); font-variant-numeric: tabular-nums; }
+.cf-cd-done { margin: 6px 0 0; font-size: 16px; color: #ffe1ad; }
+.cf-cd-done[hidden] { display: none; }
+@media (prefers-reduced-motion: no-preference) {
+  .cf-cd-sep { animation: cfCdBlink 2s steps(1, end) infinite; }
+  @keyframes cfCdBlink { 0%, 60% { opacity: 1; } 61%, 100% { opacity: .3; } }
+}
+
+/* 年份切换条：一个下拉代替一排 tab */
 .cf-tabs-bar {
   position: sticky; top: var(--nav-h, 58px); z-index: 30;
   background: color-mix(in srgb, var(--bg) 90%, transparent);
@@ -834,21 +924,52 @@ html[data-theme="dark"] .btn-danger { color: #ff8a7a; border-color: #5a2a25; }
   -webkit-backdrop-filter: saturate(180%) blur(12px);
   border-bottom: 1px solid var(--line);
 }
-.cf-tabs { display: flex; align-items: center; gap: 8px; padding: 10px 28px; overflow-x: auto; }
+.cf-tabs { display: flex; align-items: center; gap: 14px; padding: 11px 28px; }
 .cf-tabs-label {
   font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
-  color: var(--faint); margin-right: 6px; white-space: nowrap;
+  color: var(--faint); white-space: nowrap;
 }
-.cf-tab {
-  display: flex; flex-direction: column; align-items: center; gap: 1px;
-  padding: 7px 16px; border-radius: 10px; border: 1px solid transparent;
-  color: var(--fg-soft); white-space: nowrap; transition: background .15s, border-color .15s;
+.cf-tabs-hint { margin-left: auto; font-size: 12.5px; color: var(--muted); white-space: nowrap; }
+
+.cf-year { position: relative; }
+.cf-year-btn {
+  display: flex; align-items: center; gap: 14px; cursor: pointer;
+  padding: 7px 13px 7px 15px; border-radius: 11px;
+  border: 1px solid var(--line); background: var(--bg); color: var(--fg);
+  font-family: inherit; text-align: left; transition: border-color .15s, box-shadow .15s;
 }
-.cf-tab:hover { background: var(--bg-soft); text-decoration: none; }
-.cf-tab b { font-size: 15px; font-weight: 650; color: var(--fg); font-variant-numeric: tabular-nums; }
-.cf-tab span { font-size: 11px; color: var(--faint); }
-.cf-tab.on { background: var(--accent-soft); border-color: color-mix(in srgb, var(--accent) 26%, transparent); }
-.cf-tab.on b { color: var(--accent); }
+.cf-year-btn:hover { border-color: color-mix(in srgb, var(--accent) 42%, var(--line)); }
+.cf-year-btn:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--accent-soft); }
+.cf-year-cur { display: flex; align-items: baseline; gap: 9px; }
+.cf-year-cur b { font-size: 19px; font-weight: 700; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.cf-year-cur span { font-size: 12.5px; color: var(--muted); }
+.cf-year-caret {
+  width: 7px; height: 7px; border-right: 1.6px solid var(--faint); border-bottom: 1.6px solid var(--faint);
+  transform: rotate(45deg) translateY(-2px); transition: transform .18s var(--ease);
+}
+.cf-year.open .cf-year-caret { transform: rotate(225deg) translate(-1px, -1px); }
+.cf-year.open .cf-year-btn { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+
+.cf-year-menu {
+  position: absolute; top: calc(100% + 8px); left: 0; z-index: 40;
+  list-style: none; margin: 0; padding: 6px; width: 342px; max-width: calc(100vw - 40px);
+  background: var(--bg); border: 1px solid var(--line); border-radius: 13px;
+  box-shadow: 0 4px 8px rgba(16, 24, 40, .06), 0 22px 46px -18px rgba(16, 24, 40, .3);
+}
+.cf-year-menu[hidden] { display: none; }
+.cf-year-opt {
+  display: grid; grid-template-columns: 54px 62px 1fr; gap: 4px 10px; align-items: baseline;
+  width: 100%; padding: 10px 12px; border: 0; border-radius: 9px; background: none;
+  font-family: inherit; text-align: left; cursor: pointer; color: var(--fg);
+}
+.cf-year-opt:hover, .cf-year-opt:focus-visible { background: var(--bg-soft); outline: none; }
+.cf-year-opt b { font-size: 18px; font-weight: 700; font-variant-numeric: tabular-nums; grid-row: span 2; }
+.cf-year-o { font-size: 12.5px; color: var(--fg-soft); }
+.cf-year-m { font-size: 12px; color: var(--muted); }
+.cf-year-s { grid-column: 2 / -1; font-size: 11.5px; color: var(--faint); }
+.cf-year-opt.on { background: var(--accent-soft); }
+.cf-year-opt.on b { color: var(--accent); }
+.cf-year-opt.on .cf-year-s { color: var(--accent); }
 
 .cf-intro { max-width: 54em; font-size: 15px; color: var(--fg-soft); margin: 36px 0 0; }
 
@@ -886,8 +1007,11 @@ html[data-theme="dark"] .btn-danger { color: #ff8a7a; border-color: #5a2a25; }
 .cf-avatar {
   width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center;
   background: var(--accent-soft); color: var(--accent); font-weight: 700; font-size: 17px;
-  margin-bottom: 13px;
+  margin-bottom: 13px; overflow: hidden; flex: none;
 }
+.cf-avatar.lg { width: 66px; height: 66px; font-size: 22px; margin-bottom: 15px; }
+.cf-avatar.has-photo { background: var(--bg-soft); box-shadow: inset 0 0 0 1px var(--line); }
+.cf-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .cf-role { font-size: 11px; letter-spacing: .07em; text-transform: uppercase; color: var(--faint); margin: 0 0 6px; }
 .cf-name { font-size: 17px; font-weight: 650; margin: 0 0 10px; letter-spacing: -.01em; }
 .cf-tags { list-style: none; margin: 0; padding: 0; display: grid; gap: 3px; font-size: 13px; color: var(--muted); }
@@ -906,6 +1030,46 @@ html[data-theme="dark"] .btn-danger { color: #ff8a7a; border-color: #5a2a25; }
 }
 .cf-prog-n { font-size: 12px; color: var(--faint); font-variant-numeric: tabular-nums; }
 .cf-prog-t { font-size: 15px; font-weight: 550; }
+.cf-prog-en {
+  font-style: normal; margin-left: 9px; font-size: 12px; font-weight: 500;
+  letter-spacing: .02em; color: var(--faint);
+}
+.cf-prog li.is-award .cf-prog-t { color: var(--fg); font-weight: 650; }
+.cf-prog li.is-award .cf-prog-en {
+  color: #a8791f; background: color-mix(in srgb, #e2b158 16%, transparent);
+  border: 1px solid color-mix(in srgb, #e2b158 34%, transparent);
+  padding: 1px 8px; border-radius: 999px;
+}
+html[data-theme="dark"] .cf-prog li.is-award .cf-prog-en { color: #e8c98c; }
+
+/* 赞助商 */
+.cf-sp-tier + .cf-sp-tier { margin-top: 26px; }
+.cf-sp-tier-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 14px; }
+.cf-sp-tier-head h3 { margin: 0; font-size: 16px; font-weight: 650; }
+.cf-sp-tier-head span { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--faint); }
+.cf-sp-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.cf-sp-grid.n1, .cf-sp-grid.n2 { grid-template-columns: repeat(2, 1fr); }
+.cf-sp {
+  border-radius: var(--radius); padding: 22px 16px; text-align: center;
+  min-height: 138px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+  background: var(--bg);
+}
+.cf-sp.is-open {
+  border: 1.5px dashed color-mix(in srgb, var(--faint) 55%, var(--line));
+  background: var(--bg-soft); color: var(--faint);
+}
+.cf-sp.filled { border: 1px solid var(--line); color: var(--fg); }
+a.cf-sp.filled:hover { text-decoration: none; border-color: var(--accent); box-shadow: var(--shadow); }
+.cf-sp img { max-height: 54px; width: auto; margin: 0 auto 6px; object-fit: contain; }
+.cf-sp-badge {
+  font-size: 24px; line-height: 1; color: color-mix(in srgb, var(--faint) 80%, transparent);
+}
+.cf-sp-name { margin: 0; font-size: 13.5px; font-weight: 600; color: inherit; }
+.cf-sp.is-open .cf-sp-name { color: var(--muted); font-weight: 550; }
+.cf-sp-note { margin: 0; font-size: 12px; color: var(--faint); }
+@media (max-width: 900px) {
+  .cf-sp-grid { grid-template-columns: repeat(2, 1fr); }
+}
 .cf-prog-d { font-size: 13px; color: var(--muted); text-align: right; }
 
 /* 统计 */
@@ -984,9 +1148,16 @@ html[data-theme="dark"] .btn-danger { color: #ff8a7a; border-color: #5a2a25; }
   .cf-sec { padding-top: 38px; }
 }
 @media (max-width: 640px) {
-  .cf-tabs { padding: 8px 12px; gap: 4px; }
+  .cf-tabs { padding: 10px 20px; gap: 10px; }
   .cf-tabs-label { display: none; }
-  .cf-tab { padding: 6px 11px; }
+  .cf-tabs-hint { font-size: 11.5px; overflow: hidden; text-overflow: ellipsis; }
+  .cf-year-cur b { font-size: 17px; }
+  .cf-year-cur span { font-size: 11.5px; }
+  .cf-cd-digits { gap: 8px; }
+  .cf-cd-u { padding: 12px 4px 10px; }
+  .cf-cd-u b { font-size: clamp(30px, 9vw, 46px); }
+  .cf-cd-u span { font-size: 11px; }
+  .cf-sp-grid { grid-template-columns: repeat(2, 1fr); }
   .cf-meta { font-size: 13px; }
   .cf-meta > span + span::before { margin: 0 8px; }
   .cf-kpi strong { font-size: 17px; }
@@ -1006,7 +1177,7 @@ html[data-theme="dark"] .btn-danger { color: #ff8a7a; border-color: #5a2a25; }
     width: 100%; flex-wrap: wrap; gap: 6px 16px; justify-content: flex-start;
     overflow: visible; padding-top: 2px;
   }
-  .nav-links > a, .nav-links > .dd > button { font-size: 13.5px; white-space: nowrap; }
+  .nav-links > a, .nav-links > .dd > button, .dd-conf > a { font-size: 13.5px; white-space: nowrap; }
   .nav-links > .icon-btn { margin-left: auto; }
 }
 @media (max-width: 400px) {
