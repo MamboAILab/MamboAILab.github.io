@@ -97,6 +97,7 @@ window.ML_DATA.conference = {
                 "name": "盛子默",
                 "name_en": "Zimo Sheng",
                 "role": "安徽大学计算机科学与技术学院 讲师 · 硕士生导师",
+                "photo": "assets/img/conference/sponsors/shengzimo.jpg",
                 "url": "https://cs.ahu.edu.cn/2025/0926/c20808a374861/page.htm",
                 "bio": "安徽大学计算机科学与技术学院硕士生导师、讲师，目前主持国家自然科学基金青年项目 1 项。本、硕、博均毕业于电子科技大学计算机科学与工程学院，师从肖鸣宇教授，于 2024 年 12 月获得博士学位；2025 年 3 月通过人才引进入职安徽大学计算机学院，进入张兴义教授团队。研究方向涵盖计算理论、进化算法理论及应用，重点围绕图问题的参数算法与核心化算法开展研究。以第一作者身份在《中国科学：信息科学》、Theoretical Computer Science 等期刊，以及 IJCAI、COCOON 等会议上发表多篇论文，并担任 AAAI、IJCAI、COCOON、Theoretical Computer Science 等期刊与会议的审稿人。"
               },
