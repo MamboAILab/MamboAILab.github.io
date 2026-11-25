@@ -196,28 +196,48 @@
       '</div>');
   }
 
-  function avatarHTML(name, src, big) {
-    var cls = 'cf-avatar' + (big ? ' lg' : '');
+  /* 人像放卡片右侧：方形相框 + 完整显示（不裁切），姓名与介绍在左侧 */
+  function avatarHTML(name, src) {
     if (src) {
-      return '<span class="' + cls + ' has-photo"><img src="' + esc(src) + '" alt="' + esc(name) + '" loading="lazy"></span>';
+      return '<span class="cf-portrait"><img src="' + esc(src) + '" alt="' + esc(name) + '" loading="lazy"></span>';
     }
-    return '<span class="' + cls + '" aria-hidden="true">' + esc(initial(name)) + '</span>';
+    return '<span class="cf-portrait is-mono" aria-hidden="true">' + esc(initial(name)) + '</span>';
+  }
+
+  function personCard(c, roleText) {
+    return '<div class="cf-chair">' +
+      '<div class="cf-chair-info">' +
+        (roleText ? '<p class="cf-role">' + esc(roleText) + '</p>' : '') +
+        '<p class="cf-name">' + esc(c.name) + '</p>' +
+        '<ul class="cf-tags">' + (c.meta || []).map(function (m) { return '<li>' + esc(m) + '</li>'; }).join('') + '</ul>' +
+      '</div>' +
+      avatarHTML(c.name, c.photo) +
+    '</div>';
+  }
+
+  function committeeHTML(list) {
+    if (!list || !list.length) return '';
+    return '<div class="cf-comm"><h3 class="cf-comm-t">组委会成员<span>Committee Members</span></h3>' +
+      '<p class="cf-committee">' + list.map(function (x) { return '<em>' + esc(x) + '</em>'; }).join('') + '</p></div>';
   }
 
   function chairsHTML(e, n) {
-    if (!e.chairs || !e.chairs.length) return '';
-    var cards = e.chairs.map(function (c) {
-      return '<div class="cf-chair">' +
-        avatarHTML(c.name, c.photo, true) +
-        '<p class="cf-role">' + esc(c.role) + '</p>' +
-        '<p class="cf-name">' + esc(c.name) + '</p>' +
-        '<ul class="cf-tags">' + (c.meta || []).map(function (m) { return '<li>' + esc(m) + '</li>'; }).join('') + '</ul>' +
-      '</div>';
-    }).join('');
-    var committee = e.committee
-      ? '<p class="cf-committee"><span>组委会成员</span>' + e.committee.map(function (x) { return '<em>' + esc(x) + '</em>'; }).join('') + '</p>'
-      : '';
-    return sec(n, '组委会', '<div class="cf-chairs">' + cards + '</div>' + committee);
+    var groups = e.chair_groups;
+    var inner = '';
+    if (groups && groups.length) {
+      inner = groups.map(function (g) {
+        var cards = (g.members || []).map(function (c) { return personCard(c, ''); }).join('');
+        return '<div class="cf-cgroup">' +
+          '<div class="cf-cgroup-head"><h3>' + esc(g.title) + '</h3><span>' + esc(g.en || '') + '</span></div>' +
+          '<div class="cf-chairs">' + cards + '</div></div>';
+      }).join('');
+    } else if (e.chairs && e.chairs.length) {
+      inner = '<div class="cf-chairs">' + e.chairs.map(function (c) { return personCard(c, c.role); }).join('') + '</div>';
+    } else {
+      return '';
+    }
+    inner += committeeHTML(e.committee);
+    return sec(n, '组委会', inner);
   }
 
   function programHTML(e, n) {
@@ -231,13 +251,17 @@
     return sec(n, '晚会议程', '<ol class="cf-prog">' + rows + '</ol>');
   }
 
+  var DIAMOND_SVG = '<svg class="cf-diamond" viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
+    '<path d="M12 2.6 21 8.4 12 21.4 3 8.4Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>' +
+    '<path d="M3 8.4h18M12 2.6 7.6 8.4 12 21.4 16.4 8.4 12 2.6M7.6 8.4 5.6 4.4M16.4 8.4l2-4" stroke="currentColor" stroke-width="1" stroke-linejoin="round" opacity=".65"/></svg>';
+
   /* 赞助商：钻石 4 席。数据里每个席位可填
      name / name_en / role / photo / bio / bio_en / url / thanks（赞助内容）。
      简介默认收起，点「简介 / Bio」展开；没有照片的用姓名字标。 */
   function sponsorCard(s) {
     if (!s || !s.name) {
       return '<div class="cf-sp is-open">' +
-        '<span class="cf-sp-badge" aria-hidden="true">◇</span>' +
+        '<span class="cf-sp-badge" aria-hidden="true">' + DIAMOND_SVG + '</span>' +
         '<p class="cf-sp-name">钻石赞助商 · 席位 ' + esc((s && s.seat) || '') + '</p>' +
         '<p class="cf-sp-note">待定</p></div>';
     }
@@ -256,7 +280,7 @@
       : '';
     return '<article class="cf-sp filled">' +
       '<div class="cf-sp-top">' + media +
-        '<p class="cf-sp-seat">Diamond · ' + esc(s.seat || '') + '</p></div>' +
+        '<p class="cf-sp-seat">' + DIAMOND_SVG + 'Diamond · ' + esc(s.seat || '') + '</p></div>' +
       '<p class="cf-sp-name">' + esc(s.name) + (s.name_en ? '<span class="cf-sp-name-en">' + esc(s.name_en) + '</span>' : '') + '</p>' +
       (s.role ? '<p class="cf-sp-role">' + esc(s.role) + '</p>' : '') +
       (s.thanks ? '<p class="cf-sp-thanks">' + esc(s.thanks) + '</p>' : '') +
@@ -272,10 +296,12 @@
       var slots = t.slots || [];
       var cards = slots.map(sponsorCard).join('');
       return '<div class="cf-sp-tier">' +
-        '<div class="cf-sp-tier-head"><h3>' + esc(t.title) + '</h3><span>' + esc(t.en || '') + '</span></div>' +
+        '<div class="cf-sp-tier-head"><h3>' + DIAMOND_SVG + esc(t.title) + '</h3><span>' + esc(t.en || '') + '</span></div>' +
         '<div class="cf-sp-grid">' + cards + '</div></div>';
     }).join('');
-    return sec(n, '赞助商', tiers, '<span class="cf-note">' + esc(sp.note || '') + '</span>');
+    return '<section class="cf-sec" id="cf-sponsors">' +
+      '<div class="section-head"><h2><span class="num">' + pad(n) + '</span>赞助商</h2>' +
+      '<span class="cf-note">' + esc(sp.note || '') + '</span></div>' + tiers + '</section>';
   }
 
   function bindSponsors(scope) {
@@ -326,13 +352,7 @@
 
   function applicantsHTML(e, n) {
     if (!e.applicants || !e.applicants.length) return '';
-    var cards = e.applicants.map(function (a) {
-      return '<div class="cf-chair">' +
-        avatarHTML(a.name, a.photo, false) +
-        '<p class="cf-name">' + esc(a.name) + '</p>' +
-        '<ul class="cf-tags">' + (a.meta || []).map(function (m) { return '<li>' + esc(m) + '</li>'; }).join('') + '</ul>' +
-      '</div>';
-    }).join('');
+    var cards = e.applicants.map(function (a) { return personCard(a, ''); }).join('');
     return sec(n, '现场增选申请人', '<div class="cf-chairs two">' + cards + '</div>',
       '<span class="cf-note">第三届晚会现场介绍，由组委会讨论投票</span>');
   }
@@ -378,9 +398,8 @@
 
     var n = 0;
     var html = '<p class="cf-intro">' + esc(C.intro) + '</p>' + kpiHTML(e) + overviewHTML(C, e, ++n);
-    if (e.chairs && e.chairs.length) html += chairsHTML(e, ++n);
+    if ((e.chair_groups && e.chair_groups.length) || (e.chairs && e.chairs.length)) html += chairsHTML(e, ++n);
     if (e.program && e.program.length) html += programHTML(e, ++n);
-    if (e.sponsors) html += sponsorsHTML(e, ++n);
     if (e.stats && e.stats.length) html += statsHTML(e, ++n);
     if (e.menu && e.menu.length) {
       html += menuHTML(e, ++n);
@@ -392,7 +411,9 @@
     if (e.applicants && e.applicants.length) html += applicantsHTML(e, ++n);
     if (e.goals && e.goals.length) html += goalsHTML(e, ++n);
     if (e.call) html += callHTML(e, ++n);
+    /* 赞助商放在页面最下方，历届回顾之后 */
     html += pastHTML(C.editions, year, ++n);
+    if (e.sponsors) html += sponsorsHTML(e, ++n);
     body.innerHTML = '<div class="wrap">' + html + '</div>';
 
     bindYearPicker();

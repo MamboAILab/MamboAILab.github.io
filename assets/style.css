@@ -1001,26 +1001,38 @@ html[data-theme="dark"] .btn-danger { color: #ff8a7a; border-color: #5a2a25; }
 .cf-date-v { font-size: 14px; font-weight: 650; color: var(--accent); text-align: right; white-space: nowrap; }
 .cf-date-n { grid-column: 1 / -1; font-size: 12.5px; color: var(--faint); }
 
-/* 组委会 */
-.cf-chairs { display: grid; grid-template-columns: repeat(auto-fit, minmax(228px, 1fr)); gap: 14px; }
-.cf-chair { border: 1px solid var(--line); border-radius: var(--radius); padding: 20px 22px; background: var(--bg); }
-.cf-avatar {
-  width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center;
-  background: var(--accent-soft); color: var(--accent); font-weight: 700; font-size: 17px;
-  margin-bottom: 13px; overflow: hidden; flex: none;
+/* 组委会：分组（荣誉主席 / 组织主席 / 组委会成员），卡片内照片居右、姓名介绍居左 */
+.cf-cgroup + .cf-cgroup { margin-top: 24px; }
+.cf-cgroup-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 12px; }
+.cf-cgroup-head h3 { margin: 0; font-size: 15px; font-weight: 650; letter-spacing: -.01em; }
+.cf-cgroup-head span { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--faint); }
+.cf-chairs { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+.cf-chair {
+  display: flex; align-items: center; justify-content: space-between; gap: 18px;
+  border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 20px; background: var(--bg);
 }
-.cf-avatar.lg { width: 66px; height: 66px; font-size: 22px; margin-bottom: 15px; }
-.cf-avatar.has-photo { background: var(--bg-soft); box-shadow: inset 0 0 0 1px var(--line); }
-.cf-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.cf-chair-info { min-width: 0; flex: 1; }
+/* 方形相框，完整显示人像（contain），不裁头不裁肩 */
+.cf-portrait {
+  flex: none; width: 96px; height: 116px; border-radius: 10px; overflow: hidden;
+  border: 1px solid var(--line); background: var(--bg-soft);
+  display: flex; align-items: flex-end; justify-content: center;
+}
+.cf-portrait img { width: 100%; height: 100%; object-fit: contain; object-position: center bottom; display: block; }
+.cf-portrait.is-mono {
+  align-items: center; background: var(--accent-soft); color: var(--accent);
+  font-size: 32px; font-weight: 700;
+}
 .cf-role { font-size: 11px; letter-spacing: .07em; text-transform: uppercase; color: var(--faint); margin: 0 0 6px; }
-.cf-name { font-size: 17px; font-weight: 650; margin: 0 0 10px; letter-spacing: -.01em; }
+.cf-name { font-size: 18px; font-weight: 650; margin: 0 0 9px; letter-spacing: -.01em; }
 .cf-tags { list-style: none; margin: 0; padding: 0; display: grid; gap: 3px; font-size: 13px; color: var(--muted); }
-.cf-committee {
-  margin: 18px 0 0; display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
-  font-size: 13px; color: var(--muted);
+.cf-comm { margin-top: 26px; padding-top: 18px; border-top: 1px dashed var(--line); }
+.cf-comm-t {
+  margin: 0 0 12px; font-size: 14px; font-weight: 650; display: flex; align-items: baseline; gap: 10px;
 }
-.cf-committee span { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--faint); }
-.cf-committee em { font-style: normal; padding: 3px 11px; border-radius: 999px; background: var(--pill); color: var(--fg-soft); }
+.cf-comm-t span { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--faint); font-weight: 400; }
+.cf-committee { margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.cf-committee em { font-style: normal; padding: 4px 13px; border-radius: 999px; background: var(--pill); color: var(--fg-soft); font-size: 13px; }
 
 /* 议程 */
 .cf-prog { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
@@ -1043,9 +1055,14 @@ html[data-theme="dark"] .btn-danger { color: #ff8a7a; border-color: #5a2a25; }
 html[data-theme="dark"] .cf-prog li.is-award .cf-prog-en { color: #e8c98c; }
 
 /* 赞助商 */
+.cf-diamond { flex: none; width: 1em; height: 1em; display: inline-block; vertical-align: -.14em; }
+.cf-sp-badge { display: grid; place-items: center; width: 52px; height: 52px; color: #5d7fa9; }
+.cf-sp-badge .cf-diamond { width: 44px; height: 44px; }
 .cf-sp-tier + .cf-sp-tier { margin-top: 26px; }
 .cf-sp-tier-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 14px; }
-.cf-sp-tier-head h3 { margin: 0; font-size: 16px; font-weight: 650; }
+.cf-sp-tier-head h3 { display: inline-flex; align-items: center; gap: 7px; margin: 0; font-size: 16px; font-weight: 650; }
+.cf-sp-tier-head h3 .cf-diamond { width: 21px; height: 21px; color: #5d7fa9; }
+html[data-theme="dark"] .cf-sp-tier-head h3 .cf-diamond { color: #b9cbe6; }
 .cf-sp-tier-head span { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--faint); }
 .cf-sp-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; align-items: start; }
 .cf-sp {
@@ -1062,7 +1079,7 @@ html[data-theme="dark"] .cf-prog li.is-award .cf-prog-en { color: #e8c98c; }
   background: linear-gradient(180deg, color-mix(in srgb, #cfd8e6 20%, var(--bg)) 0%, var(--bg) 46%);
   box-shadow: var(--shadow);
 }
-.cf-sp-top { position: relative; display: flex; justify-content: center; }
+.cf-sp-top { display: flex; flex-direction: column; align-items: center; gap: 9px; }
 .cf-sp-photo {
   width: 108px; height: 144px; object-fit: cover; object-position: center 22%;
   border-radius: 10px; border: 1px solid var(--line); background: var(--bg-soft);
@@ -1073,11 +1090,13 @@ html[data-theme="dark"] .cf-prog li.is-award .cf-prog-en { color: #e8c98c; }
   background: var(--accent-soft); box-shadow: inset 0 0 0 1px var(--line);
 }
 .cf-sp-seat {
-  position: absolute; top: -8px; right: -4px; margin: 0;
+  position: static; margin: 0; align-self: center;
+  display: inline-flex; align-items: center; gap: 5px;
   font-size: 9.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
   padding: 3px 8px; border-radius: 999px; color: #3c5a86;
   background: #e7edf6; border: 1px solid #cfd9e8;
 }
+.cf-sp-seat .cf-diamond { width: 12px; height: 12px; }
 html[data-theme="dark"] .cf-sp-seat { color: #b9cbe6; background: #1d2634; border-color: #2e3b4e; }
 .cf-sp-name {
   margin: 13px 0 0; font-size: 17px; font-weight: 650; letter-spacing: -.01em; color: var(--fg);
@@ -1165,7 +1184,9 @@ html[data-theme="dark"] .cf-sp-seat { color: #b9cbe6; background: #1d2634; borde
 }
 
 /* 历届 */
-.cf-past { display: grid; gap: 8px; margin-bottom: 60px; }
+.cf-past { display: grid; gap: 8px; margin-bottom: 0; }
+#cf-sponsors { padding-bottom: 60px; }
+#cf-sponsors:last-child { margin-bottom: 0; }
 .cf-past-item {
   display: grid; grid-template-columns: 72px 76px 1fr auto; gap: 16px; align-items: center;
   padding: 14px 18px; border: 1px solid var(--line); border-radius: var(--radius-sm); color: var(--fg);

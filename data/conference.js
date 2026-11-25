@@ -30,29 +30,26 @@ window.ML_DATA.conference = {
         { "k": "签到入场", "v": "18:30–19:00", "note": "到场、就座" },
         { "k": "正式开席", "v": "2026.12.24 19:00", "note": "平安夜当晚，北京时间" }
       ],
-      "chairs": [
+      "chair_groups": [
         {
-          "role": "Honorable General Chairs · 组委会常委",
-          "name": "田野", "photo": "assets/img/conference/people/tianye.png",
-          "meta": ["教授、博士生导师", "国家优青（B）人才", "合肥市 C 类人才"]
+          "title": "荣誉主席",
+          "en": "Honorable General Chairs",
+          "members": [
+            { "name": "田野", "photo": "assets/img/conference/people/tianye.jpg", "meta": ["教授、博士生导师", "国家优青（B）人才", "合肥市 C 类人才"] },
+            { "name": "彭媛媛", "photo": "assets/img/conference/people/pengyuanyuan.jpg", "meta": ["著名教育家、美食家、摄影家", "旅游达人、维权达人", "合肥市重点企业法人代表"] }
+          ]
         },
         {
-          "role": "Honorable General Chairs · 组委会常委",
-          "name": "彭媛媛", "photo": "assets/img/conference/people/pengyuanyuan.png",
-          "meta": ["著名教育家、美食家、摄影家", "旅游达人、维权达人", "合肥市重点企业法人代表"]
-        },
-        {
-          "role": "Local General Chairs · 组委会常委（候）",
-          "name": "杨尚尚", "photo": "assets/img/conference/people/yangshangshang.png",
-          "meta": ["教授、博士生导师", "国家海外青年人才", "合肥市 D 类人才（以上都不是）"]
-        },
-        {
-          "role": "Local General Chairs · 组委会常委（候）",
-          "name": "胡梦岚", "photo": "assets/img/conference/people/humenglan.png",
-          "meta": ["著名企业家、智能座舱开发者", "健身达人、哭闹达人", "合肥市 E 类人才（候补）"]
+          "title": "组织主席",
+          "en": "Local Organizing Chairs",
+          "members": [
+            { "name": "杨尚尚", "photo": "assets/img/conference/people/yangshangshang.jpg", "meta": ["教授、博士生导师", "国家海外青年人才", "合肥市 D 类人才（以上都不是）"] },
+            { "name": "胡梦岚", "photo": "assets/img/conference/people/humenglan.jpg", "meta": ["著名企业家、智能座舱开发者", "健身达人、哭闹达人", "合肥市 E 类人才（候补）"] },
+            { "name": "张亚杰", "photo": "assets/img/conference/people/zhangyajie.jpg", "meta": ["准聘助理教授", "省部级青年人才", "准国家青年人才"] }
+          ]
         }
       ],
-      "committee": ["田野", "彭媛媛", "杨尚尚", "张盼盼", "胡梦岚"],
+      "committee": ["田野", "彭媛媛", "杨尚尚", "张盼盼", "胡梦岚", "张亚杰", "李真真"],
       "goals": [
         "参会规模不低于上一届（16 人）",
         "引入新式菜肴，菜单不再重复往届",
@@ -140,10 +137,23 @@ window.ML_DATA.conference = {
         { "k": "承办", "v": "杨尚尚", "note": "组委会常委（候）" },
         { "k": "参会人数", "v": "16 人", "note": "历届最高" }
       ],
-      "chairs": [
-        { "role": "Honorable General Chairs", "name": "田野", "photo": "assets/img/conference/people/tianye.png", "meta": ["教授、博士生导师", "国家优青（B）人才"] },
-        { "role": "Honorable General Chairs", "name": "彭媛媛", "photo": "assets/img/conference/people/pengyuanyuan.png", "meta": ["著名教育家、美食家、摄影家"] },
-        { "role": "Local General Chair · 承办", "name": "杨尚尚", "photo": "assets/img/conference/people/yangshangshang.png", "meta": ["教授、博士生导师", "组委会常委（候）"] }
+      "chair_groups": [
+        {
+          "title": "荣誉主席",
+          "en": "Honorable General Chairs",
+          "members": [
+            { "name": "田野", "photo": "assets/img/conference/people/tianye.jpg", "meta": ["教授、博士生导师", "国家优青（B）人才"] },
+            { "name": "彭媛媛", "photo": "assets/img/conference/people/pengyuanyuan.jpg", "meta": ["著名教育家、美食家、摄影家"] }
+          ]
+        },
+        {
+          "title": "组织主席",
+          "en": "Local General Chairs",
+          "members": [
+            { "name": "杨尚尚", "photo": "assets/img/conference/people/yangshangshang.jpg", "meta": ["教授、博士生导师", "组委会常委（候）· 第三届承办"] },
+            { "name": "胡梦岚", "photo": "assets/img/conference/people/humenglan.jpg", "meta": ["著名企业家、智能座舱开发者", "健身达人、哭闹达人"] }
+          ]
+        }
       ],
       "committee": ["田野", "彭媛媛", "杨尚尚", "张盼盼", "胡梦岚"],
       "program": [
@@ -168,8 +178,8 @@ window.ML_DATA.conference = {
         { "k": "汽水 / 果汁", "v": "可乐、雪碧、芬达；NFC 橙汁、青柠汁" }
       ],
       "applicants": [
-        { "name": "张亚杰", "photo": "assets/img/conference/people/zhangyajie.png", "meta": ["准聘助理教授", "省部级青年人才", "准国家青年人才"] },
-        { "name": "李真真", "photo": "assets/img/conference/people/lizhenzhen.png", "meta": ["知名美妆博主、资深买手", "躺平达人、摸鱼达人", "四通一达重要战略合作伙伴"] }
+        { "name": "张亚杰", "photo": "assets/img/conference/people/zhangyajie.jpg", "meta": ["准聘助理教授", "省部级青年人才", "准国家青年人才"] },
+        { "name": "李真真", "photo": "assets/img/conference/people/lizhenzhen.jpg", "meta": ["知名美妆博主、资深买手", "躺平达人、摸鱼达人", "四通一达重要战略合作伙伴"] }
       ],
       "photos": [
         { "src": "assets/img/conference/venue-1.jpg", "cap": "龙湖翠湖一号 · 园区鸟瞰" },
@@ -202,9 +212,15 @@ window.ML_DATA.conference = {
         { "k": "地点", "v": "港澳花园", "note": "同首届" },
         { "k": "参会人数", "v": "8 人", "note": "历届最少，但没断" }
       ],
-      "chairs": [
-        { "role": "General Chairs", "name": "田野", "photo": "assets/img/conference/people/tianye.png", "meta": ["教授、博士生导师"] },
-        { "role": "General Chairs", "name": "彭媛媛", "photo": "assets/img/conference/people/pengyuanyuan.png", "meta": ["田彭氏"] }
+      "chair_groups": [
+        {
+          "title": "创办者 & General Chairs",
+          "en": "Founders · General Chairs",
+          "members": [
+            { "name": "田野", "photo": "assets/img/conference/people/tianye.jpg", "meta": ["教授、博士生导师"] },
+            { "name": "彭媛媛", "photo": "assets/img/conference/people/pengyuanyuan.jpg", "meta": ["田彭氏"] }
+          ]
+        }
       ],
       "photos": [
         { "src": "assets/img/conference/2024-1.jpg", "cap": "第二届现场 · 餐桌合影" },
@@ -231,9 +247,15 @@ window.ML_DATA.conference = {
         { "k": "发起人", "v": "田野、彭媛媛", "note": "General Chairs" },
         { "k": "参会人数", "v": "11 人", "note": "起点" }
       ],
-      "chairs": [
-        { "role": "Founders · General Chairs", "name": "田野", "photo": "assets/img/conference/people/tianye.png", "meta": ["教授、博士生导师"] },
-        { "role": "Founders · General Chairs", "name": "彭媛媛", "photo": "assets/img/conference/people/pengyuanyuan.png", "meta": ["田彭氏"] }
+      "chair_groups": [
+        {
+          "title": "创办者 & General Chairs",
+          "en": "Founders · General Chairs",
+          "members": [
+            { "name": "田野", "photo": "assets/img/conference/people/tianye.jpg", "meta": ["教授、博士生导师"] },
+            { "name": "彭媛媛", "photo": "assets/img/conference/people/pengyuanyuan.jpg", "meta": ["田彭氏"] }
+          ]
+        }
       ],
       "photos": [
         { "src": "assets/img/conference/2023-1.jpg", "cap": "首届现场 · 围桌的一顿" },
