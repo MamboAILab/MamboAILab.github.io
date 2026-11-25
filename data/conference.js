@@ -35,8 +35,8 @@ window.ML_DATA.conference = {
           "title": "荣誉主席",
           "en": "Honorary General Chairs",
           "members": [
-            { "name": "田野", "photo": "assets/img/conference/people/tianye.jpg", "meta": ["教授、博士生导师", "国家优青（B）人才", "合肥市 C 类人才"] },
-            { "name": "彭媛媛", "photo": "assets/img/conference/people/pengyuanyuan.jpg", "meta": ["著名教育家、美食家、摄影家", "旅游达人、维权达人", "合肥市重点企业法人代表"] }
+            { "name": "田野", "photo": "assets/img/conference/people/pengyuanyuan.jpg", "meta": ["教授、博士生导师", "国家优青（B）人才", "合肥市 C 类人才"] },
+            { "name": "彭媛媛", "photo": "assets/img/conference/people/tianye.jpg", "meta": ["著名教育家、美食家、摄影家", "旅游达人、维权达人", "合肥市重点企业法人代表"] }
           ]
         },
         {
@@ -141,8 +141,8 @@ window.ML_DATA.conference = {
           "title": "荣誉主席",
           "en": "Honorary General Chairs",
           "members": [
-            { "name": "田野", "photo": "assets/img/conference/people/tianye.jpg", "meta": ["教授、博士生导师", "国家优青（B）人才"] },
-            { "name": "彭媛媛", "photo": "assets/img/conference/people/pengyuanyuan.jpg", "meta": ["著名教育家、美食家、摄影家"] }
+            { "name": "田野", "photo": "assets/img/conference/people/pengyuanyuan.jpg", "meta": ["教授、博士生导师", "国家优青（B）人才"] },
+            { "name": "彭媛媛", "photo": "assets/img/conference/people/tianye.jpg", "meta": ["著名教育家、美食家、摄影家"] }
           ]
         },
         {
@@ -216,8 +216,8 @@ window.ML_DATA.conference = {
           "title": "创办者 & General Chairs",
           "en": "Founders · General Chairs",
           "members": [
-            { "name": "田野", "photo": "assets/img/conference/people/tianye.jpg", "meta": ["教授、博士生导师"] },
-            { "name": "彭媛媛", "photo": "assets/img/conference/people/pengyuanyuan.jpg", "meta": ["田彭氏"] }
+            { "name": "田野", "photo": "assets/img/conference/people/pengyuanyuan.jpg", "meta": ["教授、博士生导师"] },
+            { "name": "彭媛媛", "photo": "assets/img/conference/people/tianye.jpg", "meta": ["田彭氏"] }
           ]
         }
       ],
@@ -251,8 +251,8 @@ window.ML_DATA.conference = {
           "title": "创办者 & General Chairs",
           "en": "Founders · General Chairs",
           "members": [
-            { "name": "田野", "photo": "assets/img/conference/people/tianye.jpg", "meta": ["教授、博士生导师"] },
-            { "name": "彭媛媛", "photo": "assets/img/conference/people/pengyuanyuan.jpg", "meta": ["田彭氏"] }
+            { "name": "田野", "photo": "assets/img/conference/people/pengyuanyuan.jpg", "meta": ["教授、博士生导师"] },
+            { "name": "彭媛媛", "photo": "assets/img/conference/people/tianye.jpg", "meta": ["田彭氏"] }
           ]
         }
       ],
