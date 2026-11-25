@@ -119,6 +119,12 @@ window.ML_DATA.conference = {
       "photos": [
         { "src": "assets/img/conference/venue-1.jpg", "cap": "龙湖翠湖一号 · 园区鸟瞰" },
         { "src": "assets/img/conference/venue-2.jpg", "cap": "115 ㎡ 户型图" }
+      ],
+      "scene": [
+        { "src": "assets/img/conference/2025-1.jpg", "cap": "第三届现场 · 一桌人的自拍" },
+        { "src": "assets/img/conference/2025-2.jpg", "cap": "第三届现场 · 举杯" },
+        { "src": "assets/img/conference/2025-3.jpg", "cap": "第三届现场 · 长桌、菜单与本届主题" },
+        { "src": "assets/img/conference/2025-4.jpg", "cap": "第三届现场 · 18:51 的监控画面" }
       ]
     },
     {

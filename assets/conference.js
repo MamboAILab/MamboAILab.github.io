@@ -124,14 +124,14 @@
     return sec(n, '本届菜单', '<dl class="cf-menu">' + rows + '</dl>');
   }
 
-  function photosHTML(e, title, n) {
-    if (!e.photos || !e.photos.length) return '';
-    var figs = e.photos.map(function (p) {
+  function photosHTML(list, title, n) {
+    if (!list || !list.length) return '';
+    var figs = list.map(function (p) {
       return '<figure class="cf-photo"><a href="' + esc(p.src) + '" target="_blank" rel="noopener">' +
         '<img src="' + esc(p.src) + '" alt="' + esc(p.cap) + '" loading="lazy"></a>' +
         '<figcaption>' + esc(p.cap) + '</figcaption></figure>';
     }).join('');
-    return sec(n, title, '<div class="cf-photos' + (e.photos.length === 1 ? ' one' : '') + '">' + figs + '</div>');
+    return sec(n, title, '<div class="cf-photos' + (list.length === 1 ? ' one' : '') + '">' + figs + '</div>');
   }
 
   function applicantsHTML(e, n) {
@@ -193,9 +193,10 @@
     if (e.stats && e.stats.length) html += statsHTML(e, ++n);
     if (e.menu && e.menu.length) {
       html += menuHTML(e, ++n);
-      html += photosHTML(e, '本届场地', ++n);
+      html += photosHTML(e.photos, '本届场地', ++n);
+      html += photosHTML(e.scene, '晚会现场', ++n);
     } else {
-      html += photosHTML(e, '现场', ++n);
+      html += photosHTML(e.photos, '现场', ++n);
     }
     if (e.applicants && e.applicants.length) html += applicantsHTML(e, ++n);
     if (e.goals && e.goals.length) html += goalsHTML(e, ++n);
