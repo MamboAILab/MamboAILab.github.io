@@ -47,6 +47,13 @@ window.ML_DATA.conference = {
             { "name": "胡梦岚", "photo": "assets/img/conference/people/humenglan.jpg", "meta": ["著名企业家、智能座舱开发者", "健身达人、哭闹达人", "合肥市 E 类人才（候补）"] },
             { "name": "张亚杰", "photo": "assets/img/conference/people/zhangyajie.jpg", "meta": ["准聘助理教授", "省部级青年人才", "准国家青年人才"] }
           ]
+        },
+        {
+          "title": "财务主席",
+          "en": "Finance Chair",
+          "members": [
+            { "name": "李静", "photo": "assets/img/conference/people/lijing.jpg", "meta": ["安徽大学计算机科学与技术学院", "2026 级博士生"] }
+          ]
         }
       ],
       "committee": ["田野", "彭媛媛", "杨尚尚", "张盼盼", "胡梦岚", "张亚杰", "李真真"],
