@@ -7,6 +7,11 @@ window.ML_DATA.news = {
       "link": "special-days.html"
     },
     {
+      "date": "2026-11-25",
+      "text": "第四届 BIMK 博士吃喝群平安夜晚会定档 2026 年 12 月 24 日，场地申报与组委会增选同步开放。",
+      "link": "conference.html"
+    },
+    {
       "date": "2026-11-21",
       "text": "本学期第二次 Special Day「甜品日」举办，主题詹记，10:00–12:00 于材料科学大楼A。",
       "link": "special-days.html"
