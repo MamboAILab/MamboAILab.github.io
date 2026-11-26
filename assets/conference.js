@@ -59,38 +59,40 @@
   }
 
   function bindEngagement(root, year) {
-    /* 浏览量：每届每次会话只计一次；每次重新查询节点，避免头部重渲染后写入脱离文档的元素 */
     var viewKey = 'conference-' + year;
+    var likeBtns = root.querySelectorAll('.cf-like');
+    var keys = [];
+    Array.prototype.forEach.call(likeBtns, function (b) { keys.push(b.getAttribute('data-like-key')); });
+    keys.push(viewKey);
+
+    var bumped = false;
+    /* 每次都重新查询节点：页面头部可能在数据重载后重建，避免写入脱离文档的元素 */
     function showView(n) {
       var el = q('#cf-views', root);
       if (el && typeof n === 'number') el.textContent = n;
     }
-    if (!VIEWED_FLAG[viewKey]) {
-      VIEWED_FLAG[viewKey] = true;
-      bumpView(viewKey).then(function (d) { showView(d.count); })
-        .catch(function () { /* 失败保持现有数字 */ });
-    } else {
-      /* 会话内重复进入该届：从数据库读回当前值，保证 pill 始终有数字 */
-      fetchCounts([viewKey]).then(function (map) {
-        var n = map[viewKey + '/view'];
-        if (typeof n === 'number') showView(n);
-      });
-    }
 
-    /* 点赞按钮：每人每图一次，可取消 */
-    var likeBtns = root.querySelectorAll('.cf-like');
-    var keys = [];
-    Array.prototype.forEach.call(likeBtns, function (b) { keys.push(b.getAttribute('data-like-key')); });
+    /* 一次性读回浏览量与所有点赞数：中继冷启动或本次不计浏览时，pill 也能立即有数字 */
     var liked = store(LIKE_KEY);
     fetchCounts(keys).then(function (map) {
+      var vn = map[viewKey + '/view'];
+      if (typeof vn === 'number' && !bumped) showView(vn);
       Array.prototype.forEach.call(likeBtns, function (b) {
         var key = b.getAttribute('data-like-key');
-        var n = map[key + '/like'] || 0;
         var num = q('[data-count]', b);
-        if (num) num.textContent = n;
+        if (num) num.textContent = map[key + '/like'] || 0;
         if (liked[key]) b.classList.add('on');
       });
     });
+
+    /* 浏览量：每届每次会话只计一次；bump 成功后覆盖读回的旧值 */
+    if (!VIEWED_FLAG[viewKey]) {
+      VIEWED_FLAG[viewKey] = true;
+      bumpView(viewKey).then(function (d) { bumped = true; showView(d.count); })
+        .catch(function () { /* 失败时保留 fetchCounts 读回的数字 */ });
+    }
+
+    /* 点赞：每人每图一次，可取消 */
 
     Array.prototype.forEach.call(likeBtns, function (b) {
       b.addEventListener('click', function (ev) {
