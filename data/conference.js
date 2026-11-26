@@ -53,8 +53,8 @@ window.ML_DATA.conference = {
           "title": "组织主席",
           "en": "Local Organizing Chairs",
           "members": [
-            { "name": "杨尚尚", "photo": "assets/img/conference/people/yangshangshang.webp", "meta": ["教授、博士生导师", "国家海外青年人才", "合肥市 D 类人才（以上都不是）"] },
-            { "name": "胡梦岚", "photo": "assets/img/conference/people/humenglan.webp", "meta": ["著名企业家、智能座舱开发者", "健身达人、哭闹达人", "合肥市 E 类人才（候补）"] },
+            { "name": "杨尚尚", "photo": "assets/img/conference/people/yangshangshang-2026.webp", "meta": ["教授、博士生导师", "国家海外青年人才", "合肥市 D 类人才（以上都不是）"] },
+            { "name": "胡梦岚", "photo": "assets/img/conference/people/humenglan-2026.webp", "meta": ["著名企业家、智能座舱开发者", "健身达人、哭闹达人", "合肥市 E 类人才（候补）"] },
             { "name": "张亚杰", "photo": "assets/img/conference/people/zhangyajie.webp", "meta": ["安徽大学计算机科学与技术学院 教授", "国家级青年人才", "合肥市 C 类人才"] }
           ]
         },
