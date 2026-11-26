@@ -118,6 +118,12 @@ window.ML_DATA.conference = {
                 "name_en": "Yajie Zhang",
                 "role": "安徽大学计算机科学与技术学院 教授 · 国家级青年人才",
                 "photo": "assets/img/conference/people/zhangyajie.jpg"
+              },
+              {
+                "name": "李真真",
+                "name_en": "Zhenzhen Li",
+                "role": "知名美妆博主 · 资深买手",
+                "photo": "assets/img/conference/people/lizhenzhen.jpg"
               }
             ]
           },
@@ -126,6 +132,12 @@ window.ML_DATA.conference = {
             "en": "Silver Sponsors",
             "level": "silver",
             "slots": [
+              {
+                "name": "张亚杰",
+                "name_en": "Yajie Zhang",
+                "role": "安徽大学计算机科学与技术学院 教授 · 国家级青年人才",
+                "photo": "assets/img/conference/people/zhangyajie.jpg"
+              },
               {
                 "name": "李真真",
                 "name_en": "Zhenzhen Li",
