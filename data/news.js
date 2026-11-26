@@ -2,6 +2,11 @@ window.ML_DATA = window.ML_DATA || {};
 window.ML_DATA.news = {
   "items": [
     {
+      "date": "2026-11-26",
+      "text": "课题组论文 \"Evolutionary Multitasking-based Neural Architecture Search for Generalized Cognitive Diagnosis in Intelligent Education\" 被 IEEE Transactions on Artificial Intelligence（TAI）接收。",
+      "link": "publications.html"
+    },
+    {
       "date": "2026-12-12",
       "text": "下一次 Special Day「肉食日」定档 12 月 12 日（周六）10:00–12:00，材料科学大楼A，主题：卤味 + 炸货 + 饮料。",
       "link": "special-days.html"
