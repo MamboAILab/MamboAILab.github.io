@@ -198,7 +198,7 @@
           '<div class="cf-hero-copy">' +
             '<p class="cf-eyebrow">BIMK · 博士吃喝群 · ' + esc(e.ordinal) + '</p>' +
             '<h1>' + esc(C.short) + '</h1>' +
-            '<p class="cf-en">The ' + esc(e.ordinal_en) + ' ' + esc(C.name_en) + '</p>' +
+            '<p class="cf-en">The ' + esc(e.ordinal_en) + ' ' + esc(C.name_en) + ' (ICIG ' + esc(e.year) + ')</p>' +
             '<p class="cf-meta">' +
               '<span>' + esc(e.date_label) + '</span>' +
               '<span>' + esc(e.venue) + '</span>' +
@@ -294,7 +294,7 @@
 
   function kpiHTML(e) {
     return '<div class="cf-kpis">' +
-      '<div class="cf-kpi"><span class="k">届次</span><strong>' + esc(e.ordinal) + '</strong><em>The ' + esc(e.ordinal_en) + ' Dinner</em></div>' +
+      '<div class="cf-kpi"><span class="k">届次</span><strong>' + esc(e.ordinal) + '</strong><em>ICIG ' + esc(e.year) + '</em></div>' +
       '<div class="cf-kpi"><span class="k">日期</span><strong>' + esc(e.date_label.replace(/（.*?）/g, '')) + '</strong><em>平安夜</em></div>' +
       '<div class="cf-kpi"><span class="k">地点</span><strong>' + esc(e.venue) + '</strong><em>' + esc(e.venue_note || '') + '</em></div>' +
       '<div class="cf-kpi"><span class="k">参会</span><strong>' + esc(e.attendance) + '</strong><em>' + esc(e.attendance_note || '') + '</em></div>' +
@@ -484,7 +484,7 @@
       return '<a class="cf-past-item' + (e.year === active ? ' on' : '') + '" href="#' + e.year + '" data-year="' + e.year + '">' +
         '<span class="cf-past-y">' + e.year + '</span>' +
         '<span class="cf-past-o">' + esc(e.ordinal) + '</span>' +
-        '<span class="cf-past-m">' + esc(e.date_label) + ' · ' + esc(e.venue) + ' · ' + esc(e.attendance) + '</span>' +
+        '<span class="cf-past-m">ICIG ' + e.year + ' · ' + esc(e.date_label) + ' · ' + esc(e.venue) + ' · ' + esc(e.attendance) + '</span>' +
         '<span class="cf-past-g">查看 →</span></a>';
     }).join('');
     return '<section class="cf-sec" id="cf-past">' +

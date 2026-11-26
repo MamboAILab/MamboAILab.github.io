@@ -1,7 +1,7 @@
 window.ML_DATA = window.ML_DATA || {};
 window.ML_DATA.conference = {
   "name_zh": "BIMK 博士吃喝群平安夜晚会",
-  "name_en": "BIMK PhD Student Food & Wine Group Christmas Eve Banquet",
+  "name_en": "International Christmas Conference for Computational Intelligence Group",
   "short": "博士吃喝群平安夜晚会",
   "host": "生物智能与知识发现研究所（BIMK）· 博士吃喝群组委会",
   "intro": "一场每年平安夜举办的课题组聚餐：不讲论文、不排议程，只负责把一整年没坐在一起吃过的饭补上。自 2023 年首届起，已连续举办三届，2026 年为第四届。",
