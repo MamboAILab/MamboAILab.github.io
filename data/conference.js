@@ -76,7 +76,7 @@ window.ML_DATA.conference = {
         { "t": "下届展望", "d": "交接与下一届筹备" }
       ],
       "sponsors": {
-        "note": "本届首次开放赞助，感谢 4 位钻石赞助商的支持。",
+        "note": "本届首次开放赞助，感谢 4 位钻石赞助商与金牌、银牌赞助商的支持。",
         "tiers": [
           {
             "title": "钻石赞助商",
@@ -112,13 +112,27 @@ window.ML_DATA.conference = {
             "title": "金牌赞助商",
             "en": "Gold Sponsors",
             "level": "gold",
-            "slots": []
+            "slots": [
+              {
+                "name": "张亚杰",
+                "name_en": "Yajie Zhang",
+                "role": "安徽大学计算机科学与技术学院 教授 · 国家级青年人才",
+                "photo": "assets/img/conference/people/zhangyajie.jpg"
+              }
+            ]
           },
           {
             "title": "银牌赞助商",
             "en": "Silver Sponsors",
             "level": "silver",
-            "slots": []
+            "slots": [
+              {
+                "name": "李真真",
+                "name_en": "Zhenzhen Li",
+                "role": "知名美妆博主 · 资深买手",
+                "photo": "assets/img/conference/people/lizhenzhen.jpg"
+              }
+            ]
           }
         ]
       },
