@@ -92,6 +92,16 @@
         .catch(function () { /* 失败时保留 fetchCounts 读回的数字 */ });
     }
 
+    /* 冷启动兜底：若首个请求整体失败或挂起，3 秒后再读一次，避免 pill 停在占位符 */
+    setTimeout(function () {
+      var el = q('#cf-views', root);
+      if (!el || el.textContent.indexOf('…') < 0) return;
+      fetchCounts([viewKey]).then(function (m) {
+        var n = m[viewKey + '/view'];
+        if (typeof n === 'number' && !bumped) showView(n);
+      });
+    }, 3000);
+
     /* 点赞：每人每图一次，可取消 */
 
     Array.prototype.forEach.call(likeBtns, function (b) {
