@@ -1004,6 +1004,7 @@ html[data-theme="dark"] .btn-danger { color: #ff8a7a; border-color: #5a2a25; }
   color: var(--faint); white-space: nowrap;
 }
 .cf-tabs-hint { margin-left: auto; font-size: 12.5px; color: var(--muted); white-space: nowrap; }
+.cf-tabs-hint + .cf-views-pill { margin-left: 0; }
 
 .cf-year { position: relative; }
 .cf-year-btn {
@@ -1286,7 +1287,34 @@ html[data-theme="dark"] .cf-sp-seat { color: #b9cbe6; background: #1d2634; borde
   transition: transform .2s var(--ease), box-shadow .2s var(--ease);
 }
 .cf-photo a:hover img { transform: translateY(-2px); box-shadow: var(--shadow-lift); }
-.cf-photo figcaption { margin-top: 9px; font-size: 12.5px; line-height: 1.7; color: var(--muted); }
+.cf-photo figcaption {
+  margin-top: 9px; font-size: 12.5px; line-height: 1.7; color: var(--muted);
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+}
+.cf-cap-text { min-width: 0; text-wrap: pretty; }
+
+/* 点赞按钮（照片右下角） */
+.cf-like {
+  flex: none; display: inline-flex; align-items: center; gap: 6px;
+  font-family: inherit; font-size: 12.5px; font-weight: 600; cursor: pointer;
+  padding: 5px 13px 5px 10px; border-radius: 999px; color: var(--muted);
+  background: var(--pill); border: 1px solid var(--line);
+  transition: color .15s, border-color .15s, background .15s, transform .12s var(--ease);
+}
+.cf-like:hover { color: #e0435f; border-color: color-mix(in srgb, #e0435f 42%, var(--line)); background: color-mix(in srgb, #e0435f 7%, var(--bg)); }
+.cf-like:active { transform: scale(.94); }
+.cf-like.on { color: #e0435f; border-color: color-mix(in srgb, #e0435f 48%, var(--line)); background: color-mix(in srgb, #e0435f 10%, var(--bg)); }
+.cf-heart { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.7; }
+.cf-like.on .cf-heart { fill: #e0435f; stroke: #e0435f; }
+.cf-like-n { font-variant-numeric: tabular-nums; min-width: 1ch; }
+
+/* 届次吸顶条上的浏览量 */
+.cf-views-pill {
+  margin-left: auto; display: inline-flex; align-items: baseline; gap: 6px; white-space: nowrap;
+  font-size: 12px; color: var(--faint);
+  padding: 4px 12px; border-radius: 999px; background: var(--pill); border: 1px solid var(--line);
+}
+.cf-views-pill b { font-size: 13px; color: var(--fg-soft); font-variant-numeric: tabular-nums; }
 
 /* 目标与增选 */
 .cf-goals {
@@ -1384,6 +1412,7 @@ html[data-theme="dark"] .cf-sp-seat { color: #b9cbe6; background: #1d2634; borde
   .cf-tabs { padding: 10px 20px; gap: 10px; }
   .cf-tabs-label { display: none; }
   .cf-tabs-hint { font-size: 11.5px; overflow: hidden; text-overflow: ellipsis; }
+  .cf-views-pill { display: none; }
   .cf-year-cur b { font-size: 17px; }
   .cf-year-cur span { font-size: 11.5px; }
   .cf-cd-digits { gap: 8px; }

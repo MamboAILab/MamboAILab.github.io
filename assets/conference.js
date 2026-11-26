@@ -11,6 +11,109 @@
   function initial(name) { return String(name || '?').trim().slice(0, 1); }
   function pad(n) { return (n < 10 ? '0' : '') + n; }
 
+  /* ---------- 浏览量与点赞（WorkBuddy 云数据库经中继服务访问） ---------- */
+  var HEART_SVG = '<svg class="cf-heart" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.3 4.9 13a4.8 4.8 0 0 1 0-6.8 4.6 4.6 0 0 1 6.6 0l.5.5.5-.5a4.6 4.6 0 0 1 6.6 0 4.8 4.8 0 0 1 0 6.8L12 20.3Z"/></svg>';
+  var CF_RELAY = 'https://banquet-counts.app.workbuddy.host';
+  var CF_RELAY_QS = '?sharecode=JBH67D64S2';
+  var VIEW_KEY = 'cf-views';
+  var LIKE_KEY = 'cf-likes';
+  var VIEWED_FLAG = {};
+
+  function store(key) {
+    try { return JSON.parse(localStorage.getItem(key) || '{}'); } catch (e) { return {}; }
+  }
+  function saveStore(key, obj) {
+    try { localStorage.setItem(key, JSON.stringify(obj)); } catch (e) { /* 隐私模式下忽略 */ }
+  }
+
+  function cfFetch(path, opts) {
+    return fetch(CF_RELAY + path, opts).then(function (r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    });
+  }
+
+  function fetchCounts(keys) {
+    if (!keys.length) return Promise.resolve({});
+    return cfFetch('/api/counts' + CF_RELAY_QS + '&keys=' + encodeURIComponent(keys.join(',')))
+      .then(function (d) {
+        var map = {};
+        (d.counts || []).forEach(function (row) { map[row.key + '/' + row.kind] = row.count; });
+        return map;
+      })
+      .catch(function () { return {}; });
+  }
+
+  function bumpView(key) {
+    return cfFetch('/api/view' + CF_RELAY_QS, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ key: key })
+    });
+  }
+
+  function toggleLike(key, delta) {
+    return cfFetch('/api/like' + CF_RELAY_QS, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ key: key, delta: delta })
+    });
+  }
+
+  function bindEngagement(root, year) {
+    /* 浏览量：每届每次会话只计一次；每次重新查询节点，避免头部重渲染后写入脱离文档的元素 */
+    var viewKey = 'conference-' + year;
+    function showView(n) {
+      var el = q('#cf-views', root);
+      if (el && typeof n === 'number') el.textContent = n;
+    }
+    if (!VIEWED_FLAG[viewKey]) {
+      VIEWED_FLAG[viewKey] = true;
+      bumpView(viewKey).then(function (d) { showView(d.count); })
+        .catch(function () { /* 失败保持现有数字 */ });
+    } else {
+      /* 会话内重复进入该届：从数据库读回当前值，保证 pill 始终有数字 */
+      fetchCounts([viewKey]).then(function (map) {
+        var n = map[viewKey + '/view'];
+        if (typeof n === 'number') showView(n);
+      });
+    }
+
+    /* 点赞按钮：每人每图一次，可取消 */
+    var likeBtns = root.querySelectorAll('.cf-like');
+    var keys = [];
+    Array.prototype.forEach.call(likeBtns, function (b) { keys.push(b.getAttribute('data-like-key')); });
+    var liked = store(LIKE_KEY);
+    fetchCounts(keys).then(function (map) {
+      Array.prototype.forEach.call(likeBtns, function (b) {
+        var key = b.getAttribute('data-like-key');
+        var n = map[key + '/like'] || 0;
+        var num = q('[data-count]', b);
+        if (num) num.textContent = n;
+        if (liked[key]) b.classList.add('on');
+      });
+    });
+
+    Array.prototype.forEach.call(likeBtns, function (b) {
+      b.addEventListener('click', function (ev) {
+        ev.preventDefault();
+        var key = b.getAttribute('data-like-key');
+        var num = q('[data-count]', b);
+        var current = num ? parseInt(num.textContent, 10) || 0 : 0;
+        var likedMap = store(LIKE_KEY);
+        var wasLiked = !!likedMap[key];
+        var delta = wasLiked ? -1 : 1;
+        var next = Math.max(0, current + delta);
+        if (num) num.textContent = next;
+        b.classList.toggle('on', !wasLiked);
+        if (wasLiked) delete likedMap[key]; else likedMap[key] = 1;
+        saveStore(LIKE_KEY, likedMap);
+        toggleLike(key, delta).then(function (d) {
+          if (num && typeof d.count === 'number') num.textContent = d.count;
+        }).catch(function () { /* 网络失败时回滚显示 */ });
+      });
+    });
+  }
+
+
   /* ---------- 顶部 ---------- */
   /* 倒计时唯一目标时刻：数据里写 ISO（含 +08:00），不在代码里另存时间戳 */
   var CD_TIMER = null;
@@ -126,6 +229,7 @@
         '</ul>' +
       '</div>' +
       '<span class="cf-tabs-hint">' + esc(cur.ordinal) + ' · ' + esc(cur.venue) + ' · ' + esc(cur.attendance) + '</span>' +
+      '<span class="cf-views-pill">浏览 <b id="cf-views">…</b></span>' +
     '</div></div>';
   }
 
@@ -328,12 +432,16 @@
     return sec(n, '本届菜单', '<dl class="cf-menu">' + rows + '</dl>');
   }
 
-  function photosHTML(list, title, n) {
+  function photosHTML(list, title, n, photoIdPrefix) {
     if (!list || !list.length) return '';
-    var figs = list.map(function (p) {
-      return '<figure class="cf-photo"><a href="' + esc(p.src) + '" target="_blank" rel="noopener">' +
+    var figs = list.map(function (p, i) {
+      var pid = photoIdPrefix ? photoIdPrefix + (i + 1) : '';
+      return '<figure class="cf-photo"' + (pid ? ' data-photo-id="' + esc(pid) + '"' : '') + '><a href="' + esc(p.src) + '" target="_blank" rel="noopener">' +
         '<img src="' + esc(p.src) + '" alt="' + esc(p.cap) + '" loading="lazy"></a>' +
-        '<figcaption>' + esc(p.cap) + '</figcaption></figure>';
+        '<figcaption><span class="cf-cap-text">' + esc(p.cap) + '</span>' +
+        (pid ? '<button type="button" class="cf-like" data-like-key="' + esc(pid) + '" aria-label="点赞这张照片">' +
+          HEART_SVG + '<span class="cf-like-n" data-count>0</span></button>' : '') +
+        '</figcaption></figure>';
     }).join('');
     return sec(n, title, '<div class="cf-photos' + (list.length === 1 ? ' one' : '') + '">' + figs + '</div>');
   }
@@ -388,10 +496,13 @@
     var html = '<p class="cf-intro">' + esc(C.intro) + '</p>' + kpiHTML(e) + overviewHTML(C, e, ++n);
     /* 最新阅读顺序：概览 → 本届目标 → 场地 → 议程 → 组委会 → 增选 → 赞助 → 历届 */
     if (e.goals && e.goals.length) html += goalsHTML(e, ++n);
+    /* 点赞覆盖前三届（2023/2024/2025）的晚会现场照片；场地资料图与本届不带点赞 */
     if (e.photos && e.photos.length) {
-      html += photosHTML(e.photos, year >= 2025 ? '场地信息' : '现场', ++n);
+      html += photosHTML(e.photos, year >= 2025 ? '场地信息' : '现场', ++n,
+        year <= 2024 ? 'photo-' + year + '-' : '');
     }
-    if (e.scene && e.scene.length) html += photosHTML(e.scene, '晚会现场', ++n);
+    if (e.scene && e.scene.length) html += photosHTML(e.scene, '晚会现场', ++n,
+      year <= 2025 ? 'photo-' + year + '-scene-' : '');
     if (e.program && e.program.length) html += programHTML(e, ++n);
     if ((e.chair_groups && e.chair_groups.length) || (e.chairs && e.chairs.length)) html += chairsHTML(e, ++n);
     if (e.call) html += callHTML(e, ++n);
@@ -414,6 +525,8 @@
     if (CD_TIMER) { clearInterval(CD_TIMER); CD_TIMER = null; }
     tickCountdown();
     if (q('#cf-cd')) CD_TIMER = setInterval(tickCountdown, 1000);
+
+    bindEngagement(document, year);
   }
 
   window.ML_page = function () {
