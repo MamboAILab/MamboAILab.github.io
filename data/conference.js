@@ -35,7 +35,7 @@ window.ML_DATA.conference = {
           "title": "荣誉主席",
           "en": "Honorary General Chairs",
           "members": [
-            { "name": "田野", "photo": "assets/img/conference/people/pengyuanyuan.jpg", "meta": ["教授、博士生导师", "国家优青（B）人才", "合肥市 C 类人才"] },
+            { "name": "田野", "photo": "assets/img/conference/people/tianye-2026.jpg", "meta": ["教授、博士生导师", "国家优青（B）人才", "合肥市 C 类人才"] },
             { "name": "彭媛媛", "photo": "assets/img/conference/people/tianye.jpg", "meta": ["著名教育家、美食家、摄影家", "旅游达人、维权达人", "合肥市重点企业法人代表"] }
           ]
         },
@@ -45,7 +45,7 @@ window.ML_DATA.conference = {
           "members": [
             { "name": "杨尚尚", "photo": "assets/img/conference/people/yangshangshang.jpg", "meta": ["教授、博士生导师", "国家海外青年人才", "合肥市 D 类人才（以上都不是）"] },
             { "name": "胡梦岚", "photo": "assets/img/conference/people/humenglan.jpg", "meta": ["著名企业家、智能座舱开发者", "健身达人、哭闹达人", "合肥市 E 类人才（候补）"] },
-            { "name": "张亚杰", "photo": "assets/img/conference/people/zhangyajie.jpg", "meta": ["准聘助理教授", "省部级青年人才", "准国家青年人才"] }
+            { "name": "张亚杰", "photo": "assets/img/conference/people/zhangyajie.jpg", "meta": ["安徽大学计算机科学与技术学院 教授", "国家级青年人才", "合肥市 C 类人才"] }
           ]
         },
         {
@@ -153,8 +153,8 @@ window.ML_DATA.conference = {
           "title": "荣誉主席",
           "en": "Honorary General Chairs",
           "members": [
-            { "name": "田野", "photo": "assets/img/conference/people/pengyuanyuan.jpg", "meta": ["教授、博士生导师", "国家优青（B）人才"] },
-            { "name": "彭媛媛", "photo": "assets/img/conference/people/tianye.jpg", "meta": ["著名教育家、美食家、摄影家"] }
+            { "name": "田野", "photo": "assets/img/conference/people/tianye-2025.jpg", "meta": ["教授、博士生导师", "国家优青（B）人才"] },
+            { "name": "彭媛媛", "photo": "assets/img/conference/people/pengyuanyuan-2025.jpg", "meta": ["著名教育家、美食家、摄影家"] }
           ]
         },
         {
@@ -189,7 +189,7 @@ window.ML_DATA.conference = {
         { "k": "汽水 / 果汁", "v": "可乐、雪碧、芬达；NFC 橙汁、青柠汁" }
       ],
       "applicants": [
-        { "name": "张亚杰", "photo": "assets/img/conference/people/zhangyajie.jpg", "meta": ["准聘助理教授", "省部级青年人才", "准国家青年人才"] },
+        { "name": "张亚杰", "photo": "assets/img/conference/people/zhangyajie.jpg", "meta": ["安徽大学计算机科学与技术学院 教授", "国家级青年人才", "合肥市 C 类人才"] },
         { "name": "李真真", "photo": "assets/img/conference/people/lizhenzhen.jpg", "meta": ["知名美妆博主、资深买手", "躺平达人、摸鱼达人", "四通一达重要战略合作伙伴"] }
       ],
       "photos": [
@@ -263,8 +263,8 @@ window.ML_DATA.conference = {
           "title": "创办者 & General Chairs",
           "en": "Founders · General Chairs",
           "members": [
-            { "name": "田野", "photo": "assets/img/conference/people/pengyuanyuan.jpg", "meta": ["教授、博士生导师"] },
-            { "name": "彭媛媛", "photo": "assets/img/conference/people/tianye.jpg", "meta": ["田彭氏"] }
+            { "name": "田野", "photo": "assets/img/conference/people/tianye-2023.jpg", "meta": ["教授、博士生导师"] },
+            { "name": "彭媛媛", "photo": "assets/img/conference/people/pengyuanyuan-2023.jpg", "meta": ["田彭氏"] }
           ]
         }
       ],
