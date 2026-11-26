@@ -36,7 +36,7 @@ window.ML_DATA.conference = {
           "en": "Honorary General Chairs",
           "members": [
             { "name": "田野", "photo": "assets/img/conference/people/tianye-2026.webp", "meta": ["教授、博士生导师", "国家优青（B）人才", "合肥市 C 类人才"] },
-            { "name": "彭媛媛", "photo": "assets/img/conference/people/tianye.webp", "meta": ["著名教育家、美食家、摄影家", "旅游达人、维权达人", "合肥市重点企业法人代表"] }
+            { "name": "彭媛媛", "photo": "assets/img/conference/people/pengyuanyuan-2026.webp", "meta": ["著名教育家、美食家、摄影家", "旅游达人、维权达人", "合肥市重点企业法人代表"] }
           ]
         },
         {
