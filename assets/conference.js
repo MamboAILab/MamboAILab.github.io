@@ -197,8 +197,8 @@
         '<div class="wrap cf-hero-inner">' +
           '<div class="cf-hero-copy">' +
             '<p class="cf-eyebrow">BIMK · 博士吃喝群 · ' + esc(e.ordinal) + '</p>' +
-            '<h1>' + esc(C.short) + '</h1>' +
-            '<p class="cf-en">The ' + esc(e.ordinal_en) + ' ' + esc(C.name_en) + ' (ICIG ' + esc(e.year) + ')</p>' +
+            '<h1>' + esc(e.short || C.short) + '</h1>' +
+            '<p class="cf-en">The ' + esc(e.ordinal_en) + ' ' + esc(e.name_en || C.name_en) + '</p>' +
             '<p class="cf-meta">' +
               '<span>' + esc(e.date_label) + '</span>' +
               '<span>' + esc(e.venue) + '</span>' +
@@ -294,7 +294,7 @@
 
   function kpiHTML(e) {
     return '<div class="cf-kpis">' +
-      '<div class="cf-kpi"><span class="k">届次</span><strong>' + esc(e.ordinal) + '</strong><em>ICIG ' + esc(e.year) + '</em></div>' +
+      '<div class="cf-kpi"><span class="k">届次</span><strong>' + esc(e.ordinal) + '</strong><em>' + (e.name_en ? 'ICIG ' + esc(e.year) : 'The ' + esc(e.ordinal_en) + ' Dinner') + '</em></div>' +
       '<div class="cf-kpi"><span class="k">日期</span><strong>' + esc(e.date_label.replace(/（.*?）/g, '')) + '</strong><em>平安夜</em></div>' +
       '<div class="cf-kpi"><span class="k">地点</span><strong>' + esc(e.venue) + '</strong><em>' + esc(e.venue_note || '') + '</em></div>' +
       '<div class="cf-kpi"><span class="k">参会</span><strong>' + esc(e.attendance) + '</strong><em>' + esc(e.attendance_note || '') + '</em></div>' +
@@ -465,6 +465,16 @@
       '<span class="cf-note">第三届晚会现场介绍，由组委会讨论投票</span>');
   }
 
+  function historyHTML(e, n) {
+    if (!e.history) return '';
+    var h = e.history;
+    var paras = (h.paras || []).map(function (p, i) {
+      return '<p' + (i ? ' style="margin-top:12px"' : '') + '>' + esc(p) + '</p>';
+    }).join('');
+    return sec(n, h.title || '历史沿革',
+      '<div class="cf-call"><p class="cf-call-t">' + esc(h.en || 'History') + '</p>' + paras + '</div>');
+  }
+
   function goalsHTML(e, n) {
     if (!e.goals || !e.goals.length) return '';
     return sec(n, '本届目标', '<ol class="cf-goals">' + e.goals.map(function (g) { return '<li>' + esc(g) + '</li>'; }).join('') + '</ol>');
@@ -484,7 +494,7 @@
       return '<a class="cf-past-item' + (e.year === active ? ' on' : '') + '" href="#' + e.year + '" data-year="' + e.year + '">' +
         '<span class="cf-past-y">' + e.year + '</span>' +
         '<span class="cf-past-o">' + esc(e.ordinal) + '</span>' +
-        '<span class="cf-past-m">ICIG ' + e.year + ' · ' + esc(e.date_label) + ' · ' + esc(e.venue) + ' · ' + esc(e.attendance) + '</span>' +
+        '<span class="cf-past-m">' + (e.name_en ? 'ICIG ' + e.year + ' · ' : '') + esc(e.date_label) + ' · ' + esc(e.venue) + ' · ' + esc(e.attendance) + '</span>' +
         '<span class="cf-past-g">查看 →</span></a>';
     }).join('');
     return '<section class="cf-sec" id="cf-past">' +
@@ -506,7 +516,9 @@
 
     var n = 0;
     var html = '<p class="cf-intro">' + esc(C.intro) + '</p>' + kpiHTML(e) + overviewHTML(C, e, ++n);
-    /* 最新阅读顺序：概览 → 本届目标 → 场地 → 议程 → 组委会 → 增选 → 赞助 → 历届 */
+    /* 历史沿革仅第四届（2026）有，说明自本届起正式更名 */
+    if (e.history) html += historyHTML(e, ++n);
+    /* 阅读顺序：概览 →（历史沿革）→ 本届目标 → 场地 → 议程 → 组委会 → 增选 → 赞助 → 历届 */
     if (e.goals && e.goals.length) html += goalsHTML(e, ++n);
     /* 点赞覆盖前三届（2023/2024/2025）的晚会现场照片；场地资料图与本届不带点赞 */
     if (e.photos && e.photos.length) {

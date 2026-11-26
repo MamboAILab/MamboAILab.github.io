@@ -1,7 +1,7 @@
 window.ML_DATA = window.ML_DATA || {};
 window.ML_DATA.conference = {
   "name_zh": "BIMK 博士吃喝群平安夜晚会",
-  "name_en": "International Christmas Conference for Computational Intelligence Group",
+  "name_en": "BIMK PhD Student Food & Wine Group Christmas Eve Banquet",
   "short": "博士吃喝群平安夜晚会",
   "host": "生物智能与知识发现研究所（BIMK）· 博士吃喝群组委会",
   "intro": "一场每年平安夜举办的课题组聚餐：不讲论文、不排议程，只负责把一整年没坐在一起吃过的饭补上。自 2023 年首届起，已连续举办三届，2026 年为第四届。",
@@ -12,6 +12,16 @@ window.ML_DATA.conference = {
       "bg": "assets/img/conference/bg/2026.webp",
       "ordinal": "第四届",
       "ordinal_en": "4th",
+      "name_en": "International Christmas Conference for Computational Intelligence Group (ICIG 2026)",
+      "short": "国际计算智能团队圣诞会议",
+      "history": {
+        "title": "历史沿革",
+        "en": "History & Renaming",
+        "paras": [
+          "2023 年 12 月 24 日，课题组在港澳花园办了第一顿平安夜饭，没有议程、没有 PPT，只有一桌菜和 11 个人。此后 2024、2025 两届沿用「BIMK 博士吃喝群平安夜晚会」之名，分别在港澳花园与龙湖翠湖一号举办，人数从 8 人到 16 人，一次也没断过。",
+          "自 2026 年第四届起，活动正式更名为「国际计算智能团队圣诞会议」（The 4th International Christmas Conference for Computational Intelligence Group, ICIG 2026），以与课题组在计算智能与智能教育方向的研究定位相称。名称变了，规矩没变：不讲论文、不排议程，只负责把一整年没坐在一起吃过的饭补上。"
+        ]
+      },
       "status": "upcoming",
       "date": "2026-12-24",
       "start_at": "2026-12-24T19:00:00+08:00",
