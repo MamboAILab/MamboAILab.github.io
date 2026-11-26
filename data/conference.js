@@ -35,31 +35,31 @@ window.ML_DATA.conference = {
           "title": "荣誉主席",
           "en": "Honorary General Chairs",
           "members": [
-            { "name": "田野", "photo": "assets/img/conference/people/tianye-2026.jpg", "meta": ["教授、博士生导师", "国家优青（B）人才", "合肥市 C 类人才"] },
-            { "name": "彭媛媛", "photo": "assets/img/conference/people/tianye.jpg", "meta": ["著名教育家、美食家、摄影家", "旅游达人、维权达人", "合肥市重点企业法人代表"] }
+            { "name": "田野", "photo": "assets/img/conference/people/tianye-2026.webp", "meta": ["教授、博士生导师", "国家优青（B）人才", "合肥市 C 类人才"] },
+            { "name": "彭媛媛", "photo": "assets/img/conference/people/tianye.webp", "meta": ["著名教育家、美食家、摄影家", "旅游达人、维权达人", "合肥市重点企业法人代表"] }
           ]
         },
         {
           "title": "组织主席",
           "en": "Local Organizing Chairs",
           "members": [
-            { "name": "杨尚尚", "photo": "assets/img/conference/people/yangshangshang.jpg", "meta": ["教授、博士生导师", "国家海外青年人才", "合肥市 D 类人才（以上都不是）"] },
-            { "name": "胡梦岚", "photo": "assets/img/conference/people/humenglan.jpg", "meta": ["著名企业家、智能座舱开发者", "健身达人、哭闹达人", "合肥市 E 类人才（候补）"] },
-            { "name": "张亚杰", "photo": "assets/img/conference/people/zhangyajie.jpg", "meta": ["安徽大学计算机科学与技术学院 教授", "国家级青年人才", "合肥市 C 类人才"] }
+            { "name": "杨尚尚", "photo": "assets/img/conference/people/yangshangshang.webp", "meta": ["教授、博士生导师", "国家海外青年人才", "合肥市 D 类人才（以上都不是）"] },
+            { "name": "胡梦岚", "photo": "assets/img/conference/people/humenglan.webp", "meta": ["著名企业家、智能座舱开发者", "健身达人、哭闹达人", "合肥市 E 类人才（候补）"] },
+            { "name": "张亚杰", "photo": "assets/img/conference/people/zhangyajie.webp", "meta": ["安徽大学计算机科学与技术学院 教授", "国家级青年人才", "合肥市 C 类人才"] }
           ]
         },
         {
           "title": "财务主席",
           "en": "Finance Chair",
           "members": [
-            { "name": "李静", "photo": "assets/img/conference/people/lijing.jpg", "meta": ["安徽大学计算机科学与技术学院", "2026 级博士生"] }
+            { "name": "李静", "photo": "assets/img/conference/people/lijing.webp", "meta": ["安徽大学计算机科学与技术学院", "2026 级博士生"] }
           ]
         }
       ],
       "committee": ["田野", "彭媛媛", "杨尚尚", "张盼盼", "胡梦岚", "张亚杰", "李真真"],
       "photos": [
-        { "src": "assets/img/conference/venue-1.jpg", "cap": "龙湖翠湖一号 · 园区鸟瞰（与第三届同一场地）" },
-        { "src": "assets/img/conference/venue-2.jpg", "cap": "115 ㎡ 户型图（第三届场地资料）" }
+        { "src": "assets/img/conference/venue-1.webp", "cap": "龙湖翠湖一号 · 园区鸟瞰（与第三届同一场地）" },
+        { "src": "assets/img/conference/venue-2.webp", "cap": "115 ㎡ 户型图（第三届场地资料）" }
       ],
       "goals": [
         "参会规模不低于上一届（16 人）",
@@ -86,25 +86,25 @@ window.ML_DATA.conference = {
                 "name": "司朗春",
                 "name_en": "Langchun Si",
                 "role": "安徽大学计算机科学与技术学院 博士后",
-                "photo": "assets/img/conference/sponsors/silangchun.jpg"
+                "photo": "assets/img/conference/sponsors/silangchun.webp"
               },
               {
                 "name": "田野",
                 "name_en": "Ye Tian",
                 "role": "安徽大学计算机科学与技术学院 教授 · IEEE Member",
-                "photo": "assets/img/conference/sponsors/tianye.jpg"
+                "photo": "assets/img/conference/sponsors/tianye.webp"
               },
               {
                 "name": "盛子默",
                 "name_en": "Zimo Sheng",
                 "role": "安徽大学计算机科学与技术学院 教授",
-                "photo": "assets/img/conference/sponsors/shengzimo.jpg"
+                "photo": "assets/img/conference/sponsors/shengzimo.webp"
               },
               {
                 "name": "江浩",
                 "name_en": "Hao Jiang",
                 "role": "安徽大学计算机科学与技术学院 教授",
-                "photo": "assets/img/conference/sponsors/jianghao.jpg"
+                "photo": "assets/img/conference/sponsors/jianghao.webp"
               }
             ]
           },
@@ -117,13 +117,13 @@ window.ML_DATA.conference = {
                 "name": "张亚杰",
                 "name_en": "Yajie Zhang",
                 "role": "安徽大学计算机科学与技术学院 教授 · 国家级青年人才",
-                "photo": "assets/img/conference/people/zhangyajie.jpg"
+                "photo": "assets/img/conference/people/zhangyajie.webp"
               },
               {
                 "name": "李真真",
                 "name_en": "Zhenzhen Li",
                 "role": "知名美妆博主 · 资深买手",
-                "photo": "assets/img/conference/people/lizhenzhen.jpg"
+                "photo": "assets/img/conference/people/lizhenzhen.webp"
               }
             ]
           },
@@ -136,13 +136,13 @@ window.ML_DATA.conference = {
                 "name": "张亚杰",
                 "name_en": "Yajie Zhang",
                 "role": "安徽大学计算机科学与技术学院 教授 · 国家级青年人才",
-                "photo": "assets/img/conference/people/zhangyajie.jpg"
+                "photo": "assets/img/conference/people/zhangyajie.webp"
               },
               {
                 "name": "李真真",
                 "name_en": "Zhenzhen Li",
                 "role": "知名美妆博主 · 资深买手",
-                "photo": "assets/img/conference/people/lizhenzhen.jpg"
+                "photo": "assets/img/conference/people/lizhenzhen.webp"
               }
             ]
           }
@@ -179,16 +179,16 @@ window.ML_DATA.conference = {
           "title": "荣誉主席",
           "en": "Honorary General Chairs",
           "members": [
-            { "name": "田野", "photo": "assets/img/conference/people/tianye-2025.jpg", "meta": ["教授、博士生导师", "国家优青（B）人才"] },
-            { "name": "彭媛媛", "photo": "assets/img/conference/people/pengyuanyuan-2025.jpg", "meta": ["著名教育家、美食家、摄影家"] }
+            { "name": "田野", "photo": "assets/img/conference/people/tianye-2025.webp", "meta": ["教授、博士生导师", "国家优青（B）人才"] },
+            { "name": "彭媛媛", "photo": "assets/img/conference/people/pengyuanyuan-2025.webp", "meta": ["著名教育家、美食家、摄影家"] }
           ]
         },
         {
           "title": "组织主席",
           "en": "Local Organizing Chairs",
           "members": [
-            { "name": "杨尚尚", "photo": "assets/img/conference/people/yangshangshang.jpg", "meta": ["教授、博士生导师", "组委会常委（候）· 第三届承办"] },
-            { "name": "胡梦岚", "photo": "assets/img/conference/people/humenglan.jpg", "meta": ["著名企业家、智能座舱开发者", "健身达人、哭闹达人"] }
+            { "name": "杨尚尚", "photo": "assets/img/conference/people/yangshangshang.webp", "meta": ["教授、博士生导师", "组委会常委（候）· 第三届承办"] },
+            { "name": "胡梦岚", "photo": "assets/img/conference/people/humenglan.webp", "meta": ["著名企业家、智能座舱开发者", "健身达人、哭闹达人"] }
           ]
         }
       ],
@@ -215,18 +215,18 @@ window.ML_DATA.conference = {
         { "k": "汽水 / 果汁", "v": "可乐、雪碧、芬达；NFC 橙汁、青柠汁" }
       ],
       "applicants": [
-        { "name": "张亚杰", "photo": "assets/img/conference/people/zhangyajie.jpg", "meta": ["安徽大学计算机科学与技术学院 教授", "国家级青年人才", "合肥市 C 类人才"] },
-        { "name": "李真真", "photo": "assets/img/conference/people/lizhenzhen.jpg", "meta": ["知名美妆博主、资深买手", "躺平达人、摸鱼达人", "四通一达重要战略合作伙伴"] }
+        { "name": "张亚杰", "photo": "assets/img/conference/people/zhangyajie.webp", "meta": ["安徽大学计算机科学与技术学院 教授", "国家级青年人才", "合肥市 C 类人才"] },
+        { "name": "李真真", "photo": "assets/img/conference/people/lizhenzhen.webp", "meta": ["知名美妆博主、资深买手", "躺平达人、摸鱼达人", "四通一达重要战略合作伙伴"] }
       ],
       "photos": [
-        { "src": "assets/img/conference/venue-1.jpg", "cap": "龙湖翠湖一号 · 园区鸟瞰" },
-        { "src": "assets/img/conference/venue-2.jpg", "cap": "115 ㎡ 户型图" }
+        { "src": "assets/img/conference/venue-1.webp", "cap": "龙湖翠湖一号 · 园区鸟瞰" },
+        { "src": "assets/img/conference/venue-2.webp", "cap": "115 ㎡ 户型图" }
       ],
       "scene": [
-        { "src": "assets/img/conference/2025-1.jpg", "cap": "大合影" },
-        { "src": "assets/img/conference/2025-2.jpg", "cap": "举杯" },
-        { "src": "assets/img/conference/2025-3.jpg", "cap": "餐前准备" },
-        { "src": "assets/img/conference/2025-4.jpg", "cap": "第三人称视角" }
+        { "src": "assets/img/conference/2025-1.webp", "cap": "大合影" },
+        { "src": "assets/img/conference/2025-2.webp", "cap": "举杯" },
+        { "src": "assets/img/conference/2025-3.webp", "cap": "餐前准备" },
+        { "src": "assets/img/conference/2025-4.webp", "cap": "第三人称视角" }
       ]
     },
     {
@@ -254,14 +254,14 @@ window.ML_DATA.conference = {
           "title": "创办者 & General Chairs",
           "en": "Founders · General Chairs",
           "members": [
-            { "name": "田野", "photo": "assets/img/conference/people/pengyuanyuan.jpg", "meta": ["教授、博士生导师"] },
-            { "name": "彭媛媛", "photo": "assets/img/conference/people/tianye.jpg", "meta": ["田彭氏"] }
+            { "name": "田野", "photo": "assets/img/conference/people/pengyuanyuan.webp", "meta": ["教授、博士生导师"] },
+            { "name": "彭媛媛", "photo": "assets/img/conference/people/tianye.webp", "meta": ["田彭氏"] }
           ]
         }
       ],
       "photos": [
-        { "src": "assets/img/conference/2024-1.jpg", "cap": "憔悴的田彭氏和开心的大家" },
-        { "src": "assets/img/conference/2024-2.jpg", "cap": "正在开花的小甜心" }
+        { "src": "assets/img/conference/2024-1.webp", "cap": "憔悴的田彭氏和开心的大家" },
+        { "src": "assets/img/conference/2024-2.webp", "cap": "正在开花的小甜心" }
       ]
     },
     {
@@ -289,14 +289,14 @@ window.ML_DATA.conference = {
           "title": "创办者 & General Chairs",
           "en": "Founders · General Chairs",
           "members": [
-            { "name": "田野", "photo": "assets/img/conference/people/tianye-2023.jpg", "meta": ["教授、博士生导师"] },
-            { "name": "彭媛媛", "photo": "assets/img/conference/people/pengyuanyuan-2023.jpg", "meta": ["田彭氏"] }
+            { "name": "田野", "photo": "assets/img/conference/people/tianye-2023.webp", "meta": ["教授、博士生导师"] },
+            { "name": "彭媛媛", "photo": "assets/img/conference/people/pengyuanyuan-2023.webp", "meta": ["田彭氏"] }
           ]
         }
       ],
       "photos": [
-        { "src": "assets/img/conference/2023-1.jpg", "cap": "首届现场 · 围桌的一顿" },
-        { "src": "assets/img/conference/2023-2.jpg", "cap": "首届现场 · Merry Christmas" }
+        { "src": "assets/img/conference/2023-1.webp", "cap": "首届现场 · 围桌的一顿" },
+        { "src": "assets/img/conference/2023-2.webp", "cap": "首届现场 · Merry Christmas" }
       ]
     }
   ]
